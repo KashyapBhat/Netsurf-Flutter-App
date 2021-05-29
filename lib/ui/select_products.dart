@@ -1,24 +1,24 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:project_netsurf/bottomsheet.dart';
-import 'package:project_netsurf/edittext.dart';
-import 'package:project_netsurf/product.dart';
-import 'package:project_netsurf/product_constant.dart';
+import 'package:project_netsurf/common/ui/bottomsheet.dart';
+import 'package:project_netsurf/common/ui/edittext.dart';
+import 'package:project_netsurf/common/product.dart';
+import 'package:project_netsurf/common/product_constant.dart';
 
-class MyHomePage extends StatefulWidget {
+class SelectProductsPage extends StatefulWidget {
   final String title;
 
-  MyHomePage({Key key, this.title}) : super(key: key);
+  SelectProductsPage({Key key, this.title}) : super(key: key);
 
   @override
-  MyHomePageState createState() => MyHomePageState();
+  SelectProductsPageState createState() => SelectProductsPageState();
 }
 
-class MyHomePageState extends State<MyHomePage> {
+class SelectProductsPageState extends State<SelectProductsPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController categoryTextController =
-      new TextEditingController();
+  new TextEditingController();
   final TextEditingController itemTextController = new TextEditingController();
   ScrollController _controller;
   bool silverCollapsed = false;
@@ -146,102 +146,102 @@ class MyHomePageState extends State<MyHomePage> {
                         itemBuilder: (context, index) {
                           return Container(
                               child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                  child: Container(
-                                child: Text(
-                                    selectedProducts[index].getDisplayName() ??
-                                        "",
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 16,
-                                        height: 1.3),
-                                    textAlign: TextAlign.start),
-                                padding: EdgeInsets.only(
-                                    left: 16, top: 8, right: 0, bottom: 8),
-                              )),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  onPrimary: Colors.white,
-                                  elevation: 1,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                      child: Container(
+                                        child: Text(
+                                            selectedProducts[index].getDisplayName() ??
+                                                "",
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 16,
+                                                height: 1.3),
+                                            textAlign: TextAlign.start),
+                                        padding: EdgeInsets.only(
+                                            left: 16, top: 8, right: 0, bottom: 8),
+                                      )),
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      onPrimary: Colors.white,
+                                      elevation: 1,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
                                           BorderRadius.circular(25.0)),
-                                  minimumSize: Size(15, 40),
-                                ),
-                                child: Icon(Icons.add),
-                                onPressed: () {
-                                  setState(() {
-                                    if (selectedProducts != null)
-                                      selectedProducts[index].quantity++;
-                                    calculateTotal();
-                                  });
-                                },
-                              ),
-                              SizedBox(width: 3),
-                              Container(
-                                  width: 40,
-                                  child: TextFormField(
-                                    key: Key(selectedProducts[index]
-                                            .quantity
-                                            .toString() ??
-                                        ""),
-                                    initialValue: selectedProducts[index]
-                                            .quantity
-                                            .toString() ??
-                                        "",
-                                    textAlign: TextAlign.center,
-                                    cursorColor: Colors.black,
-                                    keyboardType: TextInputType.number,
-                                    decoration: new InputDecoration(
-                                      border: InputBorder.none,
-                                      focusedBorder: InputBorder.none,
-                                      enabledBorder: InputBorder.none,
-                                      errorBorder: InputBorder.none,
-                                      disabledBorder: InputBorder.none,
-                                      contentPadding: EdgeInsets.only(
-                                          left: 0, bottom: 0, top: 0, right: 0),
+                                      minimumSize: Size(15, 40),
                                     ),
-                                    onChanged: (value) {
+                                    child: Icon(Icons.add),
+                                    onPressed: () {
                                       setState(() {
-                                        if (value != null && value.isNotEmpty) {
-                                          int quant =
-                                              double.parse(value).ceil();
-                                          if (quant > 1)
-                                            selectedProducts[index].quantity =
-                                                quant;
-                                          selectedCategory.quantity = quant;
-                                        } else {
-                                          selectedProducts[index].quantity = 1;
-                                          selectedCategory.quantity = 1;
-                                        }
+                                        if (selectedProducts != null)
+                                          selectedProducts[index].quantity++;
                                         calculateTotal();
                                       });
                                     },
-                                  )),
-                              SizedBox(width: 3),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  onPrimary: Colors.white,
-                                  elevation: 1,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
+                                  ),
+                                  SizedBox(width: 3),
+                                  Container(
+                                      width: 40,
+                                      child: TextFormField(
+                                        key: Key(selectedProducts[index]
+                                            .quantity
+                                            .toString() ??
+                                            ""),
+                                        initialValue: selectedProducts[index]
+                                            .quantity
+                                            .toString() ??
+                                            "",
+                                        textAlign: TextAlign.center,
+                                        cursorColor: Colors.black,
+                                        keyboardType: TextInputType.number,
+                                        decoration: new InputDecoration(
+                                          border: InputBorder.none,
+                                          focusedBorder: InputBorder.none,
+                                          enabledBorder: InputBorder.none,
+                                          errorBorder: InputBorder.none,
+                                          disabledBorder: InputBorder.none,
+                                          contentPadding: EdgeInsets.only(
+                                              left: 0, bottom: 0, top: 0, right: 0),
+                                        ),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            if (value != null && value.isNotEmpty) {
+                                              int quant =
+                                              double.parse(value).ceil();
+                                              if (quant > 1)
+                                                selectedProducts[index].quantity =
+                                                    quant;
+                                              selectedCategory.quantity = quant;
+                                            } else {
+                                              selectedProducts[index].quantity = 1;
+                                              selectedCategory.quantity = 1;
+                                            }
+                                            calculateTotal();
+                                          });
+                                        },
+                                      )),
+                                  SizedBox(width: 3),
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      onPrimary: Colors.white,
+                                      elevation: 1,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
                                           BorderRadius.circular(25.0)),
-                                  minimumSize: Size(15, 40),
-                                ),
-                                child: Icon(Icons.remove),
-                                onPressed: () {
-                                  setState(() {
-                                    if (selectedProducts[index].quantity > 1)
-                                      selectedProducts[index].quantity--;
-                                    calculateTotal();
-                                  });
-                                },
-                              ),
-                              SizedBox(width: 3),
-                            ],
-                          ));
+                                      minimumSize: Size(15, 40),
+                                    ),
+                                    child: Icon(Icons.remove),
+                                    onPressed: () {
+                                      setState(() {
+                                        if (selectedProducts[index].quantity > 1)
+                                          selectedProducts[index].quantity--;
+                                        calculateTotal();
+                                      });
+                                    },
+                                  ),
+                                  SizedBox(width: 3),
+                                ],
+                              ));
                         }),
                   ),
                 Column(
@@ -294,7 +294,7 @@ class MyHomePageState extends State<MyHomePage> {
                                               if (value != null &&
                                                   value.isNotEmpty) {
                                                 double discount =
-                                                    double.parse(value);
+                                                double.parse(value);
                                                 double discountedPrice = 0;
                                                 if (discount > 0) {
                                                   discountedPrice =
