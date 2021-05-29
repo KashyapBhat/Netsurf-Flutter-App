@@ -15,6 +15,10 @@ dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/banner.png
+    - assets/naturamore.png
+    - assets/netsurf.png
 
 dev_dependencies:
   flutter_test:
