@@ -3,9 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:project_netsurf/bottomsheet.dart';
 import 'package:project_netsurf/edittext.dart';
-import 'package:project_netsurf/main.dart';
 import 'package:project_netsurf/product.dart';
 import 'package:project_netsurf/product_constant.dart';
+
+class MyHomePage extends StatefulWidget {
+  final String title;
+
+  MyHomePage({Key key, this.title}) : super(key: key);
+
+  @override
+  MyHomePageState createState() => MyHomePageState();
+}
 
 class MyHomePageState extends State<MyHomePage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
