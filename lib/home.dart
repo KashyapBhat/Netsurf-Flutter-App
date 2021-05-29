@@ -293,6 +293,9 @@ class MyHomePageState extends State<MyHomePage> {
                                                       total * (discount / 100);
                                                   priceAfterDiscount =
                                                       total - discountedPrice;
+                                                  if (priceAfterDiscount < 0) {
+                                                    priceAfterDiscount = 0;
+                                                  }
                                                   print(priceAfterDiscount);
                                                 }
                                               }
