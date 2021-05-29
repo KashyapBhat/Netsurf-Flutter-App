@@ -5,6 +5,7 @@ import 'package:project_netsurf/common/ui/bottomsheet.dart';
 import 'package:project_netsurf/common/ui/edittext.dart';
 import 'package:project_netsurf/common/product.dart';
 import 'package:project_netsurf/common/product_constant.dart';
+import 'package:project_netsurf/ui/main.dart';
 
 class HomePage extends StatefulWidget {
 
@@ -325,6 +326,7 @@ class HomePageState extends State<HomePage> {
                     CustomButton(
                         buttonText: "Done",
                         onClick: () {
+                          Navigator.pushNamed(context, PATH_PRODUCT);
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             content: Text(priceAfterDiscount.toString()),
                             duration: const Duration(seconds: 3),
