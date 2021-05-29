@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="in.codingcurve.project_netsurf">
    <application
-        android:label="project_netsurf"
+        android:label="Net Surf"
         android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
