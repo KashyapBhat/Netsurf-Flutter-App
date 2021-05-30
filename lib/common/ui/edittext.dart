@@ -2,36 +2,50 @@ import 'package:flutter/material.dart';
 
 class EditText extends StatelessWidget {
   String editTextName = "";
+  String initTextValue = "";
   TextInputType type = TextInputType.name;
+  bool required = false;
+  int maxline = 1;
+  Function(String) onText;
+  TextEditingController _controller;
+  Function() onTap;
 
-  EditText({Key key, this.editTextName, this.type}) : super(key: key);
+  EditText(
+      {Key key,
+      this.editTextName,
+      this.type,
+      this.required,
+      this.maxline,
+      this.onText,
+      this.onTap,
+      this.initTextValue})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    _controller = TextEditingController();
     return Stack(
       children: <Widget>[
         Container(
-          padding: new EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-          child: new TextFormField(
-            decoration: new InputDecoration(
-              labelText: editTextName,
+          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+          child: TextFormField(
+            controller: _controller,
+            maxLines: maxline,
+            decoration: InputDecoration(
+              labelText: editTextName + (required ? " \*" : ""),
               fillColor: Colors.white,
-              border: new OutlineInputBorder(
-                borderRadius: new BorderRadius.circular(25.0),
-                borderSide: new BorderSide(),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(25.0),
+                borderSide: BorderSide(),
               ),
             ),
-            validator: (val) {
-              if (val.length == 0) {
-                return "Cannot be empty";
-              } else {
-                return null;
-              }
-            },
             keyboardType: type,
-            style: new TextStyle(
-              fontFamily: "Poppins",
-            ),
+            onChanged: (value) {
+              onText.call(_controller.text);
+            },
+            onTap: () {
+              onTap.call();
+            },
           ),
         ),
       ],
@@ -43,8 +57,7 @@ class CustomButton extends StatelessWidget {
   String buttonText = "";
   Function onClick;
 
-  CustomButton({Key key, this.buttonText, this.onClick})
-      : super(key: key);
+  CustomButton({Key key, this.buttonText, this.onClick}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -57,9 +70,16 @@ class CustomButton extends StatelessWidget {
             elevation: 2,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(25.0)),
-            minimumSize: Size(120, 48),
+            fixedSize: Size(110, 56),
           ),
-          child: Text(buttonText),
+          child: Text(
+            buttonText,
+            style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                height: 1.3,
+                letterSpacing: 1.1),
+          ),
           onPressed: () {
             onClick.call();
           },
