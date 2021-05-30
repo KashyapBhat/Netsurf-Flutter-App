@@ -5,7 +5,7 @@ import 'package:project_netsurf/common/models/customer.dart';
 import 'package:project_netsurf/common/sp_constants.dart';
 import 'package:project_netsurf/common/sp_utils.dart';
 import 'package:project_netsurf/common/ui/edittext.dart';
-import 'package:project_netsurf/main.dart';
+import 'package:project_netsurf/ui/select_products.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
@@ -156,7 +156,11 @@ class HomePageState extends State<HomePage> {
                   CustomButton(
                       buttonText: "Next",
                       onClick: () {
-                        Navigator.pushNamed(context, PATH_PRODUCT);
+                        Navigator.push(
+                            context,
+                            new MaterialPageRoute(
+                                builder: (__) => new SelectProductsPage(
+                                    customerData: data)));
                       }),
                 ],
               ),
