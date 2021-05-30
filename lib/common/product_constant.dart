@@ -2,10 +2,10 @@ import 'package:project_netsurf/common/models/product.dart';
 
 class Products {
   static List<Product> _productCategories = <Product>[
-    new Product(1, "Natura More", "", 0, 0, 0),
-    new Product(2, "Personal Care (Herbs & More)", "", 0, 0, 0),
-    new Product(3, "Home Care", "", 0, 0, 0),
-    new Product(4, "Agriculture - Biofit", "", 0, 0, 0)
+    new Product(1, "Natura More", "Natura More", 0, 0, 0),
+    new Product(2, "Personal Care (Herbs & More)", "Personal Care", 0, 0, 0),
+    new Product(3, "Home Care", "Home Care", 0, 0, 0),
+    new Product(4, "Agriculture - Biofit", "Agriculture", 0, 0, 0)
   ];
 
   static Product getProductCategory(int id) {

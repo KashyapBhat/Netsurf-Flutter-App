@@ -1,0 +1,1 @@
+const String RUPEE_SYMBOL = "\u20B9";

@@ -53,6 +53,41 @@ class EditText extends StatelessWidget {
   }
 }
 
+class InputText extends StatelessWidget {
+  String keyText = "";
+  int maxline = 1;
+  Function(String) onText;
+  TextEditingController controller;
+
+  InputText(
+      {Key key, this.maxline, this.onText, this.keyText, this.controller})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      cursorWidth: 3,
+      controller: controller,
+      key: Key(keyText),
+      textAlign: TextAlign.center,
+      style: TextStyle(
+        fontSize: 15,
+      ),
+      enableInteractiveSelection: false,
+      textAlignVertical: TextAlignVertical.center,
+      cursorColor: Colors.black,
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 16),
+        border: InputBorder.none,
+      ),
+      keyboardType: TextInputType.number,
+      onChanged: (value) {
+        onText.call(controller.text);
+      },
+    );
+  }
+}
+
 class CustomButton extends StatelessWidget {
   String buttonText = "";
   Function onClick;

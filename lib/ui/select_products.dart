@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:project_netsurf/common/contants.dart';
 import 'package:project_netsurf/common/models/customer.dart';
 import 'package:project_netsurf/common/ui/bottomsheet.dart';
 import 'package:project_netsurf/common/ui/edittext.dart';
@@ -23,6 +24,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
   final TextEditingController categoryTextController =
       new TextEditingController();
   final TextEditingController itemTextController = new TextEditingController();
+  List<TextEditingController> _controllers = [];
 
   bool silverCollapsed = false;
   String myTitle = "";
@@ -35,13 +37,17 @@ class SelectProductsPageState extends State<SelectProductsPage> {
   @override
   void initState() {
     super.initState();
-    print( "Selected customer: " + widget.customerData.name ?? "");
+    print("Selected customer: " + widget.customerData.name ?? "");
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
+      appBar: AppBar(
+        title: Text("Net Surf", textAlign: TextAlign.center),
+        centerTitle: true,
+      ),
       body: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -73,16 +79,14 @@ class SelectProductsPageState extends State<SelectProductsPage> {
                   itemTextController, (product) {
                 if (product != null) {
                   setState(() {
-                    if (!selectedProducts.contains(product))
+                    if (!selectedProducts.contains(product)) {
                       selectedProducts.add(product);
-                    else {
-                      for (var item in selectedProducts) {
-                        if (item == product) {
-                          setState(() {
-                            item.quantity++;
-                          });
-                        }
-                      }
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text("Item is already in the list!"),
+                        duration: const Duration(seconds: 3),
+                        behavior: SnackBarBehavior.floating,
+                      ));
                     }
                     calculateTotal();
                   });
@@ -90,177 +94,168 @@ class SelectProductsPageState extends State<SelectProductsPage> {
               });
             },
           ),
-          SizedBox(width: 30),
+          SizedBox(height: 5),
           Expanded(
-            child: ListView.separated(
-                itemCount: selectedProducts.length ?? 0,
-                separatorBuilder: (context, int) {
-                  return Divider(
-                    height: 3,
-                  );
-                },
-                itemBuilder: (context, index) {
-                  return Container(
-                      child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                          child: Container(
-                        child: Text(
-                            selectedProducts[index].getDisplayName() ?? "",
-                            style: TextStyle(
-                                color: Colors.black, fontSize: 16, height: 1.3),
-                            textAlign: TextAlign.start),
+            child: Card(
+              child: Container(
+                margin: EdgeInsets.all(5),
+                padding: EdgeInsets.all(5),
+                child: ListView.separated(
+                    itemCount: selectedProducts.length ?? 0,
+                    separatorBuilder: (context, int) {
+                      return Container(
                         padding: EdgeInsets.only(
-                            left: 16, top: 8, right: 0, bottom: 8),
-                      )),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          onPrimary: Colors.white,
-                          elevation: 1,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(25.0)),
-                          minimumSize: Size(15, 40),
+                            left: 5, top: 0, right: 5, bottom: 0),
+                        child: Divider(
+                          thickness: 1,
+                          height: 6,
                         ),
-                        child: Icon(Icons.add),
-                        onPressed: () {
-                          setState(() {
-                            if (selectedProducts != null)
-                              selectedProducts[index].quantity++;
-                            calculateTotal();
-                          });
-                        },
-                      ),
-                      SizedBox(width: 3),
-                      Container(
-                          width: 40,
-                          child: TextFormField(
-                            key: Key(
-                                selectedProducts[index].quantity.toString() ??
-                                    ""),
-                            initialValue:
-                                selectedProducts[index].quantity.toString() ??
-                                    "",
-                            textAlign: TextAlign.center,
-                            cursorColor: Colors.black,
-                            keyboardType: TextInputType.number,
-                            decoration: new InputDecoration(
-                              border: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                              enabledBorder: InputBorder.none,
-                              errorBorder: InputBorder.none,
-                              disabledBorder: InputBorder.none,
-                              contentPadding: EdgeInsets.only(
-                                  left: 0, bottom: 0, top: 0, right: 0),
+                      );
+                    },
+                    itemBuilder: (context, index) {
+                      _controllers.add(new TextEditingController(text: "1"));
+                      return Container(
+                          child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Container(
+                              padding: EdgeInsets.only(
+                                  left: 0, top: 8, right: 5, bottom: 8),
+                              child: Text(
+                                  selectedProducts[index].getDisplayName(),
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                      height: 1.3),
+                                  textAlign: TextAlign.start),
                             ),
-                            onChanged: (value) {
-                              setState(() {
-                                if (value != null && value.isNotEmpty) {
-                                  int quant = double.parse(value).ceil();
-                                  if (quant > 1)
-                                    selectedProducts[index].quantity = quant;
-                                  selectedCategory.quantity = quant;
-                                } else {
-                                  selectedProducts[index].quantity = 1;
-                                  selectedCategory.quantity = 1;
-                                }
-                                calculateTotal();
-                              });
-                            },
-                          )),
-                      SizedBox(width: 3),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          onPrimary: Colors.white,
-                          elevation: 1,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(25.0)),
-                          minimumSize: Size(15, 40),
-                        ),
-                        child: Icon(Icons.remove),
-                        onPressed: () {
-                          setState(() {
-                            if (selectedProducts[index].quantity > 1)
-                              selectedProducts[index].quantity--;
-                            calculateTotal();
-                          });
-                        },
-                      ),
-                      SizedBox(width: 3),
-                    ],
-                  ));
-                }),
+                          ),
+                          Container(
+                            padding: EdgeInsets.all(3),
+                            width: 70,
+                            child: Center(
+                              child: Text(itemPrice(index),
+                                  style: TextStyle(
+                                      color: Colors.black, fontSize: 15),
+                                  textAlign: TextAlign.left),
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.only(right: 3),
+                            width: 70,
+                            child: InputText(
+                              controller: _controllers[index],
+                              onText: (value) {
+                                setState(() {
+                                  print(value);
+                                  if (value != null) {
+                                    if (value.isEmpty) {
+                                      selectedProducts[index].quantity = 0;
+                                      selectedCategory.quantity = 0;
+                                      _controllers[index].clear();
+                                    } else {
+                                      int quant = double.parse(value).ceil();
+                                      if (quant > 0) {
+                                        selectedProducts[index].quantity =
+                                            quant;
+                                        selectedCategory.quantity = quant;
+                                      } else {
+                                        selectedProducts[index].quantity = 0;
+                                        selectedCategory.quantity = 0;
+                                        _controllers[index].clear();
+                                      }
+                                    }
+                                  }
+                                  calculateTotal();
+                                });
+                              },
+                            ),
+                          )
+                        ],
+                      ));
+                    }),
+              ),
+            ),
           ),
           Column(
             mainAxisSize: MainAxisSize.max,
             children: [
               Container(
                 margin: EdgeInsets.only(left: 16, top: 5, right: 16, bottom: 2),
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                        left: 12, top: 5, right: 12, bottom: 5),
-                    child: Container(
-                      height: 32,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            alignment: Alignment.center,
-                            child: Text("Total: " + total.toString(),
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      left: 12, top: 5, right: 12, bottom: 5),
+                  child: Container(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          alignment: Alignment.topLeft,
+                          child: Text("Total: " + total.toString(),
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                  color: Colors.grey[800],
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18)),
+                        ),
+                        Row(
+                          children: [
+                            Text("Discount: ",
                                 textAlign: TextAlign.start,
                                 style: TextStyle(
                                     color: Colors.grey[800],
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 16)),
-                          ),
-                          Row(
-                            children: [
-                              Text("Discount: ",
-                                  textAlign: TextAlign.start,
-                                  style: TextStyle(
-                                      color: Colors.grey[800],
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16)),
-                              Container(
-                                  width: 43,
-                                  child: TextFormField(
-                                    initialValue: "",
-                                    inputFormatters: [
-                                      new LengthLimitingTextInputFormatter(4),
-                                      FilteringTextInputFormatter.allow(
-                                          (RegExp("[.0-9]"))),
-                                    ],
-                                    textAlign: TextAlign.right,
-                                    enableInteractiveSelection: false,
-                                    keyboardType: TextInputType.number,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        if (value != null && value.isNotEmpty) {
-                                          double discount = double.parse(value);
-                                          double discountedPrice = 0;
-                                          if (discount > 0) {
-                                            discountedPrice =
-                                                total * (discount / 100);
-                                            priceAfterDiscount =
-                                                total - discountedPrice;
-                                            if (priceAfterDiscount < 0) {
-                                              priceAfterDiscount = 0;
-                                            }
-                                            print(priceAfterDiscount);
+                                    fontSize: 18)),
+                            Container(
+                                width: 43,
+                                child: TextFormField(
+                                  initialValue: "",
+                                  inputFormatters: [
+                                    new LengthLimitingTextInputFormatter(4),
+                                    FilteringTextInputFormatter.allow(
+                                        (RegExp("[.0-9]"))),
+                                  ],
+                                  textAlign: TextAlign.right,
+                                  enableInteractiveSelection: false,
+                                  keyboardType: TextInputType.number,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      if (value != null && value.isNotEmpty) {
+                                        double discount = double.parse(value);
+                                        double discountedPrice = 0;
+                                        if (discount > 0) {
+                                          discountedPrice =
+                                              total * (discount / 100);
+                                          priceAfterDiscount =
+                                              total - discountedPrice;
+                                          if (priceAfterDiscount < 0) {
+                                            priceAfterDiscount = 0;
                                           }
+                                          print(priceAfterDiscount);
                                         }
-                                      });
-                                    },
-                                  )),
-                              Text("%",
-                                  textAlign: TextAlign.start,
-                                  style: TextStyle(
-                                      color: Colors.grey[800], fontSize: 16)),
-                            ],
-                          ),
-                        ],
-                      ),
+                                      }
+                                    });
+                                  },
+                                )),
+                            Text("%",
+                                textAlign: TextAlign.start,
+                                style: TextStyle(
+                                    color: Colors.grey[800], fontSize: 16)),
+                          ],
+                        ),
+                        Container(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                              "Final Amount: " + priceAfterDiscount.toString(),
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                  color: Colors.grey[800],
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18)),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -286,7 +281,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
     if (selectedCategory != null &&
         selectedCategory.name != null &&
         selectedCategory.name.isNotEmpty) {
-      return "Select Item from: ${selectedCategory.name}";
+      return "Select Item from: ${selectedCategory.weight}";
     } else {
       return "Select product category first";
     }
@@ -303,5 +298,13 @@ class SelectProductsPageState extends State<SelectProductsPage> {
       print(item.price);
       total += item.price * item.quantity;
     }
+  }
+
+  String itemPrice(int index) {
+    return RUPEE_SYMBOL +
+        " " +
+        (selectedProducts[index].price * selectedProducts[index].quantity)
+            .ceil()
+            .toString();
   }
 }
