@@ -126,15 +126,13 @@ class SelectProductsPageState extends State<SelectProductsPage> {
                                   selectedProducts[index].getDisplayName(),
                                   style: TextStyle(
                                       color: Colors.black,
-                                      fontWeight: FontWeight.bold,
                                       fontSize: 14,
                                       height: 1.3),
                                   textAlign: TextAlign.start),
                             ),
                           ),
                           Container(
-                            padding: EdgeInsets.all(3),
-                            width: 70,
+                            width: 80,
                             child: Center(
                               child: Text(itemPrice(index),
                                   style: TextStyle(
@@ -144,7 +142,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
                           ),
                           Container(
                             padding: EdgeInsets.only(right: 3),
-                            width: 70,
+                            width: 80,
                             child: InputText(
                               controller: _controllers[index],
                               onText: (value) {

@@ -66,14 +66,12 @@ class InputText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      cursorWidth: 3,
+      cursorWidth: 1.3,
       controller: controller,
-      key: Key(keyText),
       textAlign: TextAlign.center,
       style: TextStyle(
         fontSize: 15,
       ),
-      enableInteractiveSelection: false,
       textAlignVertical: TextAlignVertical.center,
       cursorColor: Colors.black,
       decoration: InputDecoration(
