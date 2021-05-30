@@ -52,55 +52,12 @@ class SelectProductsPageState extends State<SelectProductsPage> {
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          SizedBox(height: 13),
-          CustomButton(
-              buttonText: selectedCategory.name ?? "Select Category",
-              onClick: () {
-                showModelBottomSheet(
-                    context,
-                    _scaffoldKey,
-                    Products.getProductCategories(),
-                    categoryTextController, (product) {
-                  if (product != null) {
-                    setState(() {
-                      selectedCategory = product;
-                      calculateTotal();
-                    });
-                  }
-                });
-              }),
-          CustomButton(
-            buttonText: _getButtonText(),
-            onClick: () {
-              showModelBottomSheet(
-                  context,
-                  _scaffoldKey,
-                  Products.getProductsFromCategoryId(selectedCategory),
-                  itemTextController, (product) {
-                if (product != null) {
-                  setState(() {
-                    if (!selectedProducts.contains(product)) {
-                      selectedProducts.add(product);
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text("Item is already in the list!"),
-                        duration: const Duration(seconds: 3),
-                        behavior: SnackBarBehavior.floating,
-                      ));
-                    }
-                    calculateTotal();
-                  });
-                }
-              });
-            },
-          ),
-          SizedBox(height: 5),
           Expanded(
             child: Card(
               child: Container(
-                margin: EdgeInsets.all(5),
                 padding: EdgeInsets.all(5),
                 child: ListView.separated(
+                    shrinkWrap: true,
                     itemCount: selectedProducts.length ?? 0,
                     separatorBuilder: (context, int) {
                       return Container(
@@ -177,6 +134,47 @@ class SelectProductsPageState extends State<SelectProductsPage> {
                     }),
               ),
             ),
+          ),
+          CustomButton(
+              buttonText: selectedCategory.name ?? "Select Category",
+              onClick: () {
+                showModelBottomSheet(
+                    context,
+                    _scaffoldKey,
+                    Products.getProductCategories(),
+                    categoryTextController, (product) {
+                  if (product != null) {
+                    setState(() {
+                      selectedCategory = product;
+                      calculateTotal();
+                    });
+                  }
+                });
+              }),
+          CustomButton(
+            buttonText: _getButtonText(),
+            onClick: () {
+              showModelBottomSheet(
+                  context,
+                  _scaffoldKey,
+                  Products.getProductsFromCategoryId(selectedCategory),
+                  itemTextController, (product) {
+                if (product != null) {
+                  setState(() {
+                    if (!selectedProducts.contains(product)) {
+                      selectedProducts.add(product);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text("Item is already in the list!"),
+                        duration: const Duration(seconds: 3),
+                        behavior: SnackBarBehavior.floating,
+                      ));
+                    }
+                    calculateTotal();
+                  });
+                }
+              });
+            },
           ),
           Column(
             mainAxisSize: MainAxisSize.max,

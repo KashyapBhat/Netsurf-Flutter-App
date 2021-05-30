@@ -101,7 +101,7 @@ class CustomButton extends StatelessWidget {
             elevation: 2,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(25.0)),
-            fixedSize: Size(110, 56),
+            fixedSize: Size(110, 48),
           ),
           child: Text(
             buttonText,
