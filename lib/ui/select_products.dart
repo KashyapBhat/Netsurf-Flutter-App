@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:project_netsurf/common/contants.dart';
 import 'package:project_netsurf/common/models/customer.dart';
+import 'package:project_netsurf/common/models/price.dart';
 import 'package:project_netsurf/common/ui/bottomsheet.dart';
 import 'package:project_netsurf/common/ui/edittext.dart';
 import 'package:project_netsurf/common/models/product.dart';
@@ -20,17 +21,16 @@ class SelectProductsPage extends StatefulWidget {
 }
 
 class SelectProductsPageState extends State<SelectProductsPage> {
+  List<TextEditingController> _controllers = [];
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  final TextEditingController discountedPriceController =
+      new TextEditingController();
   final TextEditingController categoryTextController =
       new TextEditingController();
   final TextEditingController itemTextController = new TextEditingController();
-  List<TextEditingController> _controllers = [];
+  final TextEditingController discountController = new TextEditingController();
 
-  bool silverCollapsed = false;
-  String myTitle = "";
-  double priceAfterDiscount = 0;
-
-  double total = 0;
+  Price price = Price(0, 0, 0);
   List<Product> selectedProducts = [];
   Product selectedCategory = Products.getProductCategory(null);
 
@@ -143,6 +143,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
                           Container(
                             padding: EdgeInsets.only(right: 3),
                             width: 80,
+                            height: 30,
                             child: InputText(
                               controller: _controllers[index],
                               onText: (value) {
@@ -189,69 +190,172 @@ class SelectProductsPageState extends State<SelectProductsPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Container(
-                          alignment: Alignment.topLeft,
-                          child: Text("Total: " + total.toString(),
-                              textAlign: TextAlign.start,
-                              style: TextStyle(
-                                  color: Colors.grey[800],
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18)),
-                        ),
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("Discount: ",
-                                textAlign: TextAlign.start,
-                                style: TextStyle(
-                                    color: Colors.grey[800],
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18)),
-                            Container(
-                                width: 43,
-                                child: TextFormField(
-                                  initialValue: "",
-                                  inputFormatters: [
-                                    new LengthLimitingTextInputFormatter(4),
-                                    FilteringTextInputFormatter.allow(
-                                        (RegExp("[.0-9]"))),
-                                  ],
-                                  textAlign: TextAlign.right,
-                                  enableInteractiveSelection: false,
-                                  keyboardType: TextInputType.number,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      if (value != null && value.isNotEmpty) {
-                                        double discount = double.parse(value);
-                                        double discountedPrice = 0;
-                                        if (discount > 0) {
-                                          discountedPrice =
-                                              total * (discount / 100);
-                                          priceAfterDiscount =
-                                              total - discountedPrice;
-                                          if (priceAfterDiscount < 0) {
-                                            priceAfterDiscount = 0;
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Total ",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.grey[800],
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16),
+                                ),
+                                Text(
+                                  RUPEE_SYMBOL + " " + price.dispTotal(),
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.grey[800], fontSize: 15),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(
+                                  "Discount ",
+                                  textAlign: TextAlign.start,
+                                  style: TextStyle(
+                                      color: Colors.grey[800],
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16),
+                                ),
+                                Text(
+                                  "% ",
+                                  textAlign: TextAlign.start,
+                                  style: TextStyle(
+                                      color: Colors.grey[800], fontSize: 15),
+                                ),
+                                Container(
+                                  width: 60,
+                                  height: 30,
+                                  child: TextFormField(
+                                    cursorWidth: 1.3,
+                                    controller: discountController,
+                                    textAlign: TextAlign.start,
+                                    onTap: () {
+                                      setState(() {
+                                        price.finalAmt = price.total;
+                                        discountController.clear();
+                                        discountedPriceController.clear();
+                                      });
+                                    },
+                                    decoration: InputDecoration(
+                                      contentPadding:
+                                          EdgeInsets.fromLTRB(0, 0, 0, 18),
+                                    ),
+                                    inputFormatters: [
+                                      new LengthLimitingTextInputFormatter(4),
+                                      FilteringTextInputFormatter.allow(
+                                          (RegExp("[.0-9]"))),
+                                    ],
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                    ),
+                                    textAlignVertical: TextAlignVertical.center,
+                                    cursorColor: Colors.black,
+                                    keyboardType: TextInputType.number,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        if (value != null) {
+                                          if (value.isNotEmpty) {
+                                            double discount =
+                                                double.parse(value);
+                                            price.discountAmt = 0;
+                                            if (discount > 0) {
+                                              price.discountAmt = price.total *
+                                                  (discount / 100);
+                                              price.finalAmt = price.total -
+                                                  price.discountAmt;
+                                              if (price.finalAmt < 0) {
+                                                price.finalAmt = 0;
+                                              }
+                                            }
+                                          } else {
+                                            price.finalAmt = price.total;
                                           }
-                                          print(priceAfterDiscount);
                                         }
-                                      }
-                                    });
-                                  },
-                                )),
-                            Text("%",
-                                textAlign: TextAlign.start,
-                                style: TextStyle(
-                                    color: Colors.grey[800], fontSize: 16)),
+                                      });
+                                    },
+                                  ),
+                                ),
+                                Text(
+                                  RUPEE_SYMBOL + " ",
+                                  textAlign: TextAlign.start,
+                                  style: TextStyle(
+                                      color: Colors.grey[800], fontSize: 15),
+                                ),
+                                Container(
+                                  width: 60,
+                                  height: 30,
+                                  child: TextFormField(
+                                    cursorWidth: 1.3,
+                                    controller: discountedPriceController,
+                                    textAlign: TextAlign.start,
+                                    onTap: () {
+                                      setState(() {
+                                        price.finalAmt = price.total;
+                                        discountController.clear();
+                                        discountedPriceController.clear();
+                                      });
+                                    },
+                                    decoration: InputDecoration(
+                                      contentPadding:
+                                          EdgeInsets.fromLTRB(0, 0, 0, 18),
+                                    ),
+                                    inputFormatters: [
+                                      new LengthLimitingTextInputFormatter(4),
+                                      FilteringTextInputFormatter.allow(
+                                          (RegExp("[.0-9]"))),
+                                    ],
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                    ),
+                                    textAlignVertical: TextAlignVertical.center,
+                                    cursorColor: Colors.black,
+                                    keyboardType: TextInputType.number,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        if (value != null) {
+                                          if (value.isNotEmpty) {
+                                            double discountPrice =
+                                                double.parse(value);
+                                            price.discountAmt = 0;
+                                            if (discountPrice > 0) {
+                                              price.finalAmt =
+                                                  price.total - discountPrice;
+                                              if (price.finalAmt < 0) {
+                                                price.finalAmt = 0;
+                                              }
+                                            }
+                                          } else {
+                                            price.finalAmt = price.total;
+                                          }
+                                        }
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                         Container(
+                          margin: EdgeInsets.only(top: 10),
                           alignment: Alignment.topLeft,
-                          child: Text(
-                              "Final Amount: " + priceAfterDiscount.toString(),
+                          child: Center(
+                            child: Text(
+                              RUPEE_SYMBOL + " " + price.dispFinalAmt(),
                               textAlign: TextAlign.start,
                               style: TextStyle(
                                   color: Colors.grey[800],
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 18)),
+                                  fontSize: 18),
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -262,7 +366,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
                   buttonText: "Done",
                   onClick: () {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text(priceAfterDiscount.toString()),
+                      content: Text(price.dispFinalAmt()),
                       duration: const Duration(seconds: 3),
                       behavior: SnackBarBehavior.floating,
                     ));
@@ -291,10 +395,11 @@ class SelectProductsPageState extends State<SelectProductsPage> {
   }
 
   void calculateTotal() {
-    total = 0;
+    price.total = 0;
     for (var item in selectedProducts) {
       print(item.price);
-      total += item.price * item.quantity;
+      price.total += item.price * item.quantity;
+      price.finalAmt = price.total;
     }
   }
 

@@ -59,8 +59,7 @@ class InputText extends StatelessWidget {
   Function(String) onText;
   TextEditingController controller;
 
-  InputText(
-      {Key key, this.maxline, this.onText, this.keyText, this.controller})
+  InputText({Key key, this.maxline, this.onText, this.keyText, this.controller})
       : super(key: key);
 
   @override
@@ -75,8 +74,7 @@ class InputText extends StatelessWidget {
       textAlignVertical: TextAlignVertical.center,
       cursorColor: Colors.black,
       decoration: InputDecoration(
-        contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 16),
-        border: InputBorder.none,
+        contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 19),
       ),
       keyboardType: TextInputType.number,
       onChanged: (value) {
