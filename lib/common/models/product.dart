@@ -16,6 +16,6 @@ class Product {
   }
 
   String getDisplayName() {
-    return name + " " + weight;
+    return name + " - " + weight;
   }
 }
