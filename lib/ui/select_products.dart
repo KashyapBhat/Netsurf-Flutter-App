@@ -228,7 +228,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
                                       color: Colors.grey[800], fontSize: 15),
                                 ),
                                 Container(
-                                  width: 60,
+                                  width: 65,
                                   height: 30,
                                   child: TextFormField(
                                     cursorWidth: 1.3,
@@ -246,7 +246,6 @@ class SelectProductsPageState extends State<SelectProductsPage> {
                                           EdgeInsets.fromLTRB(0, 0, 0, 18),
                                     ),
                                     inputFormatters: [
-                                      new LengthLimitingTextInputFormatter(4),
                                       FilteringTextInputFormatter.allow(
                                           (RegExp("[.0-9]"))),
                                     ],
