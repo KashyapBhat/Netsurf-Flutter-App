@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:project_netsurf/common/product.dart';
+import 'package:project_netsurf/common/models/product.dart';
 
 void showModelBottomSheet(
     BuildContext context,

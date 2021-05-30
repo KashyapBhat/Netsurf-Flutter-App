@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:project_netsurf/common/models/customer.dart';
 import 'package:project_netsurf/common/sp_constants.dart';
 import 'package:project_netsurf/common/sp_utils.dart';
 import 'package:project_netsurf/common/ui/edittext.dart';
@@ -22,11 +23,7 @@ class HomePageState extends State<HomePage> {
   bool silverCollapsed = false;
   String myTitle = "";
 
-  String name = "";
-  String mobileNo = "";
-  String cRefId = "";
-  String address = "";
-  String email = "";
+  CustomerData data = CustomerData("", "", "", "", "");
 
   @override
   void initState() {
@@ -88,10 +85,11 @@ class HomePageState extends State<HomePage> {
                   SizedBox(height: 0),
                   EditText(
                       required: true,
-                      initTextValue: name ?? "",
+                      initTextValue: data.name ?? "",
                       type: TextInputType.name,
                       editTextName: "Customer Name",
                       onText: (text) async {
+                        data.name = text;
                         Preference.setItem(SP_CUSTOMER_NAME, text);
                         print(text);
                       },
@@ -101,10 +99,11 @@ class HomePageState extends State<HomePage> {
                       }),
                   EditText(
                       required: true,
-                      initTextValue: mobileNo ?? "",
+                      initTextValue: data.mobileNo ?? "",
                       type: TextInputType.phone,
                       editTextName: "Customer Mobile Number",
                       onText: (text) async {
+                        data.mobileNo = text;
                         Preference.setItem(SP_CUSTOMER_M_NO, text);
                         print(text);
                       },
@@ -114,9 +113,10 @@ class HomePageState extends State<HomePage> {
                       }),
                   EditText(
                       required: false,
-                      initTextValue: cRefId ?? "",
+                      initTextValue: data.cRefId ?? "",
                       editTextName: "Customer Reference ID",
                       onText: (text) async {
+                        data.cRefId = text;
                         await Preference.setItem(SP_CUSTOMER_RF_ID, text);
                         print(text);
                       },
@@ -127,10 +127,11 @@ class HomePageState extends State<HomePage> {
                   EditText(
                       required: false,
                       editTextName: "Address",
-                      initTextValue: address ?? "",
+                      initTextValue: data.address ?? "",
                       type: TextInputType.streetAddress,
                       maxline: 3,
                       onText: (text) async {
+                        data.address = text;
                         await Preference.setItem(SP_CUSTOMER_ADDRESS, text);
                         print(text);
                       },
@@ -140,10 +141,11 @@ class HomePageState extends State<HomePage> {
                       }),
                   EditText(
                       required: false,
-                      initTextValue: email ?? "",
+                      initTextValue: data.email ?? "",
                       editTextName: "Email",
                       type: TextInputType.emailAddress,
                       onText: (text) async {
+                        data.email = text;
                         await Preference.setItem(SP_CUSTOMER_EMAIL, text);
                         print(text);
                       },

@@ -1,4 +1,4 @@
-import 'package:project_netsurf/common/product.dart';
+import 'package:project_netsurf/common/models/product.dart';
 
 class Products {
   static List<Product> _productCategories = <Product>[
