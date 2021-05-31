@@ -1,13 +1,20 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:project_netsurf/common/contants.dart';
+import 'package:project_netsurf/common/models/billing.dart';
 import 'package:project_netsurf/common/models/customer.dart';
 import 'package:project_netsurf/common/models/price.dart';
+import 'package:project_netsurf/common/models/retailer.dart';
 import 'package:project_netsurf/common/ui/bottomsheet.dart';
 import 'package:project_netsurf/common/ui/edittext.dart';
 import 'package:project_netsurf/common/models/product.dart';
 import 'package:project_netsurf/common/product_constant.dart';
+import 'package:project_netsurf/common/utils/billing_pdf.dart';
+import 'package:project_netsurf/common/utils/pdf_api.dart';
+import 'package:project_netsurf/ui/biller.dart';
 
 class SelectProductsPage extends StatefulWidget {
   final String title;
@@ -361,12 +368,17 @@ class SelectProductsPageState extends State<SelectProductsPage> {
               ),
               CustomButton(
                   buttonText: "Done",
-                  onClick: () {
+                  onClick: () async {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       content: Text(price.dispFinalAmt()),
                       duration: const Duration(seconds: 3),
                       behavior: SnackBarBehavior.floating,
                     ));
+                    File pdf = await createPdf();
+                    Navigator.push(
+                        context,
+                        new MaterialPageRoute(
+                            builder: (__) => new BillerPage(file: pdf)));
                   }),
             ],
           ),
@@ -406,5 +418,16 @@ class SelectProductsPageState extends State<SelectProductsPage> {
         (selectedProducts[index].price * selectedProducts[index].quantity)
             .ceil()
             .toString();
+  }
+
+  Future<File> createPdf() async {
+    BillingInfo billingInfo =
+        BillingInfo("", "123412", DateTime.now(), DateTime.now());
+    Retailer retailer = Retailer("Shrinidhi", "9876567342819", "", "", "");
+    Billing billing = Billing(
+        billingInfo, retailer, widget.customerData, selectedProducts, price);
+    final pdfFile = await PdfInvoiceApi.generate(billing);
+    // PdfApi.openFile(pdfFile);
+    return pdfFile;
   }
 }
