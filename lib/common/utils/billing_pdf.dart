@@ -110,20 +110,19 @@ class PdfInvoiceApi {
       );
 
   static Widget buildInvoice(Billing invoice) {
-    final headers = ['Title', 'Qty.', 'Unit Cost', 'Total'];
+    final headers = ['Title', 'Qty', 'Cost', 'Total'];
     final data = invoice.productsSelected.map((item) {
-      final total = item.price * item.quantity;
-
       return [
         item.name,
         '${item.quantity}',
-        ' ${item.price}',
-        ' $total',
+        ' ${item.getDispPrice()}',
+        ' ${item.getDispTotal()}',
       ];
     }).toList();
 
     return Table.fromTextArray(
       headers: headers,
+      headerAlignment: Alignment.centerRight,
       data: data,
       border: null,
       headerStyle: TextStyle(fontWeight: FontWeight.bold),
@@ -134,16 +133,14 @@ class PdfInvoiceApi {
         1: Alignment.centerRight,
         2: Alignment.centerRight,
         3: Alignment.centerRight,
-        4: Alignment.centerRight,
-        5: Alignment.centerRight,
       },
     );
   }
 
   static Widget buildTotal(Billing invoice) {
-    final netTotal = invoice.price.total;
-    final discount = invoice.price.discountAmt;
-    final total = invoice.price.finalAmt;
+    final netTotal = invoice.price.dispTotal();
+    final discount = invoice.price.dispDiscAmt();
+    final total = invoice.price.dispFinalAmt();
 
     return Container(
       alignment: Alignment.centerRight,
@@ -158,15 +155,14 @@ class PdfInvoiceApi {
                 buildText(
                   title: 'Total',
                   // TODO: price
-                  // value: Utils.formatPrice(netTotal),
-                  value: netTotal.ceil().toString(),
+                  value: netTotal,
                   unite: true,
                 ),
                 buildText(
                   title: 'Discount',
                   // TODO: price
                   // value: Utils.formatPrice(discount),
-                  value: discount.ceil().toString(),
+                  value: discount,
                   unite: true,
                 ),
                 Divider(),
@@ -178,7 +174,7 @@ class PdfInvoiceApi {
                   ),
                   // TODO: price
                   // value: Utils.formatPrice(total),
-                  value: total.toString(),
+                  value: total,
                   unite: true,
                 ),
                 SizedBox(height: 2 * PdfPageFormat.mm),

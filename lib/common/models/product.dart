@@ -18,4 +18,13 @@ class Product {
   String getDisplayName() {
     return name + " - " + weight;
   }
+
+  String getDispPrice() {
+    return price.ceil().toString();
+  }
+
+  String getDispTotal() {
+    final total = this.price * this.quantity;
+    return total.ceil().toString();
+  }
 }

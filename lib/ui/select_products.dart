@@ -423,7 +423,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
   Future<File> createPdf() async {
     BillingInfo billingInfo =
         BillingInfo("", "123412", DateTime.now(), DateTime.now());
-    Retailer retailer = Retailer("Shrinidhi", "9876567342819", "", "", "");
+    Retailer retailer = Retailer("Shrinidhi", "9876567342", "", "", "");
     Billing billing = Billing(
         billingInfo, retailer, widget.customerData, selectedProducts, price);
     final pdfFile = await PdfInvoiceApi.generate(billing);
