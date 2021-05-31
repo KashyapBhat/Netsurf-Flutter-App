@@ -52,7 +52,7 @@ class PdfInvoiceApi {
           SizedBox(height: 2),
           Text(customer.email),
           SizedBox(height: 5),
-          Text("Ref ID: " + customer.cRefId,
+          Text("Ref No: " + customer.cRefId,
               style: TextStyle(fontWeight: FontWeight.bold)),
         ],
       );
@@ -60,8 +60,8 @@ class PdfInvoiceApi {
   static Widget buildInvoiceInfo(BillingInfo info) {
     // final paymentTerms = '${info.dueDate.difference(info.date).inDays} days';
     final titles = <String>[
-      'Invoice Number:',
-      'Invoice Date:',
+      'Serial No:',
+      'Date:',
       // 'Payment Terms:',
       // 'Due Date:'
     ];
@@ -100,7 +100,7 @@ class PdfInvoiceApi {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'INVOICE',
+            'ESTIMATE',
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 0.8 * PdfPageFormat.cm),
@@ -110,7 +110,7 @@ class PdfInvoiceApi {
       );
 
   static Widget buildInvoice(Billing invoice) {
-    final headers = ['Title', 'Qty', 'Cost', 'Total'];
+    final headers = ['Title', 'Qty', 'MRP', 'Total'];
     final data = invoice.productsSelected.map((item) {
       return [
         item.name,
