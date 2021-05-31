@@ -5,6 +5,7 @@ import 'package:project_netsurf/common/models/customer.dart';
 import 'package:project_netsurf/common/sp_constants.dart';
 import 'package:project_netsurf/common/sp_utils.dart';
 import 'package:project_netsurf/common/ui/edittext.dart';
+import 'package:project_netsurf/ui/drawer.dart';
 import 'package:project_netsurf/ui/select_products.dart';
 
 class HomePage extends StatefulWidget {
@@ -57,6 +58,7 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: AppDrawer(),
       key: _scaffoldKey,
       body: CustomScrollView(
         controller: _controller,
