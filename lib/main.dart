@@ -1,9 +1,9 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:project_netsurf/ui/biller.dart';
 import 'package:project_netsurf/ui/home.dart';
-import 'package:project_netsurf/ui/select_products.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
 }
 
@@ -13,6 +13,8 @@ const String PATH_PRODUCT = "/selectproducts";
 const String PATH_BILLER = "/billerpage";
 
 class MyApp extends StatelessWidget {
+  final Future<FirebaseApp> _initialization = Firebase.initializeApp();
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -21,12 +23,25 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       builder: (context, child) => SafeArea(child: child),
-      initialRoute: PATH_HOME,
-      routes: {
-        PATH_HOME: (context) => HomePage(),
-        PATH_PRODUCT: (context) => SelectProductsPage(),
-        PATH_BILLER: (context) => BillerPage(),
-      },
+      home: FutureBuilder(
+        future: _initialization,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Text(
+              "Sorry, Something went wrong.",
+              style: TextStyle(color: Colors.red
+              ,fontSize: 14),
+              textAlign: TextAlign.center,
+            );
+          } else if (snapshot.connectionState == ConnectionState.done) {
+            return HomePage();
+          } else {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        },
+      ),
     );
   }
 }
