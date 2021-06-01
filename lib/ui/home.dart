@@ -24,7 +24,7 @@ class HomePageState extends State<HomePage> {
   bool silverCollapsed = false;
   String myTitle = "";
 
-  CustomerData data = CustomerData("", "", "", "", "");
+  Customer data = Customer("", "", "", "", "");
 
   @override
   void initState() {

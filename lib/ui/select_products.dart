@@ -1,9 +1,9 @@
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:project_netsurf/common/contants.dart';
 import 'package:project_netsurf/common/models/billing.dart';
+import 'package:project_netsurf/common/models/billing_info.dart';
 import 'package:project_netsurf/common/models/customer.dart';
 import 'package:project_netsurf/common/models/price.dart';
 import 'package:project_netsurf/common/models/retailer.dart';
@@ -15,7 +15,7 @@ import 'package:project_netsurf/ui/biller.dart';
 
 class SelectProductsPage extends StatefulWidget {
   final String title;
-  final CustomerData customerData;
+  final Customer customerData;
 
   SelectProductsPage({Key key, this.title, this.customerData})
       : super(key: key);
@@ -369,7 +369,8 @@ class SelectProductsPageState extends State<SelectProductsPage> {
                     Navigator.push(
                         context,
                         new MaterialPageRoute(
-                            builder: (__) => new BillerPage(billing: createBilling())));
+                            builder: (__) =>
+                                new BillerPage(billing: createBilling())));
                   }),
             ],
           ),
@@ -411,11 +412,9 @@ class SelectProductsPageState extends State<SelectProductsPage> {
             .toString();
   }
 
-
   Billing createBilling() {
-    BillingInfo billingInfo =
-        BillingInfo("", "123412", DateTime.now(), DateTime.now());
-    Retailer retailer = Retailer("Shrinidhi", "9876567342", "", "", "");
+    BillingInfo billingInfo = BillingInfo("", "123412", DateTime.now());
+    Retailer retailer = Retailer(name: "Shrinidhi", mobileNo: "9876567342");
     Billing billing = Billing(
         billingInfo, retailer, widget.customerData, selectedProducts, price);
     return billing;

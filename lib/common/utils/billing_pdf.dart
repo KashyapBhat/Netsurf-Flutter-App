@@ -4,6 +4,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf/widgets.dart';
 import 'package:project_netsurf/common/contants.dart';
 import 'package:project_netsurf/common/models/billing.dart';
+import 'package:project_netsurf/common/models/billing_info.dart';
 import 'package:project_netsurf/common/models/customer.dart';
 import 'package:project_netsurf/common/models/retailer.dart';
 import 'package:project_netsurf/common/utils/common_utils.dart';
@@ -36,14 +37,14 @@ class PdfInvoiceApi {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              buildCustomerAddress(invoice.customerData),
+              buildCustomerAddress(invoice.customer),
               buildInvoiceInfo(invoice.billingInfo),
             ],
           ),
         ],
       );
 
-  static Widget buildCustomerAddress(CustomerData customer) => Column(
+  static Widget buildCustomerAddress(Customer customer) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(customer.name, style: TextStyle(fontWeight: FontWeight.bold)),
@@ -111,7 +112,7 @@ class PdfInvoiceApi {
 
   static Widget buildInvoice(Billing invoice) {
     final headers = ['Title', 'Qty', 'MRP', 'Total'];
-    final data = invoice.productsSelected.map((item) {
+    final data = invoice.selectedProducts.map((item) {
       return [
         item.name,
         '${item.quantity}',

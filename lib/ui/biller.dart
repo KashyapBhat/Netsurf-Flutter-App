@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:project_netsurf/common/models/billing.dart';
+import 'package:project_netsurf/common/models/billing_info.dart';
 import 'package:project_netsurf/common/models/customer.dart';
 import 'package:project_netsurf/common/models/retailer.dart';
 import 'package:project_netsurf/common/ui/edittext.dart';
@@ -63,14 +64,14 @@ class HomePageState extends State<BillerPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(child: buildCustomerAddress(invoice.customerData)),
+              Expanded(child: buildCustomerAddress(invoice.customer)),
               Expanded(child: buildInvoiceInfo(invoice.billingInfo)),
             ],
           ),
         ],
       );
 
-  static Widget buildCustomerAddress(CustomerData customer) => Container(
+  static Widget buildCustomerAddress(Customer customer) => Container(
         padding: EdgeInsets.only(left: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -128,7 +129,7 @@ class HomePageState extends State<BillerPage> {
 
   static Widget buildInvoice(Billing invoice) {
     final headers = ['TITLE', 'QTY', 'MRP', 'TOTAL'];
-    final data = invoice.productsSelected.map((item) {
+    final data = invoice.selectedProducts.map((item) {
       return [
         item.name,
         '${item.quantity}',
