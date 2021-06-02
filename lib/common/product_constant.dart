@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:project_netsurf/common/fs_constants.dart';
 import 'package:project_netsurf/common/models/product.dart';
 
 class Products {
@@ -164,5 +166,69 @@ class Products {
 
   static List<Product> getBioFit() {
     return _bioFit;
+  }
+
+  static void saveAllProducts(FirebaseFirestore instance) {
+    saveProducts("ProductsNames/NaturaMore/Products", instance,
+        Products.getNaturaMore());
+    saveProducts(
+        "ProductsNames/BioFit/Products", instance, Products.getBioFit());
+    saveProducts(
+        "ProductsNames/HomeCare/Products", instance, Products.getHomeCare());
+    saveProducts("ProductsNames/HerbsAndMore/Products", instance,
+        Products.getHerbsAndMore());
+  }
+
+  static void saveProducts(
+      String path, FirebaseFirestore instance, List<Product> products) {
+    final productRef = instance.collection(path).withConverter<Product>(
+          fromFirestore: (snapshot, _) => Product.fromJson(snapshot.data()),
+          toFirestore: (product, _) => product.toJson(),
+        );
+
+    int i = 0;
+    products.forEach((element) {
+      i++;
+      productRef
+          .doc(i.toString())
+          .set(element)
+          .then((value) => print("Product Added"))
+          .catchError((error) => print("Failed to add Product: $error"));
+    });
+  }
+
+  static Future<QuerySnapshot> getAllProducts(
+      FirebaseFirestore instance) async {
+    final QuerySnapshot productNamesCollection =
+        await instance.collection(FSC_PRODUCT_NAMES).get();
+    List<Product> productsList = [];
+    var paths = [];
+    productNamesCollection.docs.forEach((productName) async {
+      paths
+          .add(FSC_PRODUCT_NAMES + FS_S + productName.id + FS_S + FSC_PRODUCTS);
+    });
+
+    paths.forEach((path) async {
+      final QuerySnapshot productsResult =
+          await instance.collection(path).get();
+      productsResult.docs.forEach((products) async {
+        final productRef = instance.collection(path).withConverter<Product>(
+              fromFirestore: (snapshot, _) => Product.fromJson(snapshot.data()),
+              toFirestore: (product, _) => product.toJson(),
+            );
+        productsList.add(await productRef
+            .doc(products.id)
+            .get()
+            .then((snapshot) => snapshot.data()));
+        productsList.forEach((element) {
+          print(element.id.toString() +
+              " ::: " +
+              element.productCategoryId.toString() +
+              " ::: " +
+              element.name);
+        });
+      });
+    });
+    return productNamesCollection;
   }
 }

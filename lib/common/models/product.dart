@@ -2,23 +2,23 @@ class Product {
   int _id;
   String _name;
   String _weight;
-  double _price;
-  int _quantity;
-  int _productCategoryId;
+  num _price;
+  num _quantity;
+  num _productCategoryId;
 
-  int get id => _id;
+  num get id => _id;
 
   String get name => _name;
 
   String get weight => _weight;
 
-  double get price => _price;
+  num get price => _price;
 
-  int get quantity => _quantity;
+  num get quantity => _quantity;
 
-  int get productCategoryId => _productCategoryId;
+  num get productCategoryId => _productCategoryId;
 
-  set id(int value) {
+  set id(num value) {
     _id = value;
   }
 
@@ -26,11 +26,11 @@ class Product {
     _name = value;
   }
 
-  set productCategoryId(int value) {
+  set productCategoryId(num value) {
     _productCategoryId = value;
   }
 
-  set quantity(int value) {
+  set quantity(num value) {
     _quantity = value;
   }
 
@@ -42,8 +42,8 @@ class Product {
     _weight = value;
   }
 
-  Product(int id, String name, String weight, double price, int quantity,
-      int productCategoryId) {
+  Product(num id, String name, String weight, num price, num quantity,
+      num productCategoryId) {
     _id = id;
     _name = name;
     _weight = weight;
