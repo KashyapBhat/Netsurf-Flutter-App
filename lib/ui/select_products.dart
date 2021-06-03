@@ -365,7 +365,8 @@ class SelectProductsPageState extends State<SelectProductsPage> {
                     double discount = double.parse(value);
                     price.discountAmt = 0;
                     if (discount > 0) {
-                      price.finalAmt = price.total - discount;
+                      price.finalAmt =
+                          price.total - (price.total * (discount / 100));
                       if (price.finalAmt < 0) {
                         price.finalAmt = 0;
                       }
