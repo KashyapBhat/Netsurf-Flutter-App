@@ -7,6 +7,7 @@ import 'package:project_netsurf/common/models/billing_info.dart';
 import 'package:project_netsurf/common/models/customer.dart';
 import 'package:project_netsurf/common/models/price.dart';
 import 'package:project_netsurf/common/models/retailer.dart';
+import 'package:project_netsurf/common/sp_utils.dart';
 import 'package:project_netsurf/common/ui/bottomsheet.dart';
 import 'package:project_netsurf/common/ui/edittext.dart';
 import 'package:project_netsurf/common/models/product.dart';
@@ -42,6 +43,12 @@ class SelectProductsPageState extends State<SelectProductsPage> {
   void initState() {
     super.initState();
     print("Selected customer: " + widget.customerData.name ?? "");
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      List<Product> products = await Preference.getProducts();
+      products.forEach((element) {
+        print("Fetched" + element.name);
+      });
+    });
   }
 
   @override

@@ -1,5 +1,7 @@
+import 'dart:convert';
+
 class Product {
-  int _id;
+  num _id;
   String _name;
   String _weight;
   num _price;
@@ -71,6 +73,31 @@ class Product {
     map["productCategoryId"] = _productCategoryId;
     return map;
   }
+
+  factory Product.fromJsonSP(Map<String, dynamic> jsonData) {
+    return Product(jsonData['id'], jsonData['name'], jsonData['weight'],
+        jsonData['price'], jsonData['quantity'], jsonData['productCategoryId']);
+  }
+
+  static Map<String, dynamic> toJsonSP(Product music) => {
+        'id': music.id,
+        'name': music.name,
+        'weight': music.weight,
+        'price': music.price,
+        'quantity': music.quantity,
+        'productCategoryId': music.productCategoryId
+      };
+
+  static String encode(List<Product> products) => json.encode(
+        products
+            .map<Map<String, dynamic>>((music) => Product.toJsonSP(music))
+            .toList(),
+      );
+
+  static List<Product> decode(String products) =>
+      (json.decode(products) as List<dynamic>)
+          .map<Product>((item) => Product.fromJsonSP(item))
+          .toList();
 
   String getDisplayName() {
     return name + " - " + weight;

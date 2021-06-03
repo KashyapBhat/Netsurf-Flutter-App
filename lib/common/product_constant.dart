@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:project_netsurf/common/fs_constants.dart';
 import 'package:project_netsurf/common/models/product.dart';
+import 'package:project_netsurf/common/sp_utils.dart';
 
 class Products {
   static List<Product> _productCategories = <Product>[
@@ -226,6 +227,7 @@ class Products {
               element.productCategoryId.toString() +
               " ::: " +
               element.name);
+          Preference.setProducts(productsList);
         });
       });
     });

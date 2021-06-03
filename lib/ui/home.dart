@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:project_netsurf/common/models/customer.dart';
+import 'package:project_netsurf/common/models/product.dart';
 import 'package:project_netsurf/common/product_constant.dart';
 import 'package:project_netsurf/common/sp_constants.dart';
 import 'package:project_netsurf/common/sp_utils.dart';
@@ -44,14 +45,12 @@ class HomePageState extends State<HomePage> {
         if (!silverCollapsed) {
           myTitle = "Net Surf";
           silverCollapsed = true;
-          setState(() {});
         }
       }
       if (_controller.offset <= 100 && !_controller.position.outOfRange) {
         if (silverCollapsed) {
           myTitle = "";
           silverCollapsed = false;
-          setState(() {});
         }
       }
     });
