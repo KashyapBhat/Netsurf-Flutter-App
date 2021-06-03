@@ -69,51 +69,45 @@ class SelectProductsPageState extends State<SelectProductsPage> {
         centerTitle: true,
       ),
       body: Column(
-        mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           addProductLists(),
           selectProductList(widget.allCategories),
           selectItemFromProducts(widget.allProducts),
-          Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Container(
-                margin: EdgeInsets.only(left: 16, top: 5, right: 16, bottom: 2),
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      left: 12, top: 5, right: 12, bottom: 5),
-                  child: Container(
-                    child: Column(
+          Container(
+            margin: EdgeInsets.only(left: 16, top: 5, right: 16, bottom: 2),
+            child: Padding(
+              padding:
+                  const EdgeInsets.only(left: 12, top: 5, right: 12, bottom: 5),
+              child: Container(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            totalPrice(),
-                            discountPrice(),
-                          ],
-                        ),
-                        finalTotalAmount()
+                        totalPrice(),
+                        discountPrice(),
                       ],
                     ),
-                  ),
+                    finalTotalAmount()
+                  ],
                 ),
               ),
-              CustomButton(
-                buttonText: "Done",
-                onClick: () async {
-                  Navigator.push(
-                    context,
-                    new MaterialPageRoute(
-                      builder: (__) => new BillerPage(
-                        billing: createBilling(),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ],
+            ),
+          ),
+          CustomButton(
+            buttonText: "Done",
+            onClick: () async {
+              Navigator.push(
+                context,
+                new MaterialPageRoute(
+                  builder: (__) => new BillerPage(
+                    billing: createBilling(),
+                  ),
+                ),
+              );
+            },
           ),
           SizedBox(height: 5),
         ],
