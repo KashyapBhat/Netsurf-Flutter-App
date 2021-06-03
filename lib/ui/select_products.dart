@@ -18,8 +18,15 @@ import 'package:project_netsurf/ui/biller.dart';
 class SelectProductsPage extends StatefulWidget {
   final String title;
   final Customer customerData;
+  final List<Product> allProducts;
+  final List<Product> allCategories;
 
-  SelectProductsPage({Key key, this.title, this.customerData})
+  SelectProductsPage(
+      {Key key,
+      this.title,
+      this.customerData,
+      this.allProducts,
+      this.allCategories})
       : super(key: key);
 
   @override
@@ -39,12 +46,18 @@ class SelectProductsPageState extends State<SelectProductsPage> {
   Price price = Price(0, 0, 0);
   List<Product> selectedProducts = [];
   Product selectedCategory;
-  List<Product> allproducts;
 
   @override
   void initState() {
     super.initState();
     print("Selected customer: " + widget.customerData.name ?? "");
+    selectedCategory = Products.getProductCategorys(widget.allCategories, 1);
+    widget.allCategories.forEach((element) {
+      print("Products Names: " + element.name);
+    });
+    widget.allProducts.forEach((element) {
+      print("Products: " + element.name);
+    });
   }
 
   @override
@@ -55,88 +68,55 @@ class SelectProductsPageState extends State<SelectProductsPage> {
         title: Text("Net Surf", textAlign: TextAlign.center),
         centerTitle: true,
       ),
-      body: FutureBuilder(
-        future: Preference.getProducts(SP_CATEGORY_IDS),
-        builder: (context, AsyncSnapshot<List<Product>> snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            List<Product> allCategories = snapshot.data;
-            if (selectedCategory == null)
-              selectedCategory = Products.getProductCategorys(allCategories, 1);
-            allCategories.forEach((element) {
-              print("Products Names: " + element.name);
-            });
-            return FutureBuilder(
-              future: Preference.getProducts(SP_PRODUCTS),
-              builder: (context, AsyncSnapshot<List<Product>> snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  if (allproducts == null) allproducts = snapshot.data;
-                  allproducts.forEach((element) {
-                    print("Products: " + element.name);
-                  });
-                  return Column(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      addProductLists(),
-                      selectProductList(allCategories),
-                      selectItemFromProducts(allproducts),
-                      Column(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Container(
-                            margin: EdgeInsets.only(
-                                left: 16, top: 5, right: 16, bottom: 2),
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 12, top: 5, right: 12, bottom: 5),
-                              child: Container(
-                                child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        totalPrice(),
-                                        discountPrice(),
-                                      ],
-                                    ),
-                                    finalTotalAmount()
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          CustomButton(
-                            buttonText: "Done",
-                            onClick: () async {
-                              Navigator.push(
-                                context,
-                                new MaterialPageRoute(
-                                  builder: (__) => new BillerPage(
-                                    billing: createBilling(),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ],
+      body: Column(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          addProductLists(),
+          selectProductList(widget.allCategories),
+          selectItemFromProducts(widget.allProducts),
+          Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Container(
+                margin: EdgeInsets.only(left: 16, top: 5, right: 16, bottom: 2),
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      left: 12, top: 5, right: 12, bottom: 5),
+                  child: Container(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            totalPrice(),
+                            discountPrice(),
+                          ],
+                        ),
+                        finalTotalAmount()
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              CustomButton(
+                buttonText: "Done",
+                onClick: () async {
+                  Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (__) => new BillerPage(
+                        billing: createBilling(),
                       ),
-                      SizedBox(height: 5),
-                    ],
+                    ),
                   );
-                } else if (snapshot.connectionState == ConnectionState.none) {
-                  return Text("No product data found");
-                }
-                return Center(child: CircularProgressIndicator());
-              },
-            );
-          } else if (snapshot.connectionState == ConnectionState.none) {
-            return Text("No product data found");
-          }
-          return Center(child: CircularProgressIndicator());
-        },
+                },
+              ),
+            ],
+          ),
+          SizedBox(height: 5),
+        ],
       ),
     );
   }

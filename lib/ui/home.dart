@@ -27,6 +27,9 @@ class HomePageState extends State<HomePage> {
   bool silverCollapsed = false;
   String myTitle = "";
 
+  List<Product> allCategories;
+  List<Product> allProducts;
+
   Customer data = Customer("", "", "", "", "");
 
   @override
@@ -62,121 +65,21 @@ class HomePageState extends State<HomePage> {
         drawer: AppDrawer(),
         key: _scaffoldKey,
         body: FutureBuilder(
-          future: Products.getAllProducts(FirebaseFirestore.instance),
-          builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          future: Preference.getProducts(SP_CATEGORY_IDS),
+          builder: (context, AsyncSnapshot<List<Product>> snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
-              return CustomScrollView(
-                controller: _controller,
-                slivers: <Widget>[
-                  SliverAppBar(
-                    expandedHeight: 200,
-                    pinned: false,
-                    flexibleSpace: FlexibleSpaceBar(
-                      title: Text(
-                        myTitle,
-                        style: TextStyle(color: Colors.grey[100]),
-                      ),
-                      centerTitle: true,
-                      background: Image.asset(
-                        'assets/netsurf.png',
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  SliverFillRemaining(
-                    child: Container(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          SizedBox(height: 0),
-                          EditText(
-                              required: true,
-                              initTextValue: data.name ?? "",
-                              type: TextInputType.name,
-                              editTextName: "Customer Name",
-                              onText: (text) async {
-                                data.name = text;
-                                Preference.setItem(SP_CUSTOMER_NAME, text);
-                                print(text);
-                              },
-                              onTap: () {
-                                _controller.jumpTo(
-                                    _controller.position.maxScrollExtent);
-                              }),
-                          EditText(
-                              required: true,
-                              initTextValue: data.mobileNo ?? "",
-                              type: TextInputType.phone,
-                              editTextName: "Customer Mobile Number",
-                              onText: (text) async {
-                                data.mobileNo = text;
-                                Preference.setItem(SP_CUSTOMER_M_NO, text);
-                                print(text);
-                              },
-                              onTap: () {
-                                _controller.jumpTo(
-                                    _controller.position.maxScrollExtent);
-                              }),
-                          EditText(
-                              required: false,
-                              initTextValue: data.cRefId ?? "",
-                              editTextName: "Customer Reference ID",
-                              onText: (text) async {
-                                data.cRefId = text;
-                                await Preference.setItem(
-                                    SP_CUSTOMER_RF_ID, text);
-                                print(text);
-                              },
-                              onTap: () {
-                                _controller.jumpTo(
-                                    _controller.position.maxScrollExtent);
-                              }),
-                          EditText(
-                              required: false,
-                              editTextName: "Address",
-                              initTextValue: data.address ?? "",
-                              type: TextInputType.streetAddress,
-                              maxline: 3,
-                              onText: (text) async {
-                                data.address = text;
-                                await Preference.setItem(
-                                    SP_CUSTOMER_ADDRESS, text);
-                                print(text);
-                              },
-                              onTap: () {
-                                _controller.jumpTo(
-                                    _controller.position.maxScrollExtent);
-                              }),
-                          EditText(
-                              required: false,
-                              initTextValue: data.email ?? "",
-                              editTextName: "Email",
-                              type: TextInputType.emailAddress,
-                              onText: (text) async {
-                                data.email = text;
-                                await Preference.setItem(
-                                    SP_CUSTOMER_EMAIL, text);
-                                print(text);
-                              },
-                              onTap: () {
-                                _controller.jumpTo(
-                                    _controller.position.maxScrollExtent);
-                              }),
-                          CustomButton(
-                              buttonText: "Next",
-                              onClick: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (__) => new SelectProductsPage(
-                                            customerData: data)));
-                              }),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
+              allCategories = snapshot.data;
+              return FutureBuilder(
+                future: Preference.getProducts(SP_PRODUCTS),
+                builder: (context, AsyncSnapshot<List<Product>> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    allProducts = snapshot.data;
+                    return scrollView();
+                  } else if (snapshot.connectionState == ConnectionState.none) {
+                    return Text("No product data found");
+                  }
+                  return Center(child: CircularProgressIndicator());
+                },
               );
             } else if (snapshot.connectionState == ConnectionState.none) {
               return Text("No product data found");
@@ -184,6 +87,127 @@ class HomePageState extends State<HomePage> {
             return Center(child: CircularProgressIndicator());
           },
         ));
+  }
+
+  Widget scrollView() {
+    return CustomScrollView(
+      controller: _controller,
+      slivers: <Widget>[
+        scrollAppBar(),
+        inputDataAndNext(),
+      ],
+    );
+  }
+
+  Widget scrollAppBar() {
+    return SliverAppBar(
+      expandedHeight: 200,
+      pinned: false,
+      flexibleSpace: FlexibleSpaceBar(
+        title: Text(
+          myTitle,
+          style: TextStyle(color: Colors.grey[100]),
+        ),
+        centerTitle: true,
+        background: Image.asset(
+          'assets/netsurf.png',
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
+  }
+
+  Widget inputDataAndNext() {
+    return SliverFillRemaining(
+      child: Container(
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            SizedBox(height: 0),
+            EditText(
+                required: true,
+                initTextValue: data.name ?? "",
+                type: TextInputType.name,
+                editTextName: "Customer Name",
+                onText: (text) async {
+                  data.name = text;
+                  Preference.setItem(SP_CUSTOMER_NAME, text);
+                  print(text);
+                },
+                onTap: () {
+                  _controller.jumpTo(_controller.position.maxScrollExtent);
+                }),
+            EditText(
+                required: true,
+                initTextValue: data.mobileNo ?? "",
+                type: TextInputType.phone,
+                editTextName: "Customer Mobile Number",
+                onText: (text) async {
+                  data.mobileNo = text;
+                  Preference.setItem(SP_CUSTOMER_M_NO, text);
+                  print(text);
+                },
+                onTap: () {
+                  _controller.jumpTo(_controller.position.maxScrollExtent);
+                }),
+            EditText(
+                required: false,
+                initTextValue: data.cRefId ?? "",
+                editTextName: "Customer Reference ID",
+                onText: (text) async {
+                  data.cRefId = text;
+                  await Preference.setItem(SP_CUSTOMER_RF_ID, text);
+                  print(text);
+                },
+                onTap: () {
+                  _controller.jumpTo(_controller.position.maxScrollExtent);
+                }),
+            EditText(
+                required: false,
+                editTextName: "Address",
+                initTextValue: data.address ?? "",
+                type: TextInputType.streetAddress,
+                maxline: 3,
+                onText: (text) async {
+                  data.address = text;
+                  await Preference.setItem(SP_CUSTOMER_ADDRESS, text);
+                  print(text);
+                },
+                onTap: () {
+                  _controller.jumpTo(_controller.position.maxScrollExtent);
+                }),
+            EditText(
+                required: false,
+                initTextValue: data.email ?? "",
+                editTextName: "Email",
+                type: TextInputType.emailAddress,
+                onText: (text) async {
+                  data.email = text;
+                  await Preference.setItem(SP_CUSTOMER_EMAIL, text);
+                  print(text);
+                },
+                onTap: () {
+                  _controller.jumpTo(_controller.position.maxScrollExtent);
+                }),
+            CustomButton(
+                buttonText: "Next",
+                onClick: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (__) => new SelectProductsPage(
+                        customerData: data,
+                        allCategories: allCategories,
+                        allProducts: allProducts,
+                      ),
+                    ),
+                  );
+                }),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
