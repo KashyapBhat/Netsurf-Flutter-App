@@ -1,7 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
-
-import 'package:project_netsurf/common/sp_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'models/product.dart';
@@ -66,15 +63,15 @@ class Preference {
     return prefs.getStringList(key);
   }
 
-  static Future<bool> setProducts(List<Product> products) async {
+  static Future<bool> setProducts(List<Product> products, String name) async {
     final SharedPreferences prefs = await _prefs;
     final String encodedData = Product.encode(products);
-    return await prefs.setString(SP_PRODUCTS, encodedData);
+    return await prefs.setString(name, encodedData);
   }
 
-  static Future<List<Product>> getProducts() async {
+  static Future<List<Product>> getProducts(String name) async {
     final SharedPreferences prefs = await _prefs;
-    String productsEncoded = prefs.getString(SP_PRODUCTS);
+    String productsEncoded = prefs.getString(name);
     final List<Product> decodedData = Product.decode(productsEncoded);
     return decodedData;
   }

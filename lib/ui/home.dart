@@ -168,7 +168,7 @@ class HomePageState extends State<HomePage> {
                               onClick: () {
                                 Navigator.push(
                                     context,
-                                    new MaterialPageRoute(
+                                    MaterialPageRoute(
                                         builder: (__) => new SelectProductsPage(
                                             customerData: data)));
                               }),

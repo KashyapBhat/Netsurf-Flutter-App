@@ -1,9 +1,29 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:project_netsurf/common/fs_constants.dart';
 import 'package:project_netsurf/common/models/product.dart';
+import 'package:project_netsurf/common/sp_constants.dart';
 import 'package:project_netsurf/common/sp_utils.dart';
 
 class Products {
+  static Product getProductCategorys(List<Product> allCategories, int id) {
+    if (id == null) {
+      return allCategories
+          .firstWhere((element) => element.id == 0 || element.id == 1);
+    }
+    return allCategories.firstWhere((element) => element.id == id);
+  }
+
+  static List<Product> getProductsFromCategorysIds(
+      List<Product> allProducts, Product selectedProduct) {
+    List<Product> products = [];
+    allProducts.forEach((element) {
+      if (element.productCategoryId == selectedProduct.id) {
+        products.add(element);
+      }
+    });
+    return products;
+  }
+
   static List<Product> _productCategories = <Product>[
     new Product(1, "Natura More", "Natura More", 0, 0, 0),
     new Product(2, "Personal Care (Herbs & More)", "Personal Care", 0, 0, 0),
@@ -204,11 +224,14 @@ class Products {
         await instance.collection(FSC_PRODUCT_NAMES).get();
     List<Product> productsList = [];
     var paths = [];
+    List<Product> productDetails = [];
     productNamesCollection.docs.forEach((productName) async {
       paths
           .add(FSC_PRODUCT_NAMES + FS_S + productName.id + FS_S + FSC_PRODUCTS);
+      productDetails
+          .add(Product(productName[FS_ID], productName[FS_NAME], "", 0, 0, 0));
     });
-
+    Preference.setProducts(productDetails, SP_CATEGORY_IDS);
     paths.forEach((path) async {
       final QuerySnapshot productsResult =
           await instance.collection(path).get();
@@ -222,12 +245,7 @@ class Products {
             .get()
             .then((snapshot) => snapshot.data()));
         productsList.forEach((element) {
-          print(element.id.toString() +
-              " ::: " +
-              element.productCategoryId.toString() +
-              " ::: " +
-              element.name);
-          Preference.setProducts(productsList);
+          Preference.setProducts(productsList, SP_PRODUCTS);
         });
       });
     });
