@@ -39,6 +39,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
   Price price = Price(0, 0, 0);
   List<Product> selectedProducts = [];
   Product selectedCategory;
+  List<Product> allproducts;
 
   @override
   void initState() {
@@ -59,7 +60,8 @@ class SelectProductsPageState extends State<SelectProductsPage> {
         builder: (context, AsyncSnapshot<List<Product>> snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             List<Product> allCategories = snapshot.data;
-            selectedCategory = Products.getProductCategorys(allCategories, 1);
+            if (selectedCategory == null)
+              selectedCategory = Products.getProductCategorys(allCategories, 1);
             allCategories.forEach((element) {
               print("Products Names: " + element.name);
             });
@@ -67,7 +69,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
               future: Preference.getProducts(SP_PRODUCTS),
               builder: (context, AsyncSnapshot<List<Product>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
-                  List<Product> allproducts = snapshot.data;
+                  if (allproducts == null) allproducts = snapshot.data;
                   allproducts.forEach((element) {
                     print("Products: " + element.name);
                   });
@@ -222,7 +224,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
 
   Widget selectProductList(List<Product> allCategories) {
     return CustomButton(
-        buttonText: selectedCategory.name ?? "Select Category",
+        buttonText: "Category: " + selectedCategory.name ?? "Select Category",
         onClick: () {
           showModelBottomSheet(
               context, _scaffoldKey, allCategories, categoryTextController,
@@ -432,7 +434,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
     if (selectedCategory != null &&
         selectedCategory.name != null &&
         selectedCategory.name.isNotEmpty) {
-      return "Select Item from: ${selectedCategory.weight}";
+      return "Pick products";
     } else {
       return "Select product category first";
     }

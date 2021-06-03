@@ -100,6 +100,7 @@ class Product {
           .toList();
 
   String getDisplayName() {
+    if (weight == null || weight.isEmpty) return name;
     return name + " - " + weight;
   }
 

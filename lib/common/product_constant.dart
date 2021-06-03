@@ -21,6 +21,7 @@ class Products {
         products.add(element);
       }
     });
+    products.sort((a, b) => a.id.compareTo(b.id));
     return products;
   }
 
