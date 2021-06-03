@@ -23,10 +23,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Net Surf',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      builder: (context, child) => SafeArea(child: child),
+      theme: ThemeData(primarySwatch: Colors.blue),
+      builder: (context, child) => SafeArea(
+          child: Container(
+        height: MediaQuery.of(context).size.height,
+        decoration: BoxDecoration(
+          color: Colors.white,
+        ),
+        child: child,
+      )),
       home: FutureBuilder(
         future: _initialization,
         builder: (context, AsyncSnapshot<FirebaseApp> snapshot) {
@@ -40,7 +45,8 @@ class MyApp extends StatelessWidget {
                     builder: (context, AsyncSnapshot<User> snapshot) {
                       if (snapshot.connectionState == ConnectionState.done) {
                         if (snapshot.data != null &&
-                            snapshot.data.name.isNotEmpty) {
+                            snapshot.data.name.isNotEmpty &&
+                            snapshot.data.mobileNo.isNotEmpty) {
                           print("RetailerData: " + snapshot.data.name);
                           return HomePage(isRetailer: false);
                         } else {
