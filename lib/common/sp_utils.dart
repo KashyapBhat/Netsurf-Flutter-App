@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:project_netsurf/common/models/customer.dart';
+import 'package:project_netsurf/common/sp_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'models/product.dart';
@@ -7,6 +9,14 @@ class Preference {
   Preference._();
 
   static Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+
+  static Future<SharedPreferences> getPref() async {
+    return await _prefs;
+  }
+  static Future<bool> remove(String name) async {
+    final SharedPreferences prefs = await _prefs;
+    return prefs.remove(name);
+  }
 
   static Future<String> getItem(String name) async {
     final SharedPreferences prefs = await _prefs;
@@ -74,5 +84,18 @@ class Preference {
     String productsEncoded = prefs.getString(name);
     final List<Product> decodedData = Product.decode(productsEncoded);
     return decodedData;
+  }
+
+  static Future<bool> setRetailer(User retailer) async {
+    final SharedPreferences prefs = await _prefs;
+    final String encodedData = User.encode(retailer);
+    return await prefs.setString(SP_RETAILER, encodedData);
+  }
+
+  static Future<User> getRetailer() async {
+    final SharedPreferences prefs = await _prefs;
+    String decodedData = prefs.getString(SP_RETAILER);
+    final User decodedRetailer = User.decode(decodedData);
+    return decodedRetailer;
   }
 }

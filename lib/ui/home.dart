@@ -12,7 +12,9 @@ import 'package:project_netsurf/ui/drawer.dart';
 import 'package:project_netsurf/ui/select_products.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key key}) : super(key: key);
+  final bool isRetailer;
+
+  HomePage({Key key, this.isRetailer}) : super(key: key);
 
   @override
   HomePageState createState() => HomePageState();
@@ -29,8 +31,8 @@ class HomePageState extends State<HomePage> {
 
   List<Product> allCategories;
   List<Product> allProducts;
-
-  Customer data = Customer("", "", "", "", "");
+  String textValue = "";
+  User user = User("", "", "", "", "");
 
   @override
   void initState() {
@@ -42,6 +44,11 @@ class HomePageState extends State<HomePage> {
     // Preference.getItem(SP_CUSTOMER_RF_ID).then((value) => {cRefId = value});
     // Preference.getItem(SP_CUSTOMER_ADDRESS).then((value) => {address = value});
     // Preference.getItem(SP_CUSTOMER_EMAIL).then((value) => {email = value});
+    if (widget.isRetailer) {
+      textValue = "Retailer";
+    } else {
+      textValue = "Customer";
+    }
 
     _controller.addListener(() {
       if (_controller.offset > 100 && !_controller.position.outOfRange) {
@@ -127,11 +134,11 @@ class HomePageState extends State<HomePage> {
             SizedBox(height: 0),
             EditText(
                 required: true,
-                initTextValue: data.name ?? "",
+                initTextValue: user.name ?? "",
                 type: TextInputType.name,
-                editTextName: "Customer Name",
+                editTextName: textValue + " Name",
                 onText: (text) async {
-                  data.name = text;
+                  user.name = text;
                   Preference.setItem(SP_CUSTOMER_NAME, text);
                   print(text);
                 },
@@ -140,70 +147,77 @@ class HomePageState extends State<HomePage> {
                 }),
             EditText(
                 required: true,
-                initTextValue: data.mobileNo ?? "",
+                initTextValue: user.mobileNo ?? "",
                 type: TextInputType.phone,
-                editTextName: "Customer Mobile Number",
+                editTextName: textValue + " Mobile Number",
                 onText: (text) async {
-                  data.mobileNo = text;
+                  user.mobileNo = text;
                   Preference.setItem(SP_CUSTOMER_M_NO, text);
                   print(text);
                 },
                 onTap: () {
                   _controller.jumpTo(_controller.position.maxScrollExtent);
                 }),
-            EditText(
-                required: false,
-                initTextValue: data.cRefId ?? "",
-                editTextName: "Customer Reference ID",
-                onText: (text) async {
-                  data.cRefId = text;
-                  await Preference.setItem(SP_CUSTOMER_RF_ID, text);
-                  print(text);
-                },
-                onTap: () {
-                  _controller.jumpTo(_controller.position.maxScrollExtent);
-                }),
+            if (!widget.isRetailer)
+              EditText(
+                  required: false,
+                  initTextValue: user.cRefId ?? "",
+                  editTextName: textValue + " Reference ID",
+                  onText: (text) async {
+                    user.cRefId = text;
+                    await Preference.setItem(SP_CUSTOMER_RF_ID, text);
+                    print(text);
+                  },
+                  onTap: () {
+                    _controller.jumpTo(_controller.position.maxScrollExtent);
+                  }),
             EditText(
                 required: false,
                 editTextName: "Address",
-                initTextValue: data.address ?? "",
+                initTextValue: user.address ?? "",
                 type: TextInputType.streetAddress,
                 maxline: 3,
                 onText: (text) async {
-                  data.address = text;
+                  user.address = text;
                   await Preference.setItem(SP_CUSTOMER_ADDRESS, text);
                   print(text);
                 },
                 onTap: () {
                   _controller.jumpTo(_controller.position.maxScrollExtent);
                 }),
-            EditText(
-                required: false,
-                initTextValue: data.email ?? "",
-                editTextName: "Email",
-                type: TextInputType.emailAddress,
-                onText: (text) async {
-                  data.email = text;
-                  await Preference.setItem(SP_CUSTOMER_EMAIL, text);
-                  print(text);
-                },
-                onTap: () {
-                  _controller.jumpTo(_controller.position.maxScrollExtent);
-                }),
+            if (!widget.isRetailer)
+              EditText(
+                  required: false,
+                  initTextValue: user.email ?? "",
+                  editTextName: "Email",
+                  type: TextInputType.emailAddress,
+                  onText: (text) async {
+                    user.email = text;
+                    await Preference.setItem(SP_CUSTOMER_EMAIL, text);
+                    print(text);
+                  },
+                  onTap: () {
+                    _controller.jumpTo(_controller.position.maxScrollExtent);
+                  }),
             CustomButton(
-                buttonText: "Next",
-                onClick: () {
+              buttonText: widget.isRetailer ? "Save" : "Next",
+              onClick: () {
+                if (widget.isRetailer) {
+                  Preference.setRetailer(user);
+                } else {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (__) => new SelectProductsPage(
-                        customerData: data,
+                        customerData: user,
                         allCategories: allCategories,
                         allProducts: allProducts,
                       ),
                     ),
                   );
-                }),
+                }
+              },
+            ),
           ],
         ),
       ),

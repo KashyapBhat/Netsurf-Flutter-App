@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:project_netsurf/common/models/customer.dart';
 import 'package:project_netsurf/common/product_constant.dart';
+import 'package:project_netsurf/common/sp_utils.dart';
 import 'package:project_netsurf/ui/home.dart';
 
 void main() {
@@ -33,7 +35,30 @@ class MyApp extends StatelessWidget {
               future: Products.getAllProducts(FirebaseFirestore.instance),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
-                  return HomePage();
+                  return FutureBuilder(
+                    future: Preference.getRetailer(),
+                    builder: (context, AsyncSnapshot<User> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        if (snapshot.data != null &&
+                            snapshot.data.name.isNotEmpty) {
+                          print("RetailerData: " + snapshot.data.name);
+                          return HomePage(isRetailer: false);
+                        } else {
+                          return HomePage(isRetailer: true);
+                        }
+                      } else if (snapshot.hasError) {
+                        return Text(
+                          "Sorry, Something went wrong.",
+                          style: TextStyle(color: Colors.red, fontSize: 14),
+                          textAlign: TextAlign.center,
+                        );
+                      } else {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                    },
+                  );
                 } else if (snapshot.hasError) {
                   return Text(
                     "Sorry, Something went wrong.",

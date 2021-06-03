@@ -6,9 +6,6 @@ import 'package:project_netsurf/common/models/billing.dart';
 import 'package:project_netsurf/common/models/billing_info.dart';
 import 'package:project_netsurf/common/models/customer.dart';
 import 'package:project_netsurf/common/models/price.dart';
-import 'package:project_netsurf/common/models/retailer.dart';
-import 'package:project_netsurf/common/sp_constants.dart';
-import 'package:project_netsurf/common/sp_utils.dart';
 import 'package:project_netsurf/common/ui/bottomsheet.dart';
 import 'package:project_netsurf/common/ui/edittext.dart';
 import 'package:project_netsurf/common/models/product.dart';
@@ -17,7 +14,7 @@ import 'package:project_netsurf/ui/biller.dart';
 
 class SelectProductsPage extends StatefulWidget {
   final String title;
-  final Customer customerData;
+  final User customerData;
   final List<Product> allProducts;
   final List<Product> allCategories;
 
@@ -433,7 +430,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
 
   Billing createBilling() {
     BillingInfo billingInfo = BillingInfo("", "123412", DateTime.now());
-    Retailer retailer = Retailer(name: "Shrinidhi", mobileNo: "9876567342");
+    User retailer = User("Shrinidhi", "9876567342", "", "", "");
     Billing billing = Billing(
         billingInfo, retailer, widget.customerData, selectedProducts, price);
     return billing;

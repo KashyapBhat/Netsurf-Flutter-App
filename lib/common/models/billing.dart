@@ -2,12 +2,11 @@ import 'package:project_netsurf/common/models/customer.dart';
 import 'package:project_netsurf/common/models/billing_info.dart';
 import 'package:project_netsurf/common/models/price.dart';
 import 'package:project_netsurf/common/models/product.dart';
-import 'package:project_netsurf/common/models/retailer.dart';
 
 class Billing {
   BillingInfo billingInfo;
-  Retailer retailer;
-  Customer customer;
+  User retailer;
+  User customer;
   List<Product> selectedProducts;
   Price price;
 
@@ -19,9 +18,9 @@ class Billing {
         ? BillingInfo.fromJson(json["billingInfo"])
         : null;
     retailer =
-        json["retailer"] != null ? Retailer.fromJson(json["retailer"]) : null;
+        json["retailer"] != null ? User.fromJson(json["retailer"]) : null;
     customer =
-        json["customer"] != null ? Customer.fromJson(json["customer"]) : null;
+        json["customer"] != null ? User.fromJson(json["customer"]) : null;
     if (json["selectedProducts"] != null) {
       selectedProducts = [];
       json["selectedProducts"].forEach((v) {

@@ -1,4 +1,6 @@
-class Customer {
+import 'dart:convert';
+
+class User {
   String _name;
   String _mobileNo;
   String _cRefId;
@@ -35,7 +37,7 @@ class Customer {
     _cRefId = value;
   }
 
-  Customer(String name, String mobileNo, String cRefId, String address,
+  User(String name, String mobileNo, String cRefId, String address,
       String email) {
     _name = name;
     _mobileNo = mobileNo;
@@ -44,7 +46,7 @@ class Customer {
     _email = email;
   }
 
-  Customer.fromJson(dynamic json) {
+  User.fromJson(dynamic json) {
     _name = json["name"];
     _mobileNo = json["mobileNo"];
     _cRefId = json["cRefId"];
@@ -61,4 +63,26 @@ class Customer {
     map["email"] = _email;
     return map;
   }
+
+  factory User.fromJsonSP(Map<String, dynamic> jsonData) {
+    return User(
+      jsonData['name'],
+      jsonData['mobileNo'],
+      jsonData['refId'],
+      jsonData['address'],
+      jsonData['email'],
+    );
+  }
+
+  static Map<String, dynamic> toJsonSP(User retailer) => {
+        'name': retailer.name,
+        'mobileNo': retailer.mobileNo,
+        'refId': retailer.cRefId,
+        'address': retailer.address,
+        'email': retailer.email,
+      };
+
+  static String encode(User retailer) => json.encode(User.toJsonSP(retailer));
+
+  static User decode(String retailer) => User.fromJsonSP(json.decode(retailer));
 }

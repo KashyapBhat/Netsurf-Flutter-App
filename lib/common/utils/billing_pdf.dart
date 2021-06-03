@@ -6,7 +6,6 @@ import 'package:project_netsurf/common/contants.dart';
 import 'package:project_netsurf/common/models/billing.dart';
 import 'package:project_netsurf/common/models/billing_info.dart';
 import 'package:project_netsurf/common/models/customer.dart';
-import 'package:project_netsurf/common/models/retailer.dart';
 import 'package:project_netsurf/common/utils/common_utils.dart';
 import 'package:project_netsurf/common/utils/pdf_api.dart';
 
@@ -44,7 +43,7 @@ class PdfInvoiceApi {
         ],
       );
 
-  static Widget buildCustomerAddress(Customer customer) => Column(
+  static Widget buildCustomerAddress(User customer) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(customer.name, style: TextStyle(fontWeight: FontWeight.bold)),
@@ -84,7 +83,7 @@ class PdfInvoiceApi {
     );
   }
 
-  static Widget buildSupplierAddress(Retailer retailer) => Column(
+  static Widget buildSupplierAddress(User retailer) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text("Distributor:", style: TextStyle(fontWeight: FontWeight.bold)),

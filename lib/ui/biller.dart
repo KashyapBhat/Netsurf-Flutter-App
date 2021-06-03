@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:project_netsurf/common/models/billing.dart';
 import 'package:project_netsurf/common/models/billing_info.dart';
 import 'package:project_netsurf/common/models/customer.dart';
-import 'package:project_netsurf/common/models/retailer.dart';
 import 'package:project_netsurf/common/ui/edittext.dart';
 import 'package:project_netsurf/common/utils/billing_pdf.dart';
 import 'package:project_netsurf/common/utils/common_utils.dart';
@@ -71,7 +70,7 @@ class HomePageState extends State<BillerPage> {
         ],
       );
 
-  static Widget buildCustomerAddress(Customer customer) => Container(
+  static Widget buildCustomerAddress(User customer) => Container(
         padding: EdgeInsets.only(left: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -324,7 +323,7 @@ class HomePageState extends State<BillerPage> {
     );
   }
 
-  static Widget buildSupplierAddress(Retailer retailer) => Column(
+  static Widget buildSupplierAddress(User retailer) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text("Distributor:", style: TextStyle(fontWeight: FontWeight.bold)),

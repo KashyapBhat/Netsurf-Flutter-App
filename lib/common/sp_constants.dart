@@ -6,3 +6,5 @@ const String SP_CUSTOMER_EMAIL = "SP_CustomerEmail";
 
 const String SP_PRODUCTS = "SP_Products";
 const String SP_CATEGORY_IDS = "SP_CategoryIds";
+
+const String SP_RETAILER = "SP_Retailer";

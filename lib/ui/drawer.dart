@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:project_netsurf/common/sp_constants.dart';
+import 'package:project_netsurf/common/sp_utils.dart';
 
 class AppDrawer extends StatelessWidget {
   @override
@@ -16,14 +18,19 @@ class AppDrawer extends StatelessWidget {
             text: 'Saved bills',
             onTap: () {},
           ),
+          _createDrawerItem(
+            icon: Icons.account_box_rounded,
+            text: 'Clear',
+            onTap: () async {
+              await Preference.remove(SP_RETAILER);
+            },
+          ),
           Divider(),
           _createDrawerItem(
             icon: Icons.face,
             text: 'Author',
             onTap: () {},
           ),
-          _createDrawerItem(
-              icon: Icons.account_box, text: 'Flutter Documentation'),
           _createDrawerItem(
             icon: Icons.stars,
             text: 'Useful Links',
