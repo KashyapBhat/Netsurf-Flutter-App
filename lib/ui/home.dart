@@ -27,10 +27,10 @@ class HomePageState extends State<HomePage> {
   final TextEditingController itemTextController = new TextEditingController();
   ScrollController _controller;
   bool silverCollapsed = false;
-  String myTitle = "";
 
   List<Product> allCategories;
   List<Product> allProducts;
+  bool isRetailer = false;
   String textValue = "";
   User user = User("", "", "", "", "");
 
@@ -38,28 +38,21 @@ class HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _controller = ScrollController();
+    isRetailer = widget.isRetailer;
 
     // Preference.getItem(SP_CUSTOMER_NAME).then((value) => {name = value});
     // Preference.getItem(SP_CUSTOMER_M_NO).then((value) => {mobileNo = value});
     // Preference.getItem(SP_CUSTOMER_RF_ID).then((value) => {cRefId = value});
     // Preference.getItem(SP_CUSTOMER_ADDRESS).then((value) => {address = value});
     // Preference.getItem(SP_CUSTOMER_EMAIL).then((value) => {email = value});
-    if (widget.isRetailer) {
-      textValue = "Retailer";
-    } else {
-      textValue = "Customer";
-    }
-
     _controller.addListener(() {
       if (_controller.offset > 100 && !_controller.position.outOfRange) {
         if (!silverCollapsed) {
-          myTitle = "Net Surf";
           silverCollapsed = true;
         }
       }
       if (_controller.offset <= 100 && !_controller.position.outOfRange) {
         if (silverCollapsed) {
-          myTitle = "";
           silverCollapsed = false;
         }
       }
@@ -81,7 +74,33 @@ class HomePageState extends State<HomePage> {
                 builder: (context, AsyncSnapshot<List<Product>> snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
                     allProducts = snapshot.data;
-                    return scrollView();
+                    return FutureBuilder(
+                      future: Preference.getRetailer(),
+                      builder: (context, AsyncSnapshot<User> snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          if (snapshot.data != null &&
+                              snapshot.data.name.isNotEmpty &&
+                              snapshot.data.mobileNo.isNotEmpty) {
+                            print("RetailerData: " + snapshot.data.name);
+                            isRetailer = false;
+                            return scrollView();
+                          } else {
+                            isRetailer = true;
+                            return scrollView();
+                          }
+                        } else if (snapshot.hasError) {
+                          return Text(
+                            "Sorry, Something went wrong.",
+                            style: TextStyle(color: Colors.red, fontSize: 14),
+                            textAlign: TextAlign.center,
+                          );
+                        } else {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                      },
+                    );
                   } else if (snapshot.connectionState == ConnectionState.none) {
                     return Text("No product data found");
                   }
@@ -97,6 +116,7 @@ class HomePageState extends State<HomePage> {
   }
 
   Widget scrollView() {
+    textValue = isRetailer ? "Retailer" : "Customer";
     return CustomScrollView(
       controller: _controller,
       slivers: <Widget>[
@@ -112,7 +132,7 @@ class HomePageState extends State<HomePage> {
       pinned: false,
       flexibleSpace: FlexibleSpaceBar(
         title: Text(
-          myTitle,
+          "",
           style: TextStyle(color: Colors.grey[100]),
         ),
         centerTitle: true,
@@ -158,7 +178,7 @@ class HomePageState extends State<HomePage> {
                 onTap: () {
                   _controller.jumpTo(_controller.position.maxScrollExtent);
                 }),
-            if (!widget.isRetailer)
+            if (!isRetailer)
               EditText(
                   required: false,
                   initTextValue: user.cRefId ?? "",
@@ -185,7 +205,7 @@ class HomePageState extends State<HomePage> {
                 onTap: () {
                   _controller.jumpTo(_controller.position.maxScrollExtent);
                 }),
-            if (!widget.isRetailer)
+            if (!isRetailer)
               EditText(
                   required: false,
                   initTextValue: user.email ?? "",
@@ -200,10 +220,20 @@ class HomePageState extends State<HomePage> {
                     _controller.jumpTo(_controller.position.maxScrollExtent);
                   }),
             CustomButton(
-              buttonText: widget.isRetailer ? "Save" : "Next",
+              buttonText: isRetailer ? "Save" : "Next",
               onClick: () {
-                if (widget.isRetailer) {
+                if (user.name.isEmpty && user.mobileNo.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text("Please fill all the required fields!"),
+                    duration: const Duration(seconds: 2),
+                    behavior: SnackBarBehavior.fixed,
+                    backgroundColor: Colors.red,
+                  ));
+                  return;
+                }
+                if (isRetailer) {
                   Preference.setRetailer(user);
+                  setState(() {});
                 } else {
                   Navigator.push(
                     context,

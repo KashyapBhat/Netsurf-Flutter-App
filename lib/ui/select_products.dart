@@ -69,41 +69,16 @@ class SelectProductsPageState extends State<SelectProductsPage> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           addProductLists(),
-          selectProductList(widget.allCategories),
-          selectItemFromProducts(widget.allProducts),
-          Container(
-            margin: EdgeInsets.only(left: 16, top: 5, right: 16, bottom: 2),
-            child: Padding(
-              padding:
-                  const EdgeInsets.only(left: 12, top: 5, right: 12, bottom: 5),
-              child: Container(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        totalPrice(),
-                        discountPrice(),
-                      ],
-                    ),
-                    finalTotalAmount()
-                  ],
-                ),
-              ),
-            ),
+          Row(
+            children: [
+              selectProductList(widget.allCategories),
+              selectItemFromProducts(widget.allProducts),
+            ],
           ),
           CustomButton(
-            buttonText: "Done",
+            buttonText: RUPEE_SYMBOL + " " + price.dispTotal(),
             onClick: () async {
-              Navigator.push(
-                context,
-                new MaterialPageRoute(
-                  builder: (__) => new BillerPage(
-                    billing: createBilling(),
-                  ),
-                ),
-              );
+              modalBottomSheetColor(context);
             },
           ),
           SizedBox(height: 5),
@@ -181,6 +156,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
                               }
                             }
                             calculateTotal();
+                            finalAmountReset();
                           });
                         },
                       ),
@@ -194,45 +170,132 @@ class SelectProductsPageState extends State<SelectProductsPage> {
   }
 
   Widget selectProductList(List<Product> allCategories) {
-    return CustomButton(
-        buttonText: "Category: " + selectedCategory.name ?? "Select Category",
-        onClick: () {
-          showModelBottomSheet(
-              context, _scaffoldKey, allCategories, categoryTextController,
-              (product) {
-            if (product != null) {
-              setState(() {
-                selectedCategory = product;
-                calculateTotal();
+    return Expanded(
+      child: Container(
+        padding: new EdgeInsets.only(left: 16, top: 8, bottom: 5, right: 8),
+        child: SideButtons(
+            buttonText: selectedCategory.name ?? "Select Category",
+            onClick: () {
+              showModelBottomSheet(
+                  context, _scaffoldKey, allCategories, categoryTextController,
+                  (product) {
+                if (product != null) {
+                  setState(() {
+                    selectedCategory = product;
+                    calculateTotal();
+                  });
+                }
               });
-            }
-          });
-        });
+            }),
+      ),
+    );
   }
 
   Widget selectItemFromProducts(List<Product> allproducts) {
-    return CustomButton(
-      buttonText: _getButtonText(),
-      onClick: () {
-        showModelBottomSheet(
-            context,
-            _scaffoldKey,
-            Products.getProductsFromCategorysIds(allproducts, selectedCategory),
-            itemTextController, (product) {
-          if (product != null) {
-            setState(() {
-              if (!selectedProducts.contains(product)) {
-                selectedProducts.add(product);
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text("Item is already in the list!"),
-                  duration: const Duration(seconds: 3),
-                  behavior: SnackBarBehavior.floating,
-                ));
+    return Expanded(
+      child: Container(
+        padding: new EdgeInsets.only(left: 8, top: 8, bottom: 5, right: 16),
+        child: SideButtons(
+          buttonText: _getButtonText(),
+          onClick: () {
+            showModelBottomSheet(
+                context,
+                _scaffoldKey,
+                Products.getProductsFromCategorysIds(
+                    allproducts, selectedCategory),
+                itemTextController, (product) {
+              if (product != null) {
+                setState(() {
+                  finalAmountReset();
+                  if (!selectedProducts.contains(product)) {
+                    selectedProducts.add(product);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text("Item is already in the list!"),
+                      duration: const Duration(seconds: 3),
+                      behavior: SnackBarBehavior.floating,
+                    ));
+                  }
+                  calculateTotal();
+                });
               }
-              calculateTotal();
             });
-          }
+          },
+        ),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  String _getButtonText() {
+    if (selectedCategory != null &&
+        selectedCategory.name != null &&
+        selectedCategory.name.isNotEmpty) {
+      return "Add item";
+    } else {
+      return "Select product category first";
+    }
+  }
+
+  String itemPrice(int index) {
+    return RUPEE_SYMBOL +
+        " " +
+        (selectedProducts[index].price * selectedProducts[index].quantity)
+            .ceil()
+            .toString();
+  }
+
+  Billing createBilling() {
+    BillingInfo billingInfo = BillingInfo("", "123412", DateTime.now());
+    User retailer = User("Shrinidhi", "9876567342", "", "", "");
+    Billing billing = Billing(
+        billingInfo, retailer, widget.customerData, selectedProducts, price);
+    print("Final" + price.finalAmt.toString());
+    return billing;
+  }
+
+  void modalBottomSheetColor(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
+      ),
+      builder: (builder) {
+        return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+          return SingleChildScrollView(
+            child: Container(
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
+              margin: EdgeInsets.only(left: 16, top: 26, right: 16, bottom: 0),
+              child: Column(
+                children: [
+                  totalPrice(),
+                  SizedBox(height: 8),
+                  discountPrice(setState),
+                  SizedBox(height: 8),
+                  CustomButton(
+                    buttonText: RUPEE_SYMBOL + " " + price.dispFinalAmt(),
+                    onClick: () async {
+                      Navigator.push(
+                        context,
+                        new MaterialPageRoute(
+                          builder: (__) => new BillerPage(
+                            billing: createBilling(),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
         });
       },
     );
@@ -243,25 +306,25 @@ class SelectProductsPageState extends State<SelectProductsPage> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Text(
-          "Total ",
+          "Total " + RUPEE_SYMBOL + " ",
           textAlign: TextAlign.center,
           style: TextStyle(
               color: Colors.grey[800],
               fontWeight: FontWeight.bold,
-              fontSize: 16),
+              fontSize: 15),
         ),
         Text(
-          RUPEE_SYMBOL + " " + price.dispTotal(),
+          price.dispTotal(),
           textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.grey[800], fontSize: 15),
+          style: TextStyle(color: Colors.grey.shade700, fontSize: 15),
         ),
       ],
     );
   }
 
-  Widget discountPrice() {
+  Widget discountPrice(StateSetter setState) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Text(
           "Discount ",
@@ -269,7 +332,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
           style: TextStyle(
               color: Colors.grey[800],
               fontWeight: FontWeight.bold,
-              fontSize: 16),
+              fontSize: 15),
         ),
         Text(
           "% ",
@@ -278,28 +341,21 @@ class SelectProductsPageState extends State<SelectProductsPage> {
         ),
         Container(
           width: 65,
-          height: 30,
           child: TextFormField(
             cursorWidth: 1.3,
             controller: discountController,
             textAlign: TextAlign.start,
             onTap: () {
               setState(() {
-                price.finalAmt = price.total;
-                discountController.clear();
-                discountedPriceController.clear();
+                finalAmountReset();
               });
             },
-            decoration: InputDecoration(
-              contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 18),
-            ),
             inputFormatters: [
               FilteringTextInputFormatter.allow((RegExp("[.0-9]"))),
             ],
             style: TextStyle(
               fontSize: 15,
             ),
-            textAlignVertical: TextAlignVertical.center,
             cursorColor: Colors.black,
             keyboardType: TextInputType.number,
             onChanged: (value) {
@@ -309,8 +365,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
                     double discount = double.parse(value);
                     price.discountAmt = 0;
                     if (discount > 0) {
-                      price.discountAmt = price.total * (discount / 100);
-                      price.finalAmt = price.total - price.discountAmt;
+                      price.finalAmt = price.total - discount;
                       if (price.finalAmt < 0) {
                         price.finalAmt = 0;
                       }
@@ -330,29 +385,21 @@ class SelectProductsPageState extends State<SelectProductsPage> {
         ),
         Container(
           width: 60,
-          height: 30,
           child: TextFormField(
             cursorWidth: 1.3,
             controller: discountedPriceController,
             textAlign: TextAlign.start,
             onTap: () {
               setState(() {
-                price.finalAmt = price.total;
-                discountController.clear();
-                discountedPriceController.clear();
+                finalAmountReset();
               });
             },
-            decoration: InputDecoration(
-              contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 18),
-            ),
             inputFormatters: [
-              new LengthLimitingTextInputFormatter(4),
               FilteringTextInputFormatter.allow((RegExp("[.0-9]"))),
             ],
             style: TextStyle(
               fontSize: 15,
             ),
-            textAlignVertical: TextAlignVertical.center,
             cursorColor: Colors.black,
             keyboardType: TextInputType.number,
             onChanged: (value) {
@@ -379,38 +426,6 @@ class SelectProductsPageState extends State<SelectProductsPage> {
     );
   }
 
-  Widget finalTotalAmount() {
-    return Container(
-      margin: EdgeInsets.only(top: 10),
-      alignment: Alignment.topLeft,
-      child: Center(
-        child: Text(
-          RUPEE_SYMBOL + " " + price.dispFinalAmt(),
-          textAlign: TextAlign.start,
-          style: TextStyle(
-              color: Colors.grey[800],
-              fontWeight: FontWeight.bold,
-              fontSize: 18),
-        ),
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  String _getButtonText() {
-    if (selectedCategory != null &&
-        selectedCategory.name != null &&
-        selectedCategory.name.isNotEmpty) {
-      return "Pick products";
-    } else {
-      return "Select product category first";
-    }
-  }
-
   void calculateTotal() {
     price.total = 0;
     for (var item in selectedProducts) {
@@ -420,19 +435,9 @@ class SelectProductsPageState extends State<SelectProductsPage> {
     }
   }
 
-  String itemPrice(int index) {
-    return RUPEE_SYMBOL +
-        " " +
-        (selectedProducts[index].price * selectedProducts[index].quantity)
-            .ceil()
-            .toString();
-  }
-
-  Billing createBilling() {
-    BillingInfo billingInfo = BillingInfo("", "123412", DateTime.now());
-    User retailer = User("Shrinidhi", "9876567342", "", "", "");
-    Billing billing = Billing(
-        billingInfo, retailer, widget.customerData, selectedProducts, price);
-    return billing;
+  void finalAmountReset() {
+    price.finalAmt = price.total;
+    discountController.clear();
+    discountedPriceController.clear();
   }
 }

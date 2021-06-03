@@ -117,3 +117,34 @@ class CustomButton extends StatelessWidget {
         ));
   }
 }
+
+class SideButtons extends StatelessWidget {
+  String buttonText = "";
+  Function onClick;
+
+  SideButtons({Key key, this.buttonText, this.onClick}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        onPrimary: Colors.white,
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(25.0)),
+        fixedSize: Size(110, 48),
+      ),
+      child: Text(
+        buttonText,
+        style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            height: 1.3,
+            letterSpacing: 1.1),
+      ),
+      onPressed: () {
+        onClick.call();
+      },
+    );
+  }
+}
