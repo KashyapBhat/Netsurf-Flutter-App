@@ -48,9 +48,10 @@ class MyApp extends StatelessWidget {
                             snapshot.data.name.isNotEmpty &&
                             snapshot.data.mobileNo.isNotEmpty) {
                           print("RetailerData: " + snapshot.data.name);
-                          return HomePage(isRetailer: false);
+                          return HomePage(
+                              isRetailer: false, retailer: snapshot.data);
                         } else {
-                          return HomePage(isRetailer: true);
+                          return HomePage(isRetailer: true, retailer: null);
                         }
                       } else if (snapshot.hasError) {
                         return Text(

@@ -13,8 +13,9 @@ import 'package:project_netsurf/ui/select_products.dart';
 
 class HomePage extends StatefulWidget {
   final bool isRetailer;
+  final User retailer;
 
-  HomePage({Key key, this.isRetailer}) : super(key: key);
+  HomePage({Key key, this.isRetailer, this.retailer}) : super(key: key);
 
   @override
   HomePageState createState() => HomePageState();
@@ -33,18 +34,16 @@ class HomePageState extends State<HomePage> {
   bool isRetailer = false;
   String textValue = "";
   User user = User("", "", "", "", "");
+  User retailer = User("", "", "", "", "");
 
   @override
   void initState() {
     super.initState();
     _controller = ScrollController();
     isRetailer = widget.isRetailer;
-
-    // Preference.getItem(SP_CUSTOMER_NAME).then((value) => {name = value});
-    // Preference.getItem(SP_CUSTOMER_M_NO).then((value) => {mobileNo = value});
-    // Preference.getItem(SP_CUSTOMER_RF_ID).then((value) => {cRefId = value});
-    // Preference.getItem(SP_CUSTOMER_ADDRESS).then((value) => {address = value});
-    // Preference.getItem(SP_CUSTOMER_EMAIL).then((value) => {email = value});
+    if (widget.retailer != null &&
+        widget.retailer.name.isNotEmpty &&
+        widget.retailer.mobileNo.isNotEmpty) retailer = widget.retailer;
     _controller.addListener(() {
       if (_controller.offset > 100 && !_controller.position.outOfRange) {
         if (!silverCollapsed) {
@@ -62,7 +61,7 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        drawer: AppDrawer(),
+        drawer: AppDrawer(retailer: retailer),
         key: _scaffoldKey,
         body: FutureBuilder(
           future: Preference.getProducts(SP_CATEGORY_IDS),
@@ -82,6 +81,9 @@ class HomePageState extends State<HomePage> {
                               snapshot.data.name.isNotEmpty &&
                               snapshot.data.mobileNo.isNotEmpty) {
                             print("RetailerData: " + snapshot.data.name);
+                            if (retailer.name.isEmpty &&
+                                retailer.mobileNo.isEmpty)
+                              retailer = snapshot.data;
                             isRetailer = false;
                             return scrollView();
                           } else {
@@ -242,6 +244,7 @@ class HomePageState extends State<HomePage> {
                         customerData: user,
                         allCategories: allCategories,
                         allProducts: allProducts,
+                        retailer: retailer,
                       ),
                     ),
                   );

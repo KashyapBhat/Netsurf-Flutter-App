@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:project_netsurf/common/models/customer.dart';
 import 'package:project_netsurf/common/sp_constants.dart';
 import 'package:project_netsurf/common/sp_utils.dart';
 
 class AppDrawer extends StatelessWidget {
+  final User retailer;
+
+  const AppDrawer({Key key, this.retailer}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
-          _createHeader(),
+          _createHeader(retailer),
           SizedBox(
             height: 8,
           ),
@@ -20,9 +25,14 @@ class AppDrawer extends StatelessWidget {
           ),
           _createDrawerItem(
             icon: Icons.account_box_rounded,
-            text: 'Clear',
+            text: 'Clear user data',
             onTap: () async {
-              await Preference.remove(SP_RETAILER);
+              if (await Preference.remove(SP_RETAILER))
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text("Cleared."),
+                  duration: const Duration(seconds: 2),
+                  behavior: SnackBarBehavior.floating,
+                ));
             },
           ),
           Divider(),
@@ -52,7 +62,7 @@ class AppDrawer extends StatelessWidget {
   }
 }
 
-Widget _createHeader() {
+Widget _createHeader(User retailer) {
   return DrawerHeader(
       margin: EdgeInsets.zero,
       padding: EdgeInsets.zero,
@@ -70,7 +80,7 @@ Widget _createHeader() {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Text(
-                "Shrinidhi",
+                retailer.name ?? "Anonymous User",
                 textAlign: TextAlign.start,
                 style: TextStyle(
                     color: Colors.black,
@@ -83,7 +93,7 @@ Widget _createHeader() {
               Padding(
                 padding: EdgeInsets.only(left: 14),
                 child: Text(
-                  "9483214259",
+                  retailer.mobileNo ?? "**********",
                   textAlign: TextAlign.start,
                   style: TextStyle(color: Colors.black, fontSize: 13.0),
                 ),

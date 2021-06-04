@@ -15,6 +15,7 @@ import 'package:project_netsurf/ui/biller.dart';
 class SelectProductsPage extends StatefulWidget {
   final String title;
   final User customerData;
+  final User retailer;
   final List<Product> allProducts;
   final List<Product> allCategories;
 
@@ -23,7 +24,8 @@ class SelectProductsPage extends StatefulWidget {
       this.title,
       this.customerData,
       this.allProducts,
-      this.allCategories})
+      this.allCategories,
+      this.retailer})
       : super(key: key);
 
   @override
@@ -251,9 +253,8 @@ class SelectProductsPageState extends State<SelectProductsPage> {
 
   Billing createBilling() {
     BillingInfo billingInfo = BillingInfo("", "123412", DateTime.now());
-    User retailer = User("Shrinidhi", "9876567342", "", "", "");
-    Billing billing = Billing(
-        billingInfo, retailer, widget.customerData, selectedProducts, price);
+    Billing billing = Billing(billingInfo, widget.retailer, widget.customerData,
+        selectedProducts, price);
     print("Final" + price.finalAmt.toString());
     return billing;
   }
