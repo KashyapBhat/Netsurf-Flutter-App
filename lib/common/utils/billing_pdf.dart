@@ -14,9 +14,10 @@ class PdfInvoiceApi {
     final pdf = Document();
 
     pdf.addPage(MultiPage(
+      pageFormat: PdfPageFormat.a4,
       build: (context) => [
         buildHeader(invoice),
-        SizedBox(height: 3 * PdfPageFormat.cm),
+        Divider(),
         buildTitle(invoice),
         buildInvoice(invoice),
         Divider(),
@@ -31,28 +32,30 @@ class PdfInvoiceApi {
   static Widget buildHeader(Billing invoice) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 1 * PdfPageFormat.cm),
+          SizedBox(height: 1 * PdfPageFormat.mm),
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               buildCustomerAddress(invoice.customer),
               buildInvoiceInfo(invoice.billingInfo),
             ],
           ),
+          SizedBox(height: 0.8 * PdfPageFormat.mm),
         ],
       );
 
   static Widget buildCustomerAddress(User customer) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(customer.name, style: TextStyle(fontWeight: FontWeight.bold)),
+          Text("Name: " + customer.name,
+              style: TextStyle(fontWeight: FontWeight.bold)),
           SizedBox(height: 2),
           Text(customer.mobileNo),
           SizedBox(height: 2),
           Text(customer.email),
-          SizedBox(height: 5),
-          Text("Ref No: " + customer.cRefId,
+          SizedBox(height: 2),
+          Text("Ref: " + customer.cRefId,
               style: TextStyle(fontWeight: FontWeight.bold)),
         ],
       );
@@ -86,26 +89,30 @@ class PdfInvoiceApi {
   static Widget buildSupplierAddress(User retailer) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Distributor:", style: TextStyle(fontWeight: FontWeight.bold)),
+          Text("Distributor", style: TextStyle(fontWeight: FontWeight.bold)),
           SizedBox(height: 1 * PdfPageFormat.mm),
           Text(retailer.name),
           SizedBox(height: 1 * PdfPageFormat.mm),
           Text(retailer.mobileNo),
-          SizedBox(height: 1 * PdfPageFormat.mm),
-          Text(retailer.address),
         ],
       );
 
   static Widget buildTitle(Billing invoice) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'ESTIMATE',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          SizedBox(height: 0.8 * PdfPageFormat.mm),
+          pw.Center(
+            child: Text(
+              'ESTIMATE',
+              textAlign: pw.TextAlign.center,
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
           ),
-          SizedBox(height: 0.8 * PdfPageFormat.cm),
-          Text(invoice.billingInfo.description),
-          SizedBox(height: 0.8 * PdfPageFormat.cm),
+          if (invoice.billingInfo.description.isNotEmpty)
+            SizedBox(height: 0.8 * PdfPageFormat.cm),
+          if (invoice.billingInfo.description.isNotEmpty)
+            Text(invoice.billingInfo.description),
+          SizedBox(height: 0.8 * PdfPageFormat.mm),
         ],
       );
 
@@ -193,7 +200,7 @@ class PdfInvoiceApi {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Divider(),
-          SizedBox(height: 1 * PdfPageFormat.cm),
+          SizedBox(height: 1.3 * PdfPageFormat.mm),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -209,10 +216,7 @@ class PdfInvoiceApi {
               // ),
             ],
           ),
-          SizedBox(height: 2 * PdfPageFormat.mm),
-          if (invoice.retailer.address != null &&
-              invoice.retailer.address.isNotEmpty)
-            buildSimpleText(title: 'Address', value: invoice.retailer.address),
+          SizedBox(height: 2 * PdfPageFormat.mm)
           // TODO: Payment info
           // SizedBox(height: 1 * PdfPageFormat.mm),
           // buildSimpleText(title: 'Paypal', value: invoice.retailer.paymentInfo),
@@ -225,7 +229,7 @@ class PdfInvoiceApi {
   }) {
     final style = TextStyle(fontWeight: FontWeight.bold);
 
-    return Row(
+    return pw.Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: pw.CrossAxisAlignment.end,
       children: [

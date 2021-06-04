@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:project_netsurf/common/models/customer.dart';
 import 'package:project_netsurf/common/product_constant.dart';
 import 'package:project_netsurf/common/sp_utils.dart';
+import 'package:project_netsurf/common/ui/loader.dart';
 import 'package:project_netsurf/ui/home.dart';
 
 void main() {
@@ -60,9 +61,7 @@ class MyApp extends StatelessWidget {
                           textAlign: TextAlign.center,
                         );
                       } else {
-                        return Center(
-                          child: CircularProgressIndicator(),
-                        );
+                        return CustomLoader();
                       }
                     },
                   );
@@ -73,9 +72,7 @@ class MyApp extends StatelessWidget {
                     textAlign: TextAlign.center,
                   );
                 } else {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
+                  return CustomLoader();
                 }
               },
             );
@@ -86,9 +83,7 @@ class MyApp extends StatelessWidget {
               textAlign: TextAlign.center,
             );
           } else {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
+            return CustomLoader();
           }
         },
       ),

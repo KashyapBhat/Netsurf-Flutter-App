@@ -1,13 +1,13 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:project_netsurf/common/models/customer.dart';
 import 'package:project_netsurf/common/models/product.dart';
-import 'package:project_netsurf/common/product_constant.dart';
 import 'package:project_netsurf/common/sp_constants.dart';
 import 'package:project_netsurf/common/sp_utils.dart';
 import 'package:project_netsurf/common/ui/edittext.dart';
+import 'package:project_netsurf/common/ui/loader.dart';
 import 'package:project_netsurf/ui/drawer.dart';
 import 'package:project_netsurf/ui/select_products.dart';
 
@@ -97,22 +97,20 @@ class HomePageState extends State<HomePage> {
                             textAlign: TextAlign.center,
                           );
                         } else {
-                          return Center(
-                            child: CircularProgressIndicator(),
-                          );
+                          return CustomLoader();
                         }
                       },
                     );
                   } else if (snapshot.connectionState == ConnectionState.none) {
                     return Text("No product data found");
                   }
-                  return Center(child: CircularProgressIndicator());
+                  return CustomLoader();
                 },
               );
             } else if (snapshot.connectionState == ConnectionState.none) {
               return Text("No product data found");
             }
-            return Center(child: CircularProgressIndicator());
+            return CustomLoader();
           },
         ));
   }
@@ -132,15 +130,21 @@ class HomePageState extends State<HomePage> {
     return SliverAppBar(
       expandedHeight: 200,
       pinned: false,
+      backgroundColor: Colors.white70,
       flexibleSpace: FlexibleSpaceBar(
         title: Text(
           "",
           style: TextStyle(color: Colors.grey[100]),
         ),
         centerTitle: true,
-        background: Image.asset(
-          'assets/netsurf.png',
+        background: CachedNetworkImage(
+          imageUrl:
+              "https://images.pexels.com/photos/3687999/pexels-photo-3687999.jpeg?cs=srgb&dl=pexels-mehrad-vosoughi-3687999.jpg&fm=jpg",
+          progressIndicatorBuilder: (context, url, downloadProgress) =>
+              CustomLoader(),
           fit: BoxFit.cover,
+          fadeInCurve: Curves.easeInToLinear,
+          errorWidget: (context, url, error) => Icon(Icons.error),
         ),
       ),
     );

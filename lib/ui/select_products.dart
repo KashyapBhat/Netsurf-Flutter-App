@@ -80,7 +80,15 @@ class SelectProductsPageState extends State<SelectProductsPage> {
           CustomButton(
             buttonText: RUPEE_SYMBOL + " " + price.dispTotal(),
             onClick: () async {
-              modalBottomSheetColor(context);
+              if (selectedProducts.isNotEmpty && price.total > 0) {
+                modalBottomSheetColor(context);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text("Add items before moving ahead."),
+                  duration: const Duration(seconds: 2),
+                  behavior: SnackBarBehavior.floating,
+                ));
+              }
             },
           ),
           SizedBox(height: 5),
@@ -96,6 +104,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
           padding: EdgeInsets.all(5),
           child: ListView.separated(
               shrinkWrap: true,
+              physics: ClampingScrollPhysics(),
               itemCount: selectedProducts.length ?? 0,
               separatorBuilder: (context, int) {
                 return Container(
@@ -283,14 +292,22 @@ class SelectProductsPageState extends State<SelectProductsPage> {
                   CustomButton(
                     buttonText: RUPEE_SYMBOL + " " + price.dispFinalAmt(),
                     onClick: () async {
-                      Navigator.push(
-                        context,
-                        new MaterialPageRoute(
-                          builder: (__) => new BillerPage(
-                            billing: createBilling(),
+                      if (selectedProducts.isNotEmpty && price.total > 0) {
+                        Navigator.push(
+                          context,
+                          new MaterialPageRoute(
+                            builder: (__) => new BillerPage(
+                              billing: createBilling(),
+                            ),
                           ),
-                        ),
-                      );
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text("Add items before moving ahead."),
+                          duration: const Duration(seconds: 2),
+                          behavior: SnackBarBehavior.floating,
+                        ));
+                      }
                     },
                   ),
                 ],

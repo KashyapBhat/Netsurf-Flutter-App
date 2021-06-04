@@ -42,7 +42,7 @@ class HomePageState extends State<BillerPage> {
               child: Column(
                 children: [
                   buildHeader(widget.billing),
-                  SizedBox(height: 16),
+                  SizedBox(height: 5),
                   buildTitle(widget.billing),
                   SizedBox(height: 5),
                   buildInvoice(widget.billing),
@@ -71,21 +71,22 @@ class HomePageState extends State<BillerPage> {
       );
 
   static Widget buildCustomerAddress(User customer) => Container(
-        padding: EdgeInsets.only(left: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(customer.name, style: TextStyle(fontWeight: FontWeight.bold)),
-            SizedBox(height: 2),
-            Text(customer.mobileNo),
-            SizedBox(height: 2),
-            Text(customer.email),
-            SizedBox(height: 2),
-            Text("Ref No: " + customer.cRefId,
-                style: TextStyle(fontWeight: FontWeight.bold)),
-          ],
-        ),
-      );
+    padding: EdgeInsets.only(left: 16),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("" + customer.name,
+            style: TextStyle(fontWeight: FontWeight.bold)),
+        SizedBox(height: 2),
+        Text("" + customer.mobileNo),
+        if (customer.email.isNotEmpty) SizedBox(height: 2),
+        if (customer.email.isNotEmpty) Text("" + customer.email),
+        SizedBox(height: 2),
+        Text("" + customer.cRefId),
+      ],
+    ),
+  );
 
   static Widget buildInvoiceInfo(BillingInfo info) {
     // final paymentTerms = '${info.dueDate.difference(info.date).inDays} days';
@@ -142,6 +143,7 @@ class HomePageState extends State<BillerPage> {
       child: Container(
         padding: EdgeInsets.only(left: 5, right: 5),
         child: ListView.separated(
+            physics: ClampingScrollPhysics(),
             shrinkWrap: true,
             itemCount: data.length ?? 0,
             separatorBuilder: (context, int) {
@@ -316,7 +318,7 @@ class HomePageState extends State<BillerPage> {
             ? MainAxisAlignment.spaceBetween
             : MainAxisAlignment.spaceBetween,
         children: [
-          Text(title, style: style),
+          Text("" + title, style: style),
           Text(" " + value, style: unite ? style : null),
         ],
       ),

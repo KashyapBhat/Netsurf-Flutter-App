@@ -15,9 +15,34 @@ class AppDrawer extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: <Widget>[
           _createHeader(retailer),
-          SizedBox(
-            height: 8,
+          SizedBox(height: 8),
+          Padding(
+            padding: EdgeInsets.only(left: 8, right: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left: 8),
+                  child: Text(
+                    retailer.name ?? "Anonymous User",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 15.0,
+                        fontWeight: FontWeight.w600),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 8),
+                  child: Text(
+                    retailer.mobileNo ?? "**********",
+                    style: TextStyle(color: Colors.black, fontSize: 13.0),
+                  ),
+                ),
+              ],
+            ),
           ),
+          Divider(),
+          SizedBox(height: 8),
           _createDrawerItem(
             icon: Icons.collections_bookmark,
             text: 'Saved bills',
@@ -64,44 +89,18 @@ class AppDrawer extends StatelessWidget {
 
 Widget _createHeader(User retailer) {
   return DrawerHeader(
-      margin: EdgeInsets.zero,
-      padding: EdgeInsets.zero,
-      decoration: BoxDecoration(
-        color: Colors.blue,
-        image: new DecorationImage(
-          image: new ExactAssetImage('assets/naturamore.png'),
-          fit: BoxFit.cover,
-        ),
+    margin: EdgeInsets.zero,
+    padding: EdgeInsets.zero,
+    decoration: BoxDecoration(
+      color: Colors.white70,
+      image: new DecorationImage(
+        image: NetworkImage(
+            "https://images.pexels.com/photos/3687999/pexels-photo-3687999.jpeg?cs=srgb&dl=pexels-mehrad-vosoughi-3687999.jpg&fm=jpg"),
+        fit: BoxFit.cover,
       ),
-      child: Stack(children: <Widget>[
-        Positioned(
-          bottom: 8.0,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                retailer.name ?? "Anonymous User",
-                textAlign: TextAlign.start,
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 15.0,
-                    fontWeight: FontWeight.w600),
-              ),
-              SizedBox(
-                height: 3,
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: 14),
-                child: Text(
-                  retailer.mobileNo ?? "**********",
-                  textAlign: TextAlign.start,
-                  style: TextStyle(color: Colors.black, fontSize: 13.0),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ]));
+    ),
+    child: Container(),
+  );
 }
 
 Widget _createDrawerItem(

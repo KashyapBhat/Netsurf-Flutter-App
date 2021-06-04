@@ -20,6 +20,8 @@ dependencies:
   intl: ^0.17.0
   firebase_core: ^1.2.0
   cloud_firestore: ^2.2.0
+  cached_network_image: ^3.0.0
+  shimmer: ^2.0.0
 
 flutter:
   uses-material-design: true
