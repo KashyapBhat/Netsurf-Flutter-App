@@ -50,6 +50,8 @@ class SelectProductsPageState extends State<SelectProductsPage> {
   void initState() {
     super.initState();
     print("Selected customer: " + widget.customerData.name ?? "");
+    widget.allCategories
+        .sort((a, b) => a.id.compareTo(b.id));
     selectedCategory = Products.getProductCategorys(widget.allCategories, 1);
     widget.allCategories.forEach((element) {
       print("Products Names: " + element.name);
@@ -279,6 +281,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
         return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
           return SingleChildScrollView(
+            physics: ClampingScrollPhysics(),
             child: Container(
               padding: EdgeInsets.only(
                   bottom: MediaQuery.of(context).viewInsets.bottom),
@@ -383,8 +386,8 @@ class SelectProductsPageState extends State<SelectProductsPage> {
                     double discount = double.parse(value);
                     price.discountAmt = 0;
                     if (discount > 0) {
-                      price.finalAmt =
-                          price.total - (price.total * (discount / 100));
+                      price.discountAmt = price.total * (discount / 100);
+                      price.finalAmt = price.total - price.discountAmt;
                       if (price.finalAmt < 0) {
                         price.finalAmt = 0;
                       }
@@ -428,6 +431,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
                     double discountPrice = double.parse(value);
                     price.discountAmt = 0;
                     if (discountPrice > 0) {
+                      price.discountAmt = discountPrice;
                       price.finalAmt = price.total - discountPrice;
                       if (price.finalAmt < 0) {
                         price.finalAmt = 0;

@@ -139,7 +139,7 @@ class HomePageState extends State<HomePage> {
         centerTitle: true,
         background: CachedNetworkImage(
           imageUrl:
-              "https://images.pexels.com/photos/3687999/pexels-photo-3687999.jpeg?cs=srgb&dl=pexels-mehrad-vosoughi-3687999.jpg&fm=jpg",
+              "https://firebasestorage.googleapis.com/v0/b/net-surf-app.appspot.com/o/netsurf.png?alt=media&token=aad4ee10-8cc5-4426-90e3-2e94e74be1a9",
           progressIndicatorBuilder: (context, url, downloadProgress) =>
               CustomLoader(),
           fit: BoxFit.cover,
