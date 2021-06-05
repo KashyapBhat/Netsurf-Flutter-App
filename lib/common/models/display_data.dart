@@ -1,5 +1,5 @@
 /*
-{ "Aemail": "info.codingcurve@gmail.com", "Alink": "https://codingcurve.in/", "Aname": "Author", "banner": "", "drawer": "" }
+{ "Aemail": "info.codingcurve@gmail.com", "Alink": "https://codingcurve.in/", "Aname": "Author", "banner": "", "drawer": "", playlink : "" }
 */
 
 class DisplayData {
@@ -8,6 +8,7 @@ class DisplayData {
   String _aname;
   String _banner;
   String _drawer;
+  String _playlink;
 
   String get aemail => _aemail;
 
@@ -19,17 +20,21 @@ class DisplayData {
 
   String get drawer => _drawer;
 
+  String get playlink => _playlink;
+
   DisplayData(
       {String aemail,
       String alink,
       String aname,
       String banner,
-      String drawer}) {
+      String drawer,
+      String playlink}) {
     _aemail = aemail;
     _alink = alink;
     _aname = aname;
     _banner = banner;
     _drawer = drawer;
+    _playlink = playlink;
   }
 
   DisplayData.fromJson(dynamic json) {
@@ -38,6 +43,7 @@ class DisplayData {
     _aname = json["Aname"];
     _banner = json["banner"];
     _drawer = json["drawer"];
+    _playlink = json["playlink"];
   }
 
   Map<String, dynamic> toJson() {
@@ -47,6 +53,7 @@ class DisplayData {
     map["Aname"] = _aname;
     map["banner"] = _banner;
     map["drawer"] = _drawer;
+    map["playlink"] = _playlink;
     return map;
   }
 }

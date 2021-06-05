@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:project_netsurf/common/contants.dart';
 import 'package:project_netsurf/common/models/customer.dart';
@@ -17,7 +18,7 @@ class AppDrawer extends StatelessWidget {
   const AppDrawer({Key key, this.retailer, this.displayData}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext buildContext) {
     return FutureBuilder(
       future: PackageInfo.fromPlatform(),
       builder: (context, AsyncSnapshot<PackageInfo> snapshot) {
@@ -62,7 +63,6 @@ class AppDrawer extends StatelessWidget {
                     ),
                   ),
                 if (retailer.name.isNotEmpty) Divider(),
-                SizedBox(height: 8),
                 _createDrawerItem(
                   icon: Icons.collections_bookmark_rounded,
                   text: 'Saved',
@@ -70,36 +70,34 @@ class AppDrawer extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (__) => BillsPage(
-                            retailer: retailer, displayData: displayData),
-                      ),
+                          builder: (__) => BillsPage(
+                              retailer: retailer, displayData: displayData)),
                     );
                   },
                 ),
                 _createDrawerItem(
                   icon: Icons.account_box_rounded,
-                  text: 'Clear user',
+                  text: 'Retailer Logout',
                   onTap: () async {
                     if (await Preference.remove(SP_RETAILER))
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text(
-                          "Cleared!",
-                          textAlign: TextAlign.end,
-                        ),
-                        duration: const Duration(seconds: 2),
-                        behavior: SnackBarBehavior.floating,
-                      ));
+                      Phoenix.rebirth(buildContext);
                   },
                 ),
                 Divider(),
                 _createDrawerItem(
-                  icon: Icons.tag_faces,
+                  icon: Icons.face_retouching_natural,
                   text: displayData.aname,
                   onTap: () {
                     _launchURL(displayData.alink);
                   },
                 ),
-                Divider(),
+                _createDrawerItem(
+                  icon: Icons.mobile_screen_share_rounded,
+                  text: "Share this app",
+                  onTap: () {
+                    _launchURL(displayData.playlink);
+                  },
+                ),
                 _createDrawerItem(
                   icon: Icons.bug_report,
                   text: 'Report an issue',
@@ -113,6 +111,7 @@ class AppDrawer extends StatelessWidget {
                     _launchURL(params.toString());
                   },
                 ),
+                Divider(),
                 ListTile(
                   title: Text("v " + snapshot.data.version),
                   onTap: () {},

@@ -150,7 +150,7 @@ class HomePageState extends State<HomePage> {
         ),
         centerTitle: true,
         background: CachedNetworkImage(
-          imageUrl: widget.displayData.banner,
+          imageUrl: widget.displayData.banner ?? "",
           progressIndicatorBuilder: (context, url, downloadProgress) =>
               CustomLoader(),
           fit: BoxFit.cover,

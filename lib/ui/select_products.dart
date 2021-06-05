@@ -249,7 +249,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
     if (selectedCategory != null &&
         selectedCategory.name != null &&
         selectedCategory.name.isNotEmpty) {
-      return "Add item";
+      return "Add products";
     } else {
       return "Select product category first";
     }
@@ -303,6 +303,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
                           new MaterialPageRoute(
                             builder: (__) => new BillerPage(
                               billing: createBilling(),
+                              isAlreadySaved: false,
                             ),
                           ),
                         );

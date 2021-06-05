@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:project_netsurf/common/models/billing.dart';
 import 'package:project_netsurf/common/models/billing_info.dart';
 import 'package:project_netsurf/common/models/customer.dart';
@@ -10,11 +11,14 @@ import 'package:project_netsurf/common/ui/edittext.dart';
 import 'package:project_netsurf/common/utils/billing_pdf.dart';
 import 'package:project_netsurf/common/utils/common_utils.dart';
 import 'package:project_netsurf/common/utils/pdf_api.dart';
+import 'package:project_netsurf/main.dart';
 
 class BillerPage extends StatefulWidget {
+  final bool isAlreadySaved;
   final Billing billing;
 
-  BillerPage({Key key, this.billing}) : super(key: key);
+  BillerPage({Key key, this.billing, this.isAlreadySaved = true})
+      : super(key: key);
 
   @override
   HomePageState createState() => HomePageState();
@@ -48,7 +52,7 @@ class HomePageState extends State<BillerPage> {
                   SizedBox(height: 5),
                   buildInvoice(widget.billing),
                   Divider(),
-                  buildTotal(widget.billing),
+                  buildTotal(context, widget.billing, widget.isAlreadySaved),
                 ],
               ),
             ),
@@ -210,7 +214,8 @@ class HomePageState extends State<BillerPage> {
     );
   }
 
-  static Widget buildTotal(Billing invoice) {
+  static Widget buildTotal(
+      BuildContext context, Billing invoice, bool isAlreadySaved) {
     final netTotal = invoice.price.dispTotal();
     final discount = invoice.price.dispDiscAmt();
     final total = invoice.price.dispFinalAmt();
@@ -258,7 +263,7 @@ class HomePageState extends State<BillerPage> {
           ),
           Expanded(
             child: CustomButton(
-              buttonText: "Save",
+              buttonText: isAlreadySaved ? "Open PDF" : "Save",
               onClick: () async {
                 await Preference.addBill(invoice);
                 final billings = await Preference.getBills();
@@ -267,6 +272,7 @@ class HomePageState extends State<BillerPage> {
                 });
                 File pdf = await PdfInvoiceApi.generate(invoice);
                 PdfApi.openFile(pdf);
+                Phoenix.rebirth(context);
               },
             ),
           ),
