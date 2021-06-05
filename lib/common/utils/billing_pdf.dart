@@ -26,7 +26,9 @@ class PdfInvoiceApi {
       footer: (context) => buildFooter(invoice),
     ));
 
-    return PdfApi.saveDocument(name: 'my_invoice.pdf', pdf: pdf);
+    return PdfApi.saveDocument(
+        name: invoice.customer.mobileNo + invoice.billingInfo.number + ".pdf",
+        pdf: pdf);
   }
 
   static Widget buildHeader(Billing invoice) => Column(

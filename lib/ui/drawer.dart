@@ -64,19 +64,15 @@ class AppDrawer extends StatelessWidget {
                 if (retailer.name.isNotEmpty) Divider(),
                 SizedBox(height: 8),
                 _createDrawerItem(
-                  icon: Icons.home_rounded,
-                  text: 'Home',
-                  onTap: () {},
-                ),
-                _createDrawerItem(
                   icon: Icons.collections_bookmark_rounded,
-                  text: 'Saved bills',
+                  text: 'Saved',
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (__) => BillsPage(
-                              retailer: retailer, displayData: displayData)),
+                        builder: (__) => BillsPage(
+                            retailer: retailer, displayData: displayData),
+                      ),
                     );
                   },
                 ),

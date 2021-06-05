@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -262,7 +264,10 @@ class SelectProductsPageState extends State<SelectProductsPage> {
   }
 
   Billing createBilling() {
-    BillingInfo billingInfo = BillingInfo("", "123412", DateTime.now());
+    Random random = new Random();
+    int randomNumber = random.nextInt(90000) + 10000;
+    BillingInfo billingInfo =
+        BillingInfo("", randomNumber.toString(), DateTime.now());
     Billing billing = Billing(billingInfo, widget.retailer, widget.customerData,
         selectedProducts, price);
     print("Final" + price.finalAmt.toString());

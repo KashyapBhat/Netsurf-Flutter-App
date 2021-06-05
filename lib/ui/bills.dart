@@ -7,6 +7,7 @@ import 'package:project_netsurf/common/models/customer.dart';
 import 'package:project_netsurf/common/models/display_data.dart';
 import 'package:project_netsurf/common/sp_utils.dart';
 import 'package:project_netsurf/common/ui/loader.dart';
+import 'package:project_netsurf/ui/biller.dart';
 import 'package:project_netsurf/ui/drawer.dart';
 
 class BillsPage extends StatefulWidget {
@@ -64,32 +65,48 @@ class HomePageState extends State<BillsPage> {
 
   Widget inputDataAndNext() {
     return Container(
-      padding: EdgeInsets.only(top: 10),
-      child: Container(
-        child: ListView.builder(
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          itemCount: bills.length,
-          itemBuilder: (BuildContext context, int index) {
-            return Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15.0),
-              ),
-              elevation: 5.0,
-              margin: new EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: Row(
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      print("Delete click");
-                    },
-                    icon: Icon(
-                      Icons.delete_forever_rounded,
-                      size: 30,
-                    ),
-                    color: Colors.black87,
+      child: ListView.builder(
+        scrollDirection: Axis.vertical,
+        physics: ClampingScrollPhysics(),
+        shrinkWrap: true,
+        itemCount: bills.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15.0),
+            ),
+            elevation: 5.0,
+            margin: new EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: Row(
+              children: [
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      print(bills.length);
+                      bills.remove(bills[index]);
+                      print(bills.length);
+                      bills.forEach((element) {
+                        print("" + element.price.dispFinalAmt());
+                      });
+                      Preference.addBills(bills);
+                    });
+                  },
+                  icon: Icon(
+                    Icons.delete_forever_rounded,
+                    size: 30,
                   ),
-                  Expanded(
+                  color: Colors.black87,
+                ),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (__) =>
+                                BillerPage(billing: bills[index])),
+                      );
+                    },
                     child: Container(
                       constraints: BoxConstraints(minHeight: 125),
                       decoration: new BoxDecoration(
@@ -145,7 +162,7 @@ class HomePageState extends State<BillsPage> {
                                         "Bill No: " +
                                             bills[index].billingInfo.number,
                                         style: TextStyle(
-                                          color: Colors.white,
+                                          color: Colors.white70,
                                           fontSize: 12,
                                         ),
                                       ),
@@ -157,7 +174,7 @@ class HomePageState extends State<BillsPage> {
                                           "CRef: " +
                                               bills[index].customer.cRefId,
                                           style: TextStyle(
-                                            color: Colors.white,
+                                            color: Colors.white70,
                                             fontSize: 12,
                                           ),
                                         ),
@@ -171,7 +188,7 @@ class HomePageState extends State<BillsPage> {
                                           bills[index].price.dispFinalAmt(),
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
-                                          color: Colors.white,
+                                          color: Colors.white70,
                                           fontSize: 16),
                                     ),
                                   ),
@@ -187,17 +204,17 @@ class HomePageState extends State<BillsPage> {
                               Icons.navigate_next,
                               size: 35,
                             ),
-                            color: Colors.white,
+                            color: Colors.white70,
                           ),
                         ],
                       ),
                     ),
                   ),
-                ],
-              ),
-            );
-          },
-        ),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
