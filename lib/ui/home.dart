@@ -11,6 +11,7 @@ import 'package:project_netsurf/common/ui/edittext.dart';
 import 'package:project_netsurf/common/ui/loader.dart';
 import 'package:project_netsurf/ui/drawer.dart';
 import 'package:project_netsurf/ui/select_products.dart';
+import 'package:shimmer/shimmer.dart';
 
 class HomePage extends StatefulWidget {
   final bool isRetailer;
@@ -63,59 +64,67 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        drawer: AppDrawer(retailer: retailer, displayData: widget.displayData),
-        key: _scaffoldKey,
-        body: FutureBuilder(
-          future: Preference.getProducts(SP_CATEGORY_IDS),
-          builder: (context, AsyncSnapshot<List<Product>> snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              allCategories = snapshot.data;
-              return FutureBuilder(
-                future: Preference.getProducts(SP_PRODUCTS),
-                builder: (context, AsyncSnapshot<List<Product>> snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    allProducts = snapshot.data;
-                    return FutureBuilder(
-                      future: Preference.getRetailer(),
-                      builder: (context, AsyncSnapshot<User> snapshot) {
-                        if (snapshot.connectionState == ConnectionState.done) {
-                          if (snapshot.data != null &&
-                              snapshot.data.name.isNotEmpty &&
-                              snapshot.data.mobileNo.isNotEmpty) {
-                            print("RetailerData: " + snapshot.data.name);
-                            if (retailer.name.isEmpty &&
-                                retailer.mobileNo.isEmpty)
-                              retailer = snapshot.data;
-                            isRetailer = false;
-                            return scrollView();
+    return Listener(
+      onPointerDown: (_) {
+        WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
+      },
+      child: Scaffold(
+          drawer:
+              AppDrawer(retailer: retailer, displayData: widget.displayData),
+          key: _scaffoldKey,
+          body: FutureBuilder(
+            future: Preference.getProducts(SP_CATEGORY_IDS),
+            builder: (context, AsyncSnapshot<List<Product>> snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                allCategories = snapshot.data;
+                return FutureBuilder(
+                  future: Preference.getProducts(SP_PRODUCTS),
+                  builder: (context, AsyncSnapshot<List<Product>> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      allProducts = snapshot.data;
+                      return FutureBuilder(
+                        future: Preference.getRetailer(),
+                        builder: (context, AsyncSnapshot<User> snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.done) {
+                            if (snapshot.data != null &&
+                                snapshot.data.name.isNotEmpty &&
+                                snapshot.data.mobileNo.isNotEmpty) {
+                              print("RetailerData: " + snapshot.data.name);
+                              if (retailer.name.isEmpty &&
+                                  retailer.mobileNo.isEmpty)
+                                retailer = snapshot.data;
+                              isRetailer = false;
+                              return scrollView();
+                            } else {
+                              isRetailer = true;
+                              return scrollView();
+                            }
+                          } else if (snapshot.hasError) {
+                            return Text(
+                              "Sorry, Something went wrong.",
+                              style: TextStyle(color: Colors.red, fontSize: 14),
+                              textAlign: TextAlign.center,
+                            );
                           } else {
-                            isRetailer = true;
-                            return scrollView();
+                            return CustomLoader();
                           }
-                        } else if (snapshot.hasError) {
-                          return Text(
-                            "Sorry, Something went wrong.",
-                            style: TextStyle(color: Colors.red, fontSize: 14),
-                            textAlign: TextAlign.center,
-                          );
-                        } else {
-                          return CustomLoader();
-                        }
-                      },
-                    );
-                  } else if (snapshot.connectionState == ConnectionState.none) {
-                    return Text("No product data found");
-                  }
-                  return CustomLoader();
-                },
-              );
-            } else if (snapshot.connectionState == ConnectionState.none) {
-              return Text("No product data found");
-            }
-            return CustomLoader();
-          },
-        ));
+                        },
+                      );
+                    } else if (snapshot.connectionState ==
+                        ConnectionState.none) {
+                      return Text("No product data found");
+                    }
+                    return CustomLoader();
+                  },
+                );
+              } else if (snapshot.connectionState == ConnectionState.none) {
+                return Text("No product data found");
+              }
+              return CustomLoader();
+            },
+          )),
+    );
   }
 
   Widget scrollView() {
@@ -133,7 +142,7 @@ class HomePageState extends State<HomePage> {
     return SliverAppBar(
       expandedHeight: 200,
       pinned: false,
-      backgroundColor: Colors.white70,
+      backgroundColor: Colors.white,
       flexibleSpace: FlexibleSpaceBar(
         title: Text(
           "",
@@ -159,74 +168,83 @@ class HomePageState extends State<HomePage> {
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            SizedBox(height: 0),
-            EditText(
-                required: true,
-                initTextValue: user.name ?? "",
-                type: TextInputType.name,
-                editTextName: textValue + " Name",
-                onText: (text) async {
-                  user.name = text;
-                  Preference.setItem(SP_CUSTOMER_NAME, text);
-                  print(text);
-                },
-                onTap: () {
-                  _controller.jumpTo(_controller.position.maxScrollExtent);
-                }),
-            EditText(
-                required: true,
-                initTextValue: user.mobileNo ?? "",
-                type: TextInputType.phone,
-                editTextName: textValue + " Mobile Number",
-                onText: (text) async {
-                  user.mobileNo = text;
-                  Preference.setItem(SP_CUSTOMER_M_NO, text);
-                  print(text);
-                },
-                onTap: () {
-                  _controller.jumpTo(_controller.position.maxScrollExtent);
-                }),
-            if (!isRetailer)
-              EditText(
-                  required: false,
-                  initTextValue: user.cRefId ?? "",
-                  editTextName: textValue + " Reference ID",
+            Flexible(
+              child: EditText(
+                  required: true,
+                  initTextValue: user.name ?? "",
+                  type: TextInputType.name,
+                  editTextName: textValue + " Name",
                   onText: (text) async {
-                    user.cRefId = text;
-                    await Preference.setItem(SP_CUSTOMER_RF_ID, text);
+                    user.name = text;
+                    Preference.setItem(SP_CUSTOMER_NAME, text);
                     print(text);
                   },
                   onTap: () {
                     _controller.jumpTo(_controller.position.maxScrollExtent);
                   }),
-            EditText(
-                required: false,
-                editTextName: "Address",
-                initTextValue: user.address ?? "",
-                type: TextInputType.streetAddress,
-                maxline: 3,
-                onText: (text) async {
-                  user.address = text;
-                  await Preference.setItem(SP_CUSTOMER_ADDRESS, text);
-                  print(text);
-                },
-                onTap: () {
-                  _controller.jumpTo(_controller.position.maxScrollExtent);
-                }),
-            if (!isRetailer)
-              EditText(
-                  required: false,
-                  initTextValue: user.email ?? "",
-                  editTextName: "Email",
-                  type: TextInputType.emailAddress,
+            ),
+            Flexible(
+              child: EditText(
+                  required: true,
+                  initTextValue: user.mobileNo ?? "",
+                  type: TextInputType.phone,
+                  editTextName: textValue + " Mobile Number",
                   onText: (text) async {
-                    user.email = text;
-                    await Preference.setItem(SP_CUSTOMER_EMAIL, text);
+                    user.mobileNo = text;
+                    Preference.setItem(SP_CUSTOMER_M_NO, text);
                     print(text);
                   },
                   onTap: () {
                     _controller.jumpTo(_controller.position.maxScrollExtent);
                   }),
+            ),
+            if (!isRetailer)
+              Flexible(
+                child: EditText(
+                    required: false,
+                    initTextValue: user.cRefId ?? "",
+                    editTextName: textValue + " Reference ID",
+                    onText: (text) async {
+                      user.cRefId = text;
+                      await Preference.setItem(SP_CUSTOMER_RF_ID, text);
+                      print(text);
+                    },
+                    onTap: () {
+                      _controller.jumpTo(_controller.position.maxScrollExtent);
+                    }),
+              ),
+            Flexible(
+              child: EditText(
+                  required: false,
+                  editTextName: "Address",
+                  initTextValue: user.address ?? "",
+                  type: TextInputType.streetAddress,
+                  maxline: 3,
+                  onText: (text) async {
+                    user.address = text;
+                    await Preference.setItem(SP_CUSTOMER_ADDRESS, text);
+                    print(text);
+                  },
+                  onTap: () {
+                    _controller.jumpTo(_controller.position.maxScrollExtent);
+                  }),
+            ),
+            if (!isRetailer)
+              Flexible(
+                child: EditText(
+                    required: false,
+                    initTextValue: user.email ?? "",
+                    editTextName: "Email",
+                    type: TextInputType.emailAddress,
+                    onText: (text) async {
+                      user.email = text;
+                      await Preference.setItem(SP_CUSTOMER_EMAIL, text);
+                      print(text);
+                    },
+                    onTap: () {
+                      _controller.jumpTo(_controller.position.maxScrollExtent);
+                    }),
+              ),
             CustomButton(
               buttonText: isRetailer ? "Save" : "Next",
               onClick: () {

@@ -24,31 +24,28 @@ class EditText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     _controller = TextEditingController();
-    return Stack(
-      children: <Widget>[
-        Container(
-          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-          child: TextFormField(
-            controller: _controller,
-            maxLines: maxline,
-            decoration: InputDecoration(
-              labelText: editTextName + (required ? " \*" : ""),
-              fillColor: Colors.white,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(25.0),
-                borderSide: BorderSide(),
-              ),
-            ),
-            keyboardType: type,
-            onChanged: (value) {
-              onText.call(_controller.text);
-            },
-            onTap: () {
-              onTap.call();
-            },
+    return Container(
+      constraints: BoxConstraints(minHeight: 55, minWidth: double.infinity),
+      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+      child: TextFormField(
+        controller: _controller,
+        maxLines: maxline,
+        decoration: InputDecoration(
+          labelText: editTextName + (required ? " \*" : ""),
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(25.0),
+            borderSide: BorderSide(),
           ),
         ),
-      ],
+        keyboardType: type,
+        onChanged: (value) {
+          onText.call(_controller.text);
+        },
+        onTap: () {
+          onTap.call();
+        },
+      ),
     );
   }
 }
@@ -130,8 +127,8 @@ class SideButtons extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         onPrimary: Colors.white,
         elevation: 2,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25.0)),
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.0)),
         fixedSize: Size(110, 48),
       ),
       child: Text(
