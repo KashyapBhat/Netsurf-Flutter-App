@@ -286,7 +286,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
 
   Billing createBilling() {
     BillingInfo billingInfo =
-        BillingInfo("", billingIdVal.toString(), DateTime.now());
+        BillingInfo("", billingIdVal.ceil().toString(), DateTime.now());
     Billing billing = Billing(billingInfo, widget.retailer, widget.customerData,
         selectedProducts, price);
     print("Final" + price.finalAmt.toString());
@@ -371,15 +371,18 @@ class SelectProductsPageState extends State<SelectProductsPage> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Text(
-            "Billing Id ",
+            "Bill Id ",
             textAlign: TextAlign.start,
-            style: TextStyle(color: Colors.grey[800], fontSize: 15),
+            style: TextStyle(
+                color: Colors.grey[800],
+                fontWeight: FontWeight.bold,
+                fontSize: 15),
           ),
           Padding(
-            padding: EdgeInsets.only(left: 5),
+            padding: EdgeInsets.only(left: 1),
             child: Container(
               width: 70,
-              child: TextFormField(
+              child: TextField(
                 cursorWidth: 1.3,
                 textAlign: TextAlign.start,
                 inputFormatters: [
