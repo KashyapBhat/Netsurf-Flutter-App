@@ -175,7 +175,17 @@ class SelectProductsPageState extends State<SelectProductsPage> {
                           });
                         },
                       ),
-                    )
+                    ),
+                    IconButton(
+                        onPressed: () {
+                          setState(() {
+                            selectedProducts.remove(selectedProducts[index]);
+                            calculateTotal();
+                            finalAmountReset();
+                          });
+                        },
+                        icon: Icon(Icons.delete_forever_rounded),
+                        color: Colors.black87)
                   ],
                 ));
               }),
