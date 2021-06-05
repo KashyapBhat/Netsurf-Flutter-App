@@ -47,6 +47,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
   Price price = Price(0, 0, 0);
   List<Product> selectedProducts = [];
   Product selectedCategory;
+  bool isFirstTime = true;
 
   @override
   void initState() {
@@ -184,11 +185,17 @@ class SelectProductsPageState extends State<SelectProductsPage> {
   }
 
   Widget selectProductList(List<Product> allCategories) {
+    final buttonText = isFirstTime ||
+            selectedCategory.name == null ||
+            selectedCategory.name.isEmpty
+        ? "Select Category"
+        : selectedCategory.name;
+    isFirstTime = false;
     return Expanded(
       child: Container(
         padding: new EdgeInsets.only(left: 16, top: 8, bottom: 5, right: 8),
         child: SideButtons(
-            buttonText: selectedCategory.name ?? "Select Category",
+            buttonText: buttonText,
             onClick: () {
               showModelBottomSheet(
                   context, _scaffoldKey, allCategories, categoryTextController,
@@ -212,32 +219,35 @@ class SelectProductsPageState extends State<SelectProductsPage> {
         child: SideButtons(
           buttonText: _getButtonText(),
           onClick: () {
-            showModelBottomSheet(
-                context,
-                _scaffoldKey,
-                Products.getProductsFromCategorysIds(
-                    allproducts, selectedCategory),
-                itemTextController, (product) {
-              if (product != null) {
-                setState(() {
-                  finalAmountReset();
-                  if (!selectedProducts.contains(product)) {
-                    selectedProducts.add(product);
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text("Item is already in the list!"),
-                      duration: const Duration(seconds: 3),
-                      behavior: SnackBarBehavior.floating,
-                    ));
-                  }
-                  calculateTotal();
-                });
-              }
-            });
+            showItemsBottomsheet(allproducts);
           },
         ),
       ),
     );
+  }
+
+  void showItemsBottomsheet(List<Product> allproducts) {
+    showModelBottomSheet(
+        context,
+        _scaffoldKey,
+        Products.getProductsFromCategorysIds(allproducts, selectedCategory),
+        itemTextController, (product) {
+      if (product != null) {
+        setState(() {
+          finalAmountReset();
+          if (!selectedProducts.contains(product)) {
+            selectedProducts.add(product);
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text("Item is already in the list!"),
+              duration: const Duration(seconds: 3),
+              behavior: SnackBarBehavior.floating,
+            ));
+          }
+          calculateTotal();
+        });
+      }
+    });
   }
 
   @override

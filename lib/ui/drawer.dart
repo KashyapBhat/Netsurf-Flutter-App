@@ -9,6 +9,7 @@ import 'package:project_netsurf/common/sp_constants.dart';
 import 'package:project_netsurf/common/sp_utils.dart';
 import 'package:project_netsurf/common/ui/loader.dart';
 import 'package:project_netsurf/ui/bills.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -70,8 +71,10 @@ class AppDrawer extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (__) => BillsPage(
-                              retailer: retailer, displayData: displayData)),
+                          builder: (__) =>
+                              BillsPage(
+                                  retailer: retailer,
+                                  displayData: displayData)),
                     );
                   },
                 ),
@@ -95,7 +98,8 @@ class AppDrawer extends StatelessWidget {
                   icon: Icons.mobile_screen_share_rounded,
                   text: "Share this app",
                   onTap: () {
-                    _launchURL(displayData.playlink);
+                    print("Play Link: " + displayData.playlink);
+                    Share.share(displayData.playlink);
                   },
                 ),
                 _createDrawerItem(
