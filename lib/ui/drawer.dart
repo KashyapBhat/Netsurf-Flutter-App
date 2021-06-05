@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:project_netsurf/common/contants.dart';
 import 'package:project_netsurf/common/models/customer.dart';
 import 'package:project_netsurf/common/models/display_data.dart';
 import 'package:project_netsurf/common/sp_constants.dart';
@@ -47,17 +48,14 @@ class AppDrawer extends StatelessWidget {
                           child: Text(
                             retailer.name,
                             style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 15.0,
-                                fontWeight: FontWeight.w600),
+                                fontSize: 15.0, fontWeight: FontWeight.w600),
                           ),
                         ),
                         Padding(
                           padding: EdgeInsets.only(left: 8),
                           child: Text(
                             retailer.mobileNo,
-                            style:
-                                TextStyle(color: Colors.black, fontSize: 13.0),
+                            style: TextStyle(fontSize: 13.0),
                           ),
                         ),
                       ],

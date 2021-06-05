@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:project_netsurf/common/contants.dart';
 import 'package:project_netsurf/common/models/customer.dart';
 import 'package:project_netsurf/common/models/display_data.dart';
 import 'package:project_netsurf/common/product_constant.dart';
@@ -25,7 +26,16 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Net Surf',
-      theme: ThemeData(primarySwatch: Colors.blue),
+      theme: ThemeData(
+        textTheme: TextTheme(
+          headline1: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
+          headline6: TextStyle(fontSize: 36.0, fontStyle: FontStyle.italic),
+          bodyText2: TextStyle(fontSize: 14.0),
+        ),
+        primaryColor: Color(PRIMARY_COLOR),
+        accentColor: Color(SECONDARY_COLOR),
+        primarySwatch: MaterialColor(SECONDARY_COLOR, THEME_COLOR),
+      ),
       builder: (context, child) => SafeArea(
           child: Container(
         height: MediaQuery.of(context).size.height,
@@ -76,11 +86,12 @@ class MyApp extends StatelessWidget {
                                           displayData: displayData);
                                     }
                                   } else if (snapshot.hasError) {
-                                    return Text(
-                                      "Sorry, Something went wrong.",
-                                      style: TextStyle(
-                                          color: Colors.red, fontSize: 14),
-                                      textAlign: TextAlign.center,
+                                    return Center(
+                                      child: Text(
+                                        "Sorry, Something went wrong.",
+                                        style: TextStyle(fontSize: 14),
+                                        textAlign: TextAlign.center,
+                                      ),
                                     );
                                   } else {
                                     return CustomLoader();

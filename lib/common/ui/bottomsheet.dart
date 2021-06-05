@@ -112,7 +112,7 @@ Widget _showBottomSheetWithSearch(int index, List<Product> productList) {
       Expanded(
           child: Container(
         child: Text(productList[index].getDisplayName(),
-            style: TextStyle(color: Colors.black, fontSize: 16, height: 1.3),
+            style: TextStyle(fontSize: 16, height: 1.3),
             textAlign: TextAlign.start),
         padding: EdgeInsets.only(left: 16, top: 8, right: 16, bottom: 8),
       )),
@@ -120,8 +120,7 @@ Widget _showBottomSheetWithSearch(int index, List<Product> productList) {
         Expanded(
             child: Container(
           child: Text(productList[index].price.toString(),
-              style: TextStyle(color: Colors.black, fontSize: 16),
-              textAlign: TextAlign.end),
+              style: TextStyle(fontSize: 16), textAlign: TextAlign.end),
           padding: EdgeInsets.only(left: 16, top: 8, right: 16, bottom: 8),
         )),
     ],

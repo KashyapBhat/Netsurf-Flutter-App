@@ -32,7 +32,6 @@ class EditText extends StatelessWidget {
         maxLines: maxline,
         decoration: InputDecoration(
           labelText: editTextName + (required ? " \*" : ""),
-          fillColor: Colors.white,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(25.0),
             borderSide: BorderSide(),
@@ -69,7 +68,6 @@ class InputText extends StatelessWidget {
         fontSize: 15,
       ),
       textAlignVertical: TextAlignVertical.center,
-      cursorColor: Colors.black,
       decoration: InputDecoration(
         contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 19),
       ),
@@ -94,7 +92,6 @@ class CustomButton extends StatelessWidget {
         width: MediaQuery.of(context).size.width,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            onPrimary: Colors.white,
             elevation: 2,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(25.0)),
@@ -125,7 +122,6 @@ class SideButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        onPrimary: Colors.white,
         elevation: 2,
         shape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.0)),
