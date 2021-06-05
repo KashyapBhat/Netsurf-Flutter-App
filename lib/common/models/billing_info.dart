@@ -39,16 +39,16 @@ class BillingInfo {
   BillingInfo.fromJson(dynamic json) {
     _description = json["description"];
     _number = json["number"];
-    _date = json["date"];
-    _dueDate = json["dueDate"];
+    _date = DateTime.tryParse(json["date"]);
+    _dueDate = DateTime.tryParse(json["dueDate"] ?? "");
   }
 
   Map<String, dynamic> toJson() {
     var map = <String, dynamic>{};
     map["description"] = _description;
     map["number"] = _number;
-    map["date"] = _date;
-    map["dueDate"] = _dueDate;
+    map["date"] = _date.toIso8601String();
+    map["dueDate"] = _dueDate?.toIso8601String();
     return map;
   }
 }

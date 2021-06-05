@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:project_netsurf/common/models/customer.dart';
 import 'package:project_netsurf/common/models/billing_info.dart';
 import 'package:project_netsurf/common/models/price.dart';
@@ -56,4 +58,18 @@ class Billing {
     }
     return map;
   }
+
+  static String encode(Billing billing) => json.encode(billing.toJson());
+
+  static Billing decode(String billing) =>
+      Billing.fromJson(json.decode(billing));
+
+  static String encodeList(List<Billing> products) => json.encode(
+        products.map<Map<String, dynamic>>((bill) => bill.toJson()).toList(),
+      );
+
+  static List<Billing> decodeList(String bills) =>
+      (json.decode(bills) as List<dynamic>)
+          .map<Billing>((bill) => Billing.fromJson(bill))
+          .toList();
 }

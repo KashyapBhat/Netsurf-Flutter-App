@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:project_netsurf/common/models/billing.dart';
 import 'package:project_netsurf/common/models/billing_info.dart';
 import 'package:project_netsurf/common/models/customer.dart';
+import 'package:project_netsurf/common/sp_utils.dart';
 import 'package:project_netsurf/common/ui/edittext.dart';
 import 'package:project_netsurf/common/utils/billing_pdf.dart';
 import 'package:project_netsurf/common/utils/common_utils.dart';
@@ -71,22 +72,22 @@ class HomePageState extends State<BillerPage> {
       );
 
   static Widget buildCustomerAddress(User customer) => Container(
-    padding: EdgeInsets.only(left: 16),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text("" + customer.name,
-            style: TextStyle(fontWeight: FontWeight.bold)),
-        SizedBox(height: 2),
-        Text("" + customer.mobileNo),
-        if (customer.email.isNotEmpty) SizedBox(height: 2),
-        if (customer.email.isNotEmpty) Text("" + customer.email),
-        SizedBox(height: 2),
-        Text("" + customer.cRefId),
-      ],
-    ),
-  );
+        padding: EdgeInsets.only(left: 16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("" + customer.name,
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            SizedBox(height: 2),
+            Text("" + customer.mobileNo),
+            if (customer.email.isNotEmpty) SizedBox(height: 2),
+            if (customer.email.isNotEmpty) Text("" + customer.email),
+            SizedBox(height: 2),
+            Text("" + customer.cRefId),
+          ],
+        ),
+      );
 
   static Widget buildInvoiceInfo(BillingInfo info) {
     // final paymentTerms = '${info.dueDate.difference(info.date).inDays} days';
@@ -256,12 +257,19 @@ class HomePageState extends State<BillerPage> {
             ),
           ),
           Expanded(
-              child: CustomButton(
-                  buttonText: "Save PDF",
-                  onClick: () async {
-                    File pdf = await PdfInvoiceApi.generate(invoice);
-                    PdfApi.openFile(pdf);
-                  })),
+            child: CustomButton(
+              buttonText: "Save",
+              onClick: () async {
+                await Preference.addBill(invoice);
+                final billings = await Preference.getBills();
+                billings.forEach((element) {
+                  print("BILLS" + element.price.dispFinalAmt());
+                });
+                File pdf = await PdfInvoiceApi.generate(invoice);
+                PdfApi.openFile(pdf);
+              },
+            ),
+          ),
         ],
       ),
     );

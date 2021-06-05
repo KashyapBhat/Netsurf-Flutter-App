@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:project_netsurf/common/models/billing.dart';
 import 'package:project_netsurf/common/models/customer.dart';
 import 'package:project_netsurf/common/sp_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,6 +14,7 @@ class Preference {
   static Future<SharedPreferences> getPref() async {
     return await _prefs;
   }
+
   static Future<bool> remove(String name) async {
     final SharedPreferences prefs = await _prefs;
     return prefs.remove(name);
@@ -97,5 +99,36 @@ class Preference {
     String decodedData = prefs.getString(SP_RETAILER);
     final User decodedRetailer = User.decode(decodedData);
     return decodedRetailer;
+  }
+
+  static Future<bool> addBill(Billing billing) async {
+    final SharedPreferences prefs = await _prefs;
+    List<Billing> bills = [];
+    if (!prefs.containsKey(SP_BILLING)) {
+      bills.add(billing);
+    } else {
+      bills = await getBills();
+      bills.insert(0, billing);
+    }
+    final String encodedData = Billing.encodeList(bills);
+    return await prefs.setString(SP_BILLING, encodedData);
+  }
+
+  static Future<bool> addBills(List<Billing> billing) async {
+    final SharedPreferences prefs = await _prefs;
+    final String encodedData = Billing.encodeList(billing);
+    return await prefs.setString(SP_BILLING, encodedData);
+  }
+
+  static Future<List<Billing>> getBills() async {
+    final SharedPreferences prefs = await _prefs;
+    String decodedData = prefs.getString(SP_BILLING);
+    final List<Billing> decodedRetailer = Billing.decodeList(decodedData);
+    return decodedRetailer;
+  }
+
+  static Future<bool> clearAllBills() async {
+    final SharedPreferences prefs = await _prefs;
+    return prefs.remove(SP_BILLING);
   }
 }

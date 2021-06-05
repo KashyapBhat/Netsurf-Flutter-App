@@ -8,3 +8,5 @@ const String SP_PRODUCTS = "SP_Products";
 const String SP_CATEGORY_IDS = "SP_CategoryIds";
 
 const String SP_RETAILER = "SP_Retailer";
+
+const String SP_BILLING = "SP_Billing";
