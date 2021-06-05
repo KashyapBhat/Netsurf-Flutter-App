@@ -6,6 +6,7 @@ import 'package:project_netsurf/common/models/display_data.dart';
 import 'package:project_netsurf/common/sp_constants.dart';
 import 'package:project_netsurf/common/sp_utils.dart';
 import 'package:project_netsurf/common/ui/loader.dart';
+import 'package:project_netsurf/ui/bills.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -31,7 +32,8 @@ class AppDrawer extends StatelessWidget {
                       CustomLoader(),
                   fit: BoxFit.cover,
                   fadeInCurve: Curves.easeInToLinear,
-                  errorWidget: (context, url, error) => Icon(Icons.error),
+                  errorWidget: (context, url, error) =>
+                      Icon(Icons.error_outlined),
                 ),
                 if (retailer.name.isNotEmpty) SizedBox(height: 8),
                 if (retailer.name.isNotEmpty)
@@ -64,9 +66,21 @@ class AppDrawer extends StatelessWidget {
                 if (retailer.name.isNotEmpty) Divider(),
                 SizedBox(height: 8),
                 _createDrawerItem(
-                  icon: Icons.collections_bookmark,
-                  text: 'Saved bills',
+                  icon: Icons.home_rounded,
+                  text: 'Home',
                   onTap: () {},
+                ),
+                _createDrawerItem(
+                  icon: Icons.collections_bookmark_rounded,
+                  text: 'Saved bills',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (__) => BillsPage(
+                              retailer: retailer, displayData: displayData)),
+                    );
+                  },
                 ),
                 _createDrawerItem(
                   icon: Icons.account_box_rounded,
@@ -85,7 +99,7 @@ class AppDrawer extends StatelessWidget {
                 ),
                 Divider(),
                 _createDrawerItem(
-                  icon: Icons.face,
+                  icon: Icons.tag_faces,
                   text: displayData.aname,
                   onTap: () {
                     _launchURL(displayData.alink);
