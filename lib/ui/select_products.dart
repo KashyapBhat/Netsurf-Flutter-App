@@ -48,6 +48,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
   List<Product> selectedProducts = [];
   Product selectedCategory;
   bool isFirstTime = true;
+  num billingIdVal = 0;
 
   @override
   void initState() {
@@ -284,10 +285,8 @@ class SelectProductsPageState extends State<SelectProductsPage> {
   }
 
   Billing createBilling() {
-    Random random = new Random();
-    int randomNumber = random.nextInt(90000) + 10000;
     BillingInfo billingInfo =
-        BillingInfo("", randomNumber.toString(), DateTime.now());
+        BillingInfo("", billingIdVal.toString(), DateTime.now());
     Billing billing = Billing(billingInfo, widget.retailer, widget.customerData,
         selectedProducts, price);
     print("Final" + price.finalAmt.toString());
@@ -314,6 +313,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
                 children: [
                   totalPrice(),
                   discountPrice(setState),
+                  billingId(),
                   CustomButton(
                     buttonText: RUPEE_SYMBOL + " " + price.dispFinalAmt(),
                     onClick: () async {
@@ -361,6 +361,45 @@ class SelectProductsPageState extends State<SelectProductsPage> {
           ),
         )
       ],
+    );
+  }
+
+  Widget billingId() {
+    return Padding(
+      padding: EdgeInsets.only(left: 12),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Text(
+            "Billing Id ",
+            textAlign: TextAlign.start,
+            style: TextStyle(color: Colors.grey[800], fontSize: 15),
+          ),
+          Padding(
+            padding: EdgeInsets.only(left: 5),
+            child: Container(
+              width: 70,
+              child: TextFormField(
+                cursorWidth: 1.3,
+                textAlign: TextAlign.start,
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow((RegExp("[.0-9]"))),
+                ],
+                style: TextStyle(
+                  fontSize: 15,
+                ),
+                cursorColor: Colors.black,
+                keyboardType: TextInputType.number,
+                onChanged: (value) {
+                  if (value != null && value.isNotEmpty) {
+                    billingIdVal = double.parse(value);
+                  }
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
