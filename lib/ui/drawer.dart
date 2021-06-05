@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:project_netsurf/common/models/customer.dart';
+import 'package:project_netsurf/common/models/display_data.dart';
 import 'package:project_netsurf/common/sp_constants.dart';
 import 'package:project_netsurf/common/sp_utils.dart';
 import 'package:project_netsurf/common/ui/loader.dart';
@@ -9,8 +10,9 @@ import 'package:url_launcher/url_launcher.dart';
 
 class AppDrawer extends StatelessWidget {
   final User retailer;
+  final DisplayData displayData;
 
-  const AppDrawer({Key key, this.retailer}) : super(key: key);
+  const AppDrawer({Key key, this.retailer, this.displayData}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,41 +26,42 @@ class AppDrawer extends StatelessWidget {
               children: <Widget>[
                 CachedNetworkImage(
                   height: 170,
-                  imageUrl:
-                      "https://firebasestorage.googleapis.com/v0/b/net-surf-app.appspot.com/o/naturamore.png?alt=media&token=de21fdd0-c6f6-4113-babe-ac0abdc53878",
+                  imageUrl: displayData.drawer,
                   progressIndicatorBuilder: (context, url, downloadProgress) =>
                       CustomLoader(),
                   fit: BoxFit.cover,
                   fadeInCurve: Curves.easeInToLinear,
                   errorWidget: (context, url, error) => Icon(Icons.error),
                 ),
-                SizedBox(height: 8),
-                Padding(
-                  padding: EdgeInsets.only(left: 8, right: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(left: 8),
-                        child: Text(
-                          retailer.name ?? "Anonymous User",
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 15.0,
-                              fontWeight: FontWeight.w600),
+                if (retailer.name.isNotEmpty) SizedBox(height: 8),
+                if (retailer.name.isNotEmpty)
+                  Padding(
+                    padding: EdgeInsets.only(left: 8, right: 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(left: 8),
+                          child: Text(
+                            retailer.name,
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 15.0,
+                                fontWeight: FontWeight.w600),
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 8),
-                        child: Text(
-                          retailer.mobileNo ?? "**********",
-                          style: TextStyle(color: Colors.black, fontSize: 13.0),
+                        Padding(
+                          padding: EdgeInsets.only(left: 8),
+                          child: Text(
+                            retailer.mobileNo,
+                            style:
+                                TextStyle(color: Colors.black, fontSize: 13.0),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                Divider(),
+                if (retailer.name.isNotEmpty) Divider(),
                 SizedBox(height: 8),
                 _createDrawerItem(
                   icon: Icons.collections_bookmark,
@@ -67,12 +70,12 @@ class AppDrawer extends StatelessWidget {
                 ),
                 _createDrawerItem(
                   icon: Icons.account_box_rounded,
-                  text: 'Clear user data',
+                  text: 'Clear user',
                   onTap: () async {
                     if (await Preference.remove(SP_RETAILER))
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                         content: Text(
-                          "Cleared.",
+                          "Cleared!",
                           textAlign: TextAlign.end,
                         ),
                         duration: const Duration(seconds: 2),
@@ -83,16 +86,10 @@ class AppDrawer extends StatelessWidget {
                 Divider(),
                 _createDrawerItem(
                   icon: Icons.face,
-                  text: 'Author',
+                  text: displayData.aname,
                   onTap: () {
-                    const _url = 'https://codingcurve.in/';
-                    _launchURL(_url);
+                    _launchURL(displayData.alink);
                   },
-                ),
-                _createDrawerItem(
-                  icon: Icons.stars,
-                  text: 'Useful Links',
-                  onTap: () {},
                 ),
                 Divider(),
                 _createDrawerItem(
@@ -101,7 +98,7 @@ class AppDrawer extends StatelessWidget {
                   onTap: () async {
                     final Uri params = Uri(
                       scheme: 'mailto',
-                      path: 'info.codingcurve@gmail.com',
+                      path: displayData.aemail,
                       query: 'subject=App Feedback&body=App Version: ' +
                           snapshot.data.version, //add subject and body here
                     );
@@ -109,7 +106,7 @@ class AppDrawer extends StatelessWidget {
                   },
                 ),
                 ListTile(
-                  title: Text(snapshot.data.version),
+                  title: Text("v " + snapshot.data.version),
                   onTap: () {},
                 ),
               ],

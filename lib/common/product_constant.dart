@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:project_netsurf/common/fs_constants.dart';
+import 'package:project_netsurf/common/models/display_data.dart';
 import 'package:project_netsurf/common/models/product.dart';
 import 'package:project_netsurf/common/sp_constants.dart';
 import 'package:project_netsurf/common/sp_utils.dart';
@@ -251,5 +252,16 @@ class Products {
       });
     });
     return productNamesCollection;
+  }
+
+  static Future<DocumentSnapshot<DisplayData>> getDisplayData(
+      FirebaseFirestore instance) async {
+    DocumentReference<Map<String, dynamic>> displayDataCollection =
+        instance.collection(FS_DISPLAY_DATA).doc(FS_DISPLAY);
+    final dataRef = displayDataCollection.withConverter<DisplayData>(
+        fromFirestore: (snapshot, _) => DisplayData.fromJson(snapshot.data()),
+        toFirestore: (data, _) => data.toJson());
+    final data = await dataRef.get();
+    return data;
   }
 }

@@ -3,6 +3,12 @@ import 'package:project_netsurf/common/models/billing_info.dart';
 import 'package:project_netsurf/common/models/price.dart';
 import 'package:project_netsurf/common/models/product.dart';
 
+/*
+{ "billingInfo": { "description": "", "number": "", "date": "", "dueDate": "" }, "retailer": { "name": "", "mobileNo": "", "refId": "", "address": "", "email": "" },
+"customer": { "name": "", "mobileNo": "", "cRefId": "", "address": "", "email": "" }, "productsSelected": [ { "id": 10, "name": "", "weight": "", "price": 10, "quantity": 100, "productCategoryId": 3 },
+{ "id": 10, "name": "", "weight": "", "price": 10, "quantity": 100, "productCategoryId": 3 } ], "price": { "price": 10, "discountAmt": 10, "finalAmt": 10 } }
+*/
+
 class Billing {
   BillingInfo billingInfo;
   User retailer;

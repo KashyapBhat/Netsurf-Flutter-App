@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:project_netsurf/common/models/customer.dart';
+import 'package:project_netsurf/common/models/display_data.dart';
 import 'package:project_netsurf/common/models/product.dart';
 import 'package:project_netsurf/common/sp_constants.dart';
 import 'package:project_netsurf/common/sp_utils.dart';
@@ -14,8 +15,10 @@ import 'package:project_netsurf/ui/select_products.dart';
 class HomePage extends StatefulWidget {
   final bool isRetailer;
   final User retailer;
+  final DisplayData displayData;
 
-  HomePage({Key key, this.isRetailer, this.retailer}) : super(key: key);
+  HomePage({Key key, this.isRetailer, this.retailer, this.displayData})
+      : super(key: key);
 
   @override
   HomePageState createState() => HomePageState();
@@ -61,7 +64,7 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        drawer: AppDrawer(retailer: retailer),
+        drawer: AppDrawer(retailer: retailer, displayData: widget.displayData),
         key: _scaffoldKey,
         body: FutureBuilder(
           future: Preference.getProducts(SP_CATEGORY_IDS),
@@ -138,8 +141,7 @@ class HomePageState extends State<HomePage> {
         ),
         centerTitle: true,
         background: CachedNetworkImage(
-          imageUrl:
-              "https://firebasestorage.googleapis.com/v0/b/net-surf-app.appspot.com/o/netsurf.png?alt=media&token=aad4ee10-8cc5-4426-90e3-2e94e74be1a9",
+          imageUrl: widget.displayData.banner,
           progressIndicatorBuilder: (context, url, downloadProgress) =>
               CustomLoader(),
           fit: BoxFit.cover,
