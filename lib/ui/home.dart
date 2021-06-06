@@ -168,6 +168,14 @@ class HomePageState extends State<HomePage> {
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
+            if (isRetailer)
+              Flexible(
+                child: Text(
+                  "Before moving forward, let's update the retailer details!",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                ),
+              ),
             Flexible(
               child: EditText(
                   required: true,
@@ -198,21 +206,20 @@ class HomePageState extends State<HomePage> {
                     _controller.jumpTo(_controller.position.maxScrollExtent);
                   }),
             ),
-            if (!isRetailer)
-              Flexible(
-                child: EditText(
-                    required: false,
-                    initTextValue: user.cRefId ?? "",
-                    editTextName: textValue + " Reference ID",
-                    onText: (text) async {
-                      user.cRefId = text;
-                      await Preference.setItem(SP_CUSTOMER_RF_ID, text);
-                      print(text);
-                    },
-                    onTap: () {
-                      _controller.jumpTo(_controller.position.maxScrollExtent);
-                    }),
-              ),
+            Flexible(
+              child: EditText(
+                  required: false,
+                  initTextValue: user.cRefId ?? "",
+                  editTextName: textValue + " Reference ID",
+                  onText: (text) async {
+                    user.cRefId = text;
+                    await Preference.setItem(SP_CUSTOMER_RF_ID, text);
+                    print(text);
+                  },
+                  onTap: () {
+                    _controller.jumpTo(_controller.position.maxScrollExtent);
+                  }),
+            ),
             // Flexible(
             //   child: EditText(
             //       required: false,
