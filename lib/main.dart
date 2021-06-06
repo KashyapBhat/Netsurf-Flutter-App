@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -58,95 +60,98 @@ class MyApp extends StatelessWidget {
               builder: (context,
                   AsyncSnapshot<DocumentSnapshot<DisplayData>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
-                  DisplayData displayData = snapshot.data.data();
-                  return FutureBuilder(
-                    future: _initialization,
-                    builder: (context, AsyncSnapshot<FirebaseApp> snapshot) {
-                      if (snapshot.connectionState == ConnectionState.done) {
-                        return FutureBuilder(
-                          future: Products.getAllProducts(
-                              FirebaseFirestore.instance),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.done) {
-                              return FutureBuilder(
-                                future: Preference.getRetailer(),
-                                builder:
-                                    (context, AsyncSnapshot<User> snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.done) {
-                                    if (snapshot.data != null &&
-                                        snapshot.data.name.isNotEmpty &&
-                                        snapshot.data.mobileNo.isNotEmpty) {
-                                      print("RetailerData: " +
-                                          snapshot.data.name);
-                                      return HomePage(
-                                          isRetailer: false,
-                                          retailer: snapshot.data,
-                                          displayData: displayData);
+                  if (snapshot.data != null) {
+                    DisplayData displayData = snapshot.data.data();
+                    return FutureBuilder(
+                      future: _initialization,
+                      builder: (context, AsyncSnapshot<FirebaseApp> snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          return FutureBuilder(
+                            future: Products.getAllProducts(
+                                FirebaseFirestore.instance),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.done) {
+                                return FutureBuilder(
+                                  future: Preference.getRetailer(),
+                                  builder:
+                                      (context, AsyncSnapshot<User> snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.done) {
+                                      if (snapshot.data != null &&
+                                          snapshot.data.name.isNotEmpty &&
+                                          snapshot.data.mobileNo.isNotEmpty) {
+                                        print("RetailerData: " +
+                                            snapshot.data.name);
+                                        return HomePage(
+                                            isRetailer: false,
+                                            retailer: snapshot.data,
+                                            displayData: displayData);
+                                      } else {
+                                        return HomePage(
+                                            isRetailer: true,
+                                            retailer: null,
+                                            displayData: displayData);
+                                      }
+                                    } else if (snapshot.hasError) {
+                                      return showErrorMessage(context);
                                     } else {
-                                      return HomePage(
-                                          isRetailer: true,
-                                          retailer: null,
-                                          displayData: displayData);
+                                      return CustomLoader();
                                     }
-                                  } else if (snapshot.hasError) {
-                                    return Center(
-                                      child: Text(
-                                        "Sorry, Something went wrong.",
-                                        style: TextStyle(fontSize: 14),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    );
-                                  } else {
-                                    return CustomLoader();
-                                  }
-                                },
-                              );
-                            } else if (snapshot.hasError) {
-                              return Text(
-                                "Sorry, Something went wrong.",
-                                style:
-                                    TextStyle(color: Colors.red, fontSize: 14),
-                                textAlign: TextAlign.center,
-                              );
-                            } else {
-                              return CustomLoader();
-                            }
-                          },
-                        );
-                      } else if (snapshot.hasError) {
-                        return Text(
-                          "Sorry, Something went wrong.",
-                          style: TextStyle(color: Colors.red, fontSize: 14),
-                          textAlign: TextAlign.center,
-                        );
-                      } else {
-                        return CustomLoader();
-                      }
-                    },
-                  );
+                                  },
+                                );
+                              } else if (snapshot.hasError) {
+                                return showErrorMessage(context);
+                              } else {
+                                return CustomLoader();
+                              }
+                            },
+                          );
+                        } else if (snapshot.hasError) {
+                          return showErrorMessage(context);
+                        } else {
+                          return CustomLoader();
+                        }
+                      },
+                    );
+                  } else {
+                    return showErrorMessage(context);
+                  }
                 } else if (snapshot.hasError) {
-                  return Text(
-                    "Sorry, Something went wrong.",
-                    style: TextStyle(color: Colors.red, fontSize: 14),
-                    textAlign: TextAlign.center,
-                  );
+                  return showErrorMessage(context);
                 } else {
                   return CustomLoader();
                 }
               },
             );
           } else if (snapshot.hasError) {
-            return Text(
-              "Sorry, Something went wrong.",
-              style: TextStyle(color: Colors.red, fontSize: 14),
-              textAlign: TextAlign.center,
-            );
+            return showErrorMessage(context);
           } else {
             return CustomLoader();
           }
         },
+      ),
+    );
+  }
+
+  Widget showErrorMessage(BuildContext context) {
+    return Scaffold(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Center(
+            child: Text(
+              "Something went wrong. Please check your internet!",
+              style: TextStyle(fontSize: 14),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          IconButton(
+              icon: Icon(Icons.refresh_rounded),
+              onPressed: () {
+                Phoenix.rebirth(context);
+              }),
+        ],
       ),
     );
   }
