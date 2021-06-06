@@ -213,22 +213,22 @@ class HomePageState extends State<HomePage> {
                       _controller.jumpTo(_controller.position.maxScrollExtent);
                     }),
               ),
-            Flexible(
-              child: EditText(
-                  required: false,
-                  editTextName: "Address",
-                  initTextValue: user.address ?? "",
-                  type: TextInputType.streetAddress,
-                  maxline: 3,
-                  onText: (text) async {
-                    user.address = text;
-                    await Preference.setItem(SP_CUSTOMER_ADDRESS, text);
-                    print(text);
-                  },
-                  onTap: () {
-                    _controller.jumpTo(_controller.position.maxScrollExtent);
-                  }),
-            ),
+            // Flexible(
+            //   child: EditText(
+            //       required: false,
+            //       editTextName: "Address",
+            //       initTextValue: user.address ?? "",
+            //       type: TextInputType.streetAddress,
+            //       maxline: 3,
+            //       onText: (text) async {
+            //         user.address = text;
+            //         await Preference.setItem(SP_CUSTOMER_ADDRESS, text);
+            //         print(text);
+            //       },
+            //       onTap: () {
+            //         _controller.jumpTo(_controller.position.maxScrollExtent);
+            //       }),
+            // ),
             if (!isRetailer)
               Flexible(
                 child: EditText(

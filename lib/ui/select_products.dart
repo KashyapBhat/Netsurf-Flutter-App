@@ -76,6 +76,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           addProductLists(),
+          if (selectedProducts.isEmpty) addInstruction(),
           Row(
             children: [
               selectProductList(widget.allCategories),
@@ -191,6 +192,38 @@ class SelectProductsPageState extends State<SelectProductsPage> {
                 ));
               }),
         ),
+      ),
+    );
+  }
+
+  Widget addInstruction() {
+    return Padding(
+      padding: EdgeInsets.only(left: 26, right: 26),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.only(right: 16, top: 15, bottom: 15),
+              child: Text(
+                "Click the button below to select a category. \n\nClick again to change the selected category.",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+          Container(height: 80, child: VerticalDivider(color: Colors.black87)),
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.only(left: 16, top: 15, bottom: 15),
+              child: Text(
+                "Click the button below to add products from a selected category",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
