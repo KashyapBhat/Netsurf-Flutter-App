@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 
+const String APP_NAME = "Netsurfs Calci";
 const String RUPEE_SYMBOL = "\u20B9";
 
 const int PRIMARY_COLOR = 0xFF333366;
 const int SECONDARY_COLOR = 0xFF5555aa;
+const int LOADER_COLOR = 0x445555aa;
+const int LOADER_BASE_COLOR = 0x115555aa;
 
 Map<int, Color> THEME_COLOR = {
   50: Color.fromRGBO(51, 51, 102, .1),

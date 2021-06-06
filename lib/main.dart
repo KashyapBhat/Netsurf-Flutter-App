@@ -15,7 +15,6 @@ void main() {
   runApp(Phoenix(child: MyApp()));
 }
 
-const String TITLE = "NET SURF";
 const String PATH_HOME = "/";
 const String PATH_PRODUCT = "/selectproducts";
 const String PATH_BILLER = "/billerpage";
@@ -26,7 +25,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Net Surf',
+      title: APP_NAME,
       theme: ThemeData(
         textTheme: TextTheme(
           headline1: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),

@@ -69,7 +69,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Text("Net Surf", textAlign: TextAlign.center),
+        title: Text(APP_NAME, textAlign: TextAlign.center),
         centerTitle: true,
       ),
       body: Column(

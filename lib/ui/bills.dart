@@ -37,7 +37,7 @@ class HomePageState extends State<BillsPage> {
       },
       child: Scaffold(
           appBar: AppBar(
-            title: Text("Net Surf", textAlign: TextAlign.center),
+            title: Text(APP_NAME, textAlign: TextAlign.center),
             centerTitle: true,
           ),
           key: _scaffoldKey,
@@ -103,8 +103,7 @@ class HomePageState extends State<BillsPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (__) =>
-                                BillerPage(billing: bills[index])),
+                            builder: (__) => BillerPage(billing: bills[index])),
                       );
                     },
                     child: Container(
