@@ -37,7 +37,7 @@ class HomePageState extends State<BillsPage> {
       },
       child: Scaffold(
           appBar: AppBar(
-            title: Text(APP_NAME, textAlign: TextAlign.center),
+            title: Text(SAVED, textAlign: TextAlign.center),
             centerTitle: true,
           ),
           key: _scaffoldKey,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 const String APP_NAME = "Netsurfs Calci";
+const String SAVED = "Saved Bills";
 const String RUPEE_SYMBOL = "\u20B9";
 
 const int PRIMARY_COLOR = 0xFF333366;
