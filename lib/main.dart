@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:project_netsurf/common/contants.dart';
 import 'package:project_netsurf/common/models/customer.dart';
@@ -15,7 +16,6 @@ void main() {
   runApp(Phoenix(child: MyApp()));
 }
 
-const String TITLE = "NET SURF";
 const String PATH_HOME = "/";
 const String PATH_PRODUCT = "/selectproducts";
 const String PATH_BILLER = "/billerpage";
@@ -25,8 +25,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     return MaterialApp(
-      title: 'Net Surf',
+      title: APP_NAME,
       theme: ThemeData(
         textTheme: TextTheme(
           headline1: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),

@@ -48,6 +48,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
   List<Product> selectedProducts = [];
   Product selectedCategory;
   bool isFirstTime = true;
+  num billingIdVal = 0;
 
   @override
   void initState() {
@@ -68,13 +69,14 @@ class SelectProductsPageState extends State<SelectProductsPage> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Text("Net Surf", textAlign: TextAlign.center),
+        title: Text(APP_NAME, textAlign: TextAlign.center),
         centerTitle: true,
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           addProductLists(),
+          if (selectedProducts.isEmpty) addInstruction(),
           Row(
             children: [
               selectProductList(widget.allCategories),
@@ -175,11 +177,53 @@ class SelectProductsPageState extends State<SelectProductsPage> {
                           });
                         },
                       ),
-                    )
+                    ),
+                    IconButton(
+                        onPressed: () {
+                          setState(() {
+                            selectedProducts.remove(selectedProducts[index]);
+                            calculateTotal();
+                            finalAmountReset();
+                          });
+                        },
+                        icon: Icon(Icons.delete_forever_rounded),
+                        color: Colors.black87)
                   ],
                 ));
               }),
         ),
+      ),
+    );
+  }
+
+  Widget addInstruction() {
+    return Padding(
+      padding: EdgeInsets.only(left: 26, right: 26),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.only(right: 16, top: 15, bottom: 15),
+              child: Text(
+                "Click the button below to select a category. \n\nClick again to change the selected category.",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+          Container(height: 80, child: VerticalDivider(color: Colors.black87)),
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.only(left: 16, top: 15, bottom: 15),
+              child: Text(
+                "Click the button below to add products from a selected category",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -274,10 +318,8 @@ class SelectProductsPageState extends State<SelectProductsPage> {
   }
 
   Billing createBilling() {
-    Random random = new Random();
-    int randomNumber = random.nextInt(90000) + 10000;
     BillingInfo billingInfo =
-        BillingInfo("", randomNumber.toString(), DateTime.now());
+        BillingInfo("", billingIdVal.ceil().toString(), DateTime.now());
     Billing billing = Billing(billingInfo, widget.retailer, widget.customerData,
         selectedProducts, price);
     print("Final" + price.finalAmt.toString());
@@ -304,6 +346,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
                 children: [
                   totalPrice(),
                   discountPrice(setState),
+                  billingId(),
                   CustomButton(
                     buttonText: RUPEE_SYMBOL + " " + price.dispFinalAmt(),
                     onClick: () async {
@@ -351,6 +394,48 @@ class SelectProductsPageState extends State<SelectProductsPage> {
           ),
         )
       ],
+    );
+  }
+
+  Widget billingId() {
+    return Padding(
+      padding: EdgeInsets.only(left: 12),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Text(
+            "Bill Id ",
+            textAlign: TextAlign.start,
+            style: TextStyle(
+                color: Colors.grey[800],
+                fontWeight: FontWeight.bold,
+                fontSize: 15),
+          ),
+          Padding(
+            padding: EdgeInsets.only(left: 1),
+            child: Container(
+              width: 70,
+              child: TextField(
+                cursorWidth: 1.3,
+                textAlign: TextAlign.start,
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow((RegExp("[.0-9]"))),
+                ],
+                style: TextStyle(
+                  fontSize: 15,
+                ),
+                cursorColor: Colors.black,
+                keyboardType: TextInputType.number,
+                onChanged: (value) {
+                  if (value != null && value.isNotEmpty) {
+                    billingIdVal = double.parse(value);
+                  }
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
