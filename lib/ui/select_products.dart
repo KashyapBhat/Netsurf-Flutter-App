@@ -206,8 +206,8 @@ class SelectProductsPageState extends State<SelectProductsPage> {
             child: Padding(
               padding: EdgeInsets.only(right: 16, top: 15, bottom: 15),
               child: Text(
-                "Click the button below to select a category. \n\nClick again to change the selected category.",
-                textAlign: TextAlign.center,
+                "Use the button below to select a category. Click again to change it.",
+                textAlign: TextAlign.left,
                 style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
               ),
             ),
@@ -217,8 +217,8 @@ class SelectProductsPageState extends State<SelectProductsPage> {
             child: Padding(
               padding: EdgeInsets.only(left: 16, top: 15, bottom: 15),
               child: Text(
-                "Click the button below to add products from a selected category",
-                textAlign: TextAlign.center,
+                "Use the button below to add products from the selected category.",
+                textAlign: TextAlign.left,
                 style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
               ),
             ),
