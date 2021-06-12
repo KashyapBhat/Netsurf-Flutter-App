@@ -11,7 +11,6 @@ import 'package:project_netsurf/common/ui/edittext.dart';
 import 'package:project_netsurf/common/ui/loader.dart';
 import 'package:project_netsurf/ui/drawer.dart';
 import 'package:project_netsurf/ui/select_products.dart';
-import 'package:shimmer/shimmer.dart';
 
 class HomePage extends StatefulWidget {
   final bool isRetailer;
@@ -255,9 +254,19 @@ class HomePageState extends State<HomePage> {
             CustomButton(
               buttonText: isRetailer ? "Save" : "Next",
               onClick: () {
-                if (user.name.isEmpty && user.mobileNo.isEmpty) {
+                if (user.name.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text("Please fill all the required fields!"),
+                    content: Text("Please fill the " + textValue + " name!"),
+                    duration: const Duration(seconds: 2),
+                    behavior: SnackBarBehavior.fixed,
+                    backgroundColor: Colors.red,
+                  ));
+                  return;
+                }
+                if (user.mobileNo.length < 10) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(
+                        "Please fill the 10 digit " + textValue + " mobile number!"),
                     duration: const Duration(seconds: 2),
                     behavior: SnackBarBehavior.fixed,
                     backgroundColor: Colors.red,

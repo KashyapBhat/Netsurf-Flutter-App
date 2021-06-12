@@ -264,7 +264,7 @@ class HomePageState extends State<BillerPage> {
           ),
           Expanded(
             child: CustomButton(
-              buttonText: isAlreadySaved ? "Share PDF" : "Save",
+              buttonText: isAlreadySaved ? "Share PDF" : "SAVE",
               onClick: () async {
                 if (!isAlreadySaved) await Preference.addBill(invoice);
                 final billings = await Preference.getBills();
