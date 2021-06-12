@@ -7,6 +7,7 @@ import 'package:project_netsurf/common/contants.dart';
 import 'package:project_netsurf/common/models/billing.dart';
 import 'package:project_netsurf/common/models/billing_info.dart';
 import 'package:project_netsurf/common/models/customer.dart';
+import 'package:project_netsurf/common/sp_constants.dart';
 import 'package:project_netsurf/common/sp_utils.dart';
 import 'package:project_netsurf/common/ui/edittext.dart';
 import 'package:project_netsurf/common/utils/billing_pdf.dart';
@@ -266,6 +267,9 @@ class HomePageState extends State<BillerPage> {
             child: CustomButton(
               buttonText: isAlreadySaved ? "Share PDF" : "SAVE",
               onClick: () async {
+                if (!isAlreadySaved)
+                  await Preference.setItem(
+                      SP_BILLING_ID, invoice.billingInfo.number);
                 if (!isAlreadySaved) await Preference.addBill(invoice);
                 final billings = await Preference.getBills();
                 billings.forEach((element) {

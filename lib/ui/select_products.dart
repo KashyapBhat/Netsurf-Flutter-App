@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_phoenix/generated/i18n.dart';
 import 'package:project_netsurf/common/contants.dart';
 import 'package:project_netsurf/common/models/billing.dart';
 import 'package:project_netsurf/common/models/billing_info.dart';
@@ -20,6 +21,7 @@ class SelectProductsPage extends StatefulWidget {
   final User retailer;
   final List<Product> allProducts;
   final List<Product> allCategories;
+  final String billingIdVal;
 
   SelectProductsPage(
       {Key key,
@@ -27,7 +29,8 @@ class SelectProductsPage extends StatefulWidget {
       this.customerData,
       this.allProducts,
       this.allCategories,
-      this.retailer})
+      this.retailer,
+      this.billingIdVal})
       : super(key: key);
 
   @override
@@ -48,7 +51,6 @@ class SelectProductsPageState extends State<SelectProductsPage> {
   List<Product> selectedProducts = [];
   Product selectedCategory;
   bool isFirstTime = true;
-  num billingIdVal = 0;
 
   @override
   void initState() {
@@ -319,7 +321,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
 
   Billing createBilling() {
     BillingInfo billingInfo =
-        BillingInfo("", billingIdVal.ceil().toString(), DateTime.now());
+        BillingInfo("", widget.billingIdVal, DateTime.now());
     Billing billing = Billing(billingInfo, widget.retailer, widget.customerData,
         selectedProducts, price);
     print("Final" + price.finalAmt.toString());
@@ -346,7 +348,8 @@ class SelectProductsPageState extends State<SelectProductsPage> {
                 children: [
                   totalPrice(),
                   discountPrice(setState),
-                  billingId(),
+                  SizedBox(height: 5),
+                  // billingId(),
                   CustomButton(
                     buttonText: RUPEE_SYMBOL + " " + price.dispFinalAmt(),
                     onClick: () async {
@@ -428,7 +431,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
                 keyboardType: TextInputType.number,
                 onChanged: (value) {
                   if (value != null && value.isNotEmpty) {
-                    billingIdVal = double.parse(value);
+                    // TO DO widget.billingIdVal = double.parse(value);
                   }
                 },
               ),

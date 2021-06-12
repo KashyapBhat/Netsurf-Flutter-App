@@ -9,6 +9,7 @@ import 'package:project_netsurf/common/contants.dart';
 import 'package:project_netsurf/common/models/customer.dart';
 import 'package:project_netsurf/common/models/display_data.dart';
 import 'package:project_netsurf/common/product_constant.dart';
+import 'package:project_netsurf/common/sp_constants.dart';
 import 'package:project_netsurf/common/sp_utils.dart';
 import 'package:project_netsurf/common/ui/loader.dart';
 import 'package:project_netsurf/ui/home.dart';
@@ -73,26 +74,52 @@ class MyApp extends StatelessWidget {
                               if (snapshot.connectionState ==
                                   ConnectionState.done) {
                                 return FutureBuilder(
-                                  future: Preference.getRetailer(),
-                                  builder:
-                                      (context, AsyncSnapshot<User> snapshot) {
+                                  future: Preference.getItem(SP_BILLING_ID),
+                                  builder: (context,
+                                      AsyncSnapshot<String> snapshot) {
                                     if (snapshot.connectionState ==
                                         ConnectionState.done) {
-                                      if (snapshot.data != null &&
-                                          snapshot.data.name.isNotEmpty &&
-                                          snapshot.data.mobileNo.isNotEmpty) {
-                                        print("RetailerData: " +
-                                            snapshot.data.name);
-                                        return HomePage(
-                                            isRetailer: false,
-                                            retailer: snapshot.data,
-                                            displayData: displayData);
+                                      String billingId = snapshot.data;
+                                      if (billingId == null ||
+                                          billingId.isEmpty) {
+                                        billingId = "1001";
                                       } else {
-                                        return HomePage(
-                                            isRetailer: true,
-                                            retailer: null,
-                                            displayData: displayData);
+                                        int lastBillID = int.parse(billingId);
+                                        lastBillID++;
+                                        billingId = lastBillID.toString();
                                       }
+                                      print("Billing:" + billingId);
+                                      return FutureBuilder(
+                                        future: Preference.getRetailer(),
+                                        builder: (context,
+                                            AsyncSnapshot<User> snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.done) {
+                                            if (snapshot.data != null &&
+                                                snapshot.data.name.isNotEmpty &&
+                                                snapshot
+                                                    .data.mobileNo.isNotEmpty) {
+                                              print("RetailerData: " +
+                                                  snapshot.data.name);
+                                              return HomePage(
+                                                  isRetailer: false,
+                                                  retailer: snapshot.data,
+                                                  displayData: displayData,
+                                                  billingIdVal: billingId);
+                                            } else {
+                                              return HomePage(
+                                                  isRetailer: true,
+                                                  retailer: null,
+                                                  displayData: displayData,
+                                                  billingIdVal: billingId);
+                                            }
+                                          } else if (snapshot.hasError) {
+                                            return showErrorMessage(context);
+                                          } else {
+                                            return CustomLoader();
+                                          }
+                                        },
+                                      );
                                     } else if (snapshot.hasError) {
                                       return showErrorMessage(context);
                                     } else {

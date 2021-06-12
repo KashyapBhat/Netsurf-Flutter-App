@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:project_netsurf/common/models/customer.dart';
 import 'package:project_netsurf/common/models/display_data.dart';
 import 'package:project_netsurf/common/models/product.dart';
@@ -13,11 +14,12 @@ import 'package:project_netsurf/ui/drawer.dart';
 import 'package:project_netsurf/ui/select_products.dart';
 
 class HomePage extends StatefulWidget {
+  final String billingIdVal;
   final bool isRetailer;
   final User retailer;
   final DisplayData displayData;
 
-  HomePage({Key key, this.isRetailer, this.retailer, this.displayData})
+  HomePage({Key key, this.isRetailer, this.retailer, this.displayData, this.billingIdVal})
       : super(key: key);
 
   @override
@@ -275,7 +277,7 @@ class HomePageState extends State<HomePage> {
                 }
                 if (isRetailer) {
                   Preference.setRetailer(user);
-                  setState(() {});
+                  Phoenix.rebirth(context);
                 } else {
                   Navigator.push(
                     context,
@@ -285,6 +287,7 @@ class HomePageState extends State<HomePage> {
                         allCategories: allCategories,
                         allProducts: allProducts,
                         retailer: retailer,
+                        billingIdVal: widget.billingIdVal,
                       ),
                     ),
                   );
