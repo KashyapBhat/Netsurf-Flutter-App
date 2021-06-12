@@ -10,3 +10,5 @@ const String SP_CATEGORY_IDS = "SP_CategoryIds";
 const String SP_RETAILER = "SP_Retailer";
 
 const String SP_BILLING = "SP_Billing";
+
+const String SP_BILLING_ID = "SP_BillingID";

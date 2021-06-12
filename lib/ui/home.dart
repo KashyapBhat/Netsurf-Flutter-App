@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:project_netsurf/common/models/customer.dart';
 import 'package:project_netsurf/common/models/display_data.dart';
 import 'package:project_netsurf/common/models/product.dart';
@@ -11,14 +12,14 @@ import 'package:project_netsurf/common/ui/edittext.dart';
 import 'package:project_netsurf/common/ui/loader.dart';
 import 'package:project_netsurf/ui/drawer.dart';
 import 'package:project_netsurf/ui/select_products.dart';
-import 'package:shimmer/shimmer.dart';
 
 class HomePage extends StatefulWidget {
+  final String billingIdVal;
   final bool isRetailer;
   final User retailer;
   final DisplayData displayData;
 
-  HomePage({Key key, this.isRetailer, this.retailer, this.displayData})
+  HomePage({Key key, this.isRetailer, this.retailer, this.displayData, this.billingIdVal})
       : super(key: key);
 
   @override
@@ -128,7 +129,7 @@ class HomePageState extends State<HomePage> {
   }
 
   Widget scrollView() {
-    textValue = isRetailer ? "Retailer" : "Customer";
+    textValue = isRetailer ? "Distributor" : "Customer";
     return CustomScrollView(
       controller: _controller,
       slivers: <Widget>[
@@ -171,7 +172,7 @@ class HomePageState extends State<HomePage> {
             if (isRetailer)
               Flexible(
                 child: Text(
-                  "Before moving forward, let's update the retailer details!",
+                  "Before moving forward, let's update the distributor details!",
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
                 ),
@@ -255,9 +256,19 @@ class HomePageState extends State<HomePage> {
             CustomButton(
               buttonText: isRetailer ? "Save" : "Next",
               onClick: () {
-                if (user.name.isEmpty && user.mobileNo.isEmpty) {
+                if (user.name.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text("Please fill all the required fields!"),
+                    content: Text("Please fill the " + textValue + " name!"),
+                    duration: const Duration(seconds: 2),
+                    behavior: SnackBarBehavior.fixed,
+                    backgroundColor: Colors.red,
+                  ));
+                  return;
+                }
+                if (user.mobileNo.length < 10) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(
+                        "Please fill the 10 digit " + textValue + " mobile number!"),
                     duration: const Duration(seconds: 2),
                     behavior: SnackBarBehavior.fixed,
                     backgroundColor: Colors.red,
@@ -266,7 +277,7 @@ class HomePageState extends State<HomePage> {
                 }
                 if (isRetailer) {
                   Preference.setRetailer(user);
-                  setState(() {});
+                  Phoenix.rebirth(context);
                 } else {
                   Navigator.push(
                     context,
@@ -276,6 +287,7 @@ class HomePageState extends State<HomePage> {
                         allCategories: allCategories,
                         allProducts: allProducts,
                         retailer: retailer,
+                        billingIdVal: widget.billingIdVal,
                       ),
                     ),
                   );

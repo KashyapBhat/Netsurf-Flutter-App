@@ -66,7 +66,7 @@ class AppDrawer extends StatelessWidget {
                 if (retailer.name.isNotEmpty) Divider(),
                 _createDrawerItem(
                   icon: Icons.collections_bookmark_rounded,
-                  text: 'Saved',
+                  text: SAVED,
                   onTap: () {
                     Navigator.push(
                       context,
@@ -80,7 +80,7 @@ class AppDrawer extends StatelessWidget {
                 ),
                 _createDrawerItem(
                   icon: Icons.account_box_rounded,
-                  text: 'Retailer Logout',
+                  text: 'Distributor Logout',
                   onTap: () async {
                     if (await Preference.remove(SP_RETAILER))
                       Phoenix.rebirth(buildContext);
