@@ -128,7 +128,7 @@ class HomePageState extends State<HomePage> {
   }
 
   Widget scrollView() {
-    textValue = isRetailer ? "Retailer" : "Customer";
+    textValue = isRetailer ? "Distributor" : "Customer";
     return CustomScrollView(
       controller: _controller,
       slivers: <Widget>[
@@ -171,7 +171,7 @@ class HomePageState extends State<HomePage> {
             if (isRetailer)
               Flexible(
                 child: Text(
-                  "Before moving forward, let's update the retailer details!",
+                  "Before moving forward, let's update the distributor details!",
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
                 ),

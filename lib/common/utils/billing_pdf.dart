@@ -53,12 +53,14 @@ class PdfInvoiceApi {
           Text("Name: " + customer.name,
               style: TextStyle(fontWeight: FontWeight.bold)),
           SizedBox(height: 2),
-          Text(customer.mobileNo),
+          Text("Phone: " + customer.mobileNo),
           SizedBox(height: 2),
           Text(customer.email),
-          SizedBox(height: 2),
-          Text("Ref: " + customer.cRefId,
-              style: TextStyle(fontWeight: FontWeight.bold)),
+          if (customer.cRefId != null && customer.cRefId.isNotEmpty)
+            SizedBox(height: 2),
+          if (customer.cRefId != null && customer.cRefId.isNotEmpty)
+            Text("Ref: " + customer.cRefId,
+                style: TextStyle(fontWeight: FontWeight.bold)),
         ],
       );
 
