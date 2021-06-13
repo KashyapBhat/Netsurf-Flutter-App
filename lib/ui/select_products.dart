@@ -253,35 +253,33 @@ class SelectProductsPageState extends State<SelectProductsPage> {
         child: SideButtons(
           buttonText: _getButtonText(),
           onClick: () {
-            showItemsBottomsheet(allproducts);
+            selectProductsBottomSheet(
+                context,
+                _scaffoldKey,
+                Products.getProductsFromCategorysIds(
+                    allproducts, selectedCategory, selectedProducts),
+                itemTextController, (context, product) {
+              if (product != null) {
+                setState(() {
+                  finalAmountReset();
+                  if (!selectedProducts.contains(product) &&
+                      !productPresent(product)) {
+                    selectedProducts.add(product);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text("Item is already in the list!"),
+                      duration: const Duration(seconds: 3),
+                      behavior: SnackBarBehavior.floating,
+                    ));
+                  }
+                  calculateTotal();
+                });
+              }
+            });
           },
         ),
       ),
     );
-  }
-
-  void showItemsBottomsheet(List<Product> allproducts) {
-    selectProductsBottomSheet(
-        context,
-        _scaffoldKey,
-        Products.getProductsFromCategorysIds(allproducts, selectedCategory),
-        itemTextController, (product) {
-      if (product != null) {
-        setState(() {
-          finalAmountReset();
-          if (!selectedProducts.contains(product)) {
-            selectedProducts.add(product);
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text("Item is already in the list!"),
-              duration: const Duration(seconds: 3),
-              behavior: SnackBarBehavior.floating,
-            ));
-          }
-          calculateTotal();
-        });
-      }
-    });
   }
 
   @override
@@ -569,5 +567,12 @@ class SelectProductsPageState extends State<SelectProductsPage> {
     price.finalAmt = price.total;
     discountController.clear();
     discountedPriceController.clear();
+  }
+
+  bool productPresent(Product product) {
+    return selectedProducts.any((element) {
+      return element.id == product.id &&
+          element.productCategoryId == product.productCategoryId;
+    });
   }
 }

@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:project_netsurf/common/models/product.dart';
+import 'package:project_netsurf/common/ui/edittext.dart';
 
 void selectProductsBottomSheet(
     BuildContext context,
     GlobalKey<ScaffoldState> scaffoldKey,
     List<Product> productList,
     TextEditingController textController,
-    Function(Product) onClick) {
+    Function(BuildContext context, Product) onClick) {
   List<Product> _listAfterSearch;
-
+  print("Recreated");
   showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -26,8 +27,9 @@ void selectProductsBottomSheet(
                 return Column(
                   children: <Widget>[
                     Padding(
-                        padding: EdgeInsets.all(16),
-                        child: Row(children: <Widget>[
+                      padding: EdgeInsets.all(16),
+                      child: Row(
+                        children: <Widget>[
                           Expanded(
                               child: TextField(
                                   controller: textController,
@@ -54,28 +56,41 @@ void selectProductsBottomSheet(
                                   Navigator.pop(context);
                                 });
                               }),
-                        ])),
+                        ],
+                      ),
+                    ),
                     Expanded(
                       child: ListView.separated(
-                          controller: scrollController,
-                          itemCount: _getListViewItemCount(
-                              _listAfterSearch, productList),
-                          separatorBuilder: (context, int) {
-                            return Divider(
-                              indent: 10,
-                              endIndent: 10,
-                            );
-                          },
-                          itemBuilder: (context, index) {
-                            return InkWell(
-                                child: _getProductListAndWidget(
-                                    _listAfterSearch, productList, index),
-                                onTap: () {
-                                  onClick.call(_getClickedProduct(
-                                      _listAfterSearch, productList, index));
-                                  Navigator.of(context).pop();
-                                });
-                          }),
+                        controller: scrollController,
+                        itemCount: _getListViewItemCount(
+                            _listAfterSearch, productList),
+                        separatorBuilder: (context, int) {
+                          return Divider(
+                            indent: 10,
+                            endIndent: 10,
+                          );
+                        },
+                        itemBuilder: (context, index) {
+                          return InkWell(
+                            child: _getProductListAndWidget(
+                                _listAfterSearch, productList, index),
+                            onTap: () {
+                              setState(() {
+                                Product selectedProduct = _getClickedProduct(
+                                    _listAfterSearch, productList, index);
+                                onClick.call(context, selectedProduct);
+                                productList.remove(selectedProduct);
+                              });
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                    CustomButton(
+                      buttonText: "DONE",
+                      onClick: () {
+                        Navigator.of(context).pop();
+                      },
                     )
                   ],
                 );
@@ -98,12 +113,10 @@ Widget _showBottomSheetWithSearch(int index, List<Product> productList) {
             textAlign: TextAlign.start),
       )),
       if (productList[index].price != 0)
-        Expanded(
-          child: Container(
-            padding: EdgeInsets.only(left: 16, top: 8, right: 16, bottom: 8),
-            child: Text(productList[index].price.toString(),
-                style: TextStyle(fontSize: 15), textAlign: TextAlign.end),
-          ),
+        Container(
+          padding: EdgeInsets.only(left: 16, top: 8, right: 16, bottom: 8),
+          child: Text(productList[index].price.toString(),
+              style: TextStyle(fontSize: 15), textAlign: TextAlign.end),
         ),
     ],
   );

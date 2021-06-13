@@ -72,7 +72,7 @@ Widget _showBottomSheetWithSearch(int index, List<Product> productList) {
     child: Text(productList[index].getDisplayName(),
         style: TextStyle(
           fontSize: 15,
-          height: 1.3,
+          height: 1.5,
         ),
         textAlign: TextAlign.start),
   );
