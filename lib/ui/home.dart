@@ -19,7 +19,12 @@ class HomePage extends StatefulWidget {
   final User retailer;
   final DisplayData displayData;
 
-  HomePage({Key key, this.isRetailer, this.retailer, this.displayData, this.billingIdVal})
+  HomePage(
+      {Key key,
+      this.isRetailer,
+      this.retailer,
+      this.displayData,
+      this.billingIdVal})
       : super(key: key);
 
   @override
@@ -197,6 +202,7 @@ class HomePageState extends State<HomePage> {
                   required: true,
                   initTextValue: user.mobileNo ?? "",
                   type: TextInputType.phone,
+                  isPhone: true,
                   editTextName: textValue + " Mobile Number",
                   onText: (text) async {
                     user.mobileNo = text;
@@ -265,10 +271,11 @@ class HomePageState extends State<HomePage> {
                   ));
                   return;
                 }
-                if (user.mobileNo.length < 10) {
+                if (user.mobileNo.length != 10) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text(
-                        "Please fill the 10 digit " + textValue + " mobile number!"),
+                    content: Text("Please fill the 10 digit " +
+                        textValue +
+                        " mobile number!"),
                     duration: const Duration(seconds: 2),
                     behavior: SnackBarBehavior.fixed,
                     backgroundColor: Colors.red,
