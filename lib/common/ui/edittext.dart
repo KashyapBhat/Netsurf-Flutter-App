@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class EditText extends StatelessWidget {
   String editTextName = "";
   String initTextValue = "";
   TextInputType type = TextInputType.name;
   bool required = false;
+  bool isPhone = false;
   int maxline = 1;
   Function(String) onText;
   TextEditingController _controller;
@@ -18,12 +20,16 @@ class EditText extends StatelessWidget {
       this.maxline,
       this.onText,
       this.onTap,
-      this.initTextValue})
+      this.initTextValue,
+      this.isPhone})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     _controller = TextEditingController();
+    if (isPhone == null) {
+      isPhone = false;
+    }
     return Container(
       constraints: BoxConstraints(minHeight: 55, minWidth: double.infinity),
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
@@ -37,6 +43,10 @@ class EditText extends StatelessWidget {
             borderSide: BorderSide(),
           ),
         ),
+        inputFormatters: [
+          if (isPhone) FilteringTextInputFormatter.allow((RegExp("[.0-9]"))),
+        ],
+        maxLength: isPhone ? 10 : null,
         keyboardType: type,
         onChanged: (value) {
           onText.call(_controller.text);

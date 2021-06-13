@@ -14,16 +14,24 @@ class Products {
     return allCategories.firstWhere((element) => element.id == id);
   }
 
-  static List<Product> getProductsFromCategorysIds(
-      List<Product> allProducts, Product selectedProduct) {
+  static List<Product> getProductsFromCategorysIds(List<Product> allProducts,
+      Product selectedProduct, List<Product> selectedProducts) {
     List<Product> products = [];
     allProducts.forEach((element) {
-      if (element.productCategoryId == selectedProduct.id) {
+      if (element.productCategoryId == selectedProduct.id &&
+          !productPresent(selectedProducts, element)) {
         products.add(element);
       }
     });
     products.sort((a, b) => a.id.compareTo(b.id));
     return products;
+  }
+
+  static bool productPresent(List<Product> selectedProducts, Product product) {
+    return selectedProducts.any((element) {
+      return element.id == product.id &&
+          element.productCategoryId == product.productCategoryId;
+    });
   }
 
   static List<Product> _productCategories = <Product>[
