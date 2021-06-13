@@ -9,10 +9,11 @@ import 'package:project_netsurf/common/models/billing.dart';
 import 'package:project_netsurf/common/models/billing_info.dart';
 import 'package:project_netsurf/common/models/customer.dart';
 import 'package:project_netsurf/common/models/price.dart';
-import 'package:project_netsurf/common/ui/bottomsheet.dart';
+import 'package:project_netsurf/common/ui/select_product_bottomsheet.dart';
 import 'package:project_netsurf/common/ui/edittext.dart';
 import 'package:project_netsurf/common/models/product.dart';
 import 'package:project_netsurf/common/product_constant.dart';
+import 'package:project_netsurf/common/ui/select_category_bottomsheet.dart';
 import 'package:project_netsurf/ui/biller.dart';
 
 class SelectProductsPage extends StatefulWidget {
@@ -85,20 +86,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
               selectItemFromProducts(widget.allProducts),
             ],
           ),
-          CustomButton(
-            buttonText: RUPEE_SYMBOL + " " + price.dispTotal(),
-            onClick: () async {
-              if (selectedProducts.isNotEmpty && price.total > 0) {
-                modalBottomSheetColor(context);
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text("Add items before moving ahead."),
-                  duration: const Duration(seconds: 2),
-                  behavior: SnackBarBehavior.floating,
-                ));
-              }
-            },
-          ),
+          showDoneButton(),
           SizedBox(height: 5),
         ],
       ),
@@ -208,7 +196,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
             child: Padding(
               padding: EdgeInsets.only(right: 16, top: 15, bottom: 15),
               child: Text(
-                "Use the button below to select a category. Click again to change it.",
+                "Button below is to select a category, click again to change it.",
                 textAlign: TextAlign.left,
                 style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
               ),
@@ -219,7 +207,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
             child: Padding(
               padding: EdgeInsets.only(left: 16, top: 15, bottom: 15),
               child: Text(
-                "Use the button below to add products from the selected category.",
+                "Button below is to add many different products as required.",
                 textAlign: TextAlign.left,
                 style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
               ),
@@ -243,7 +231,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
         child: SideButtons(
             buttonText: buttonText,
             onClick: () {
-              showModelBottomSheet(
+              showSelectCategoryBottomSheet(
                   context, _scaffoldKey, allCategories, categoryTextController,
                   (product) {
                 if (product != null) {
@@ -265,35 +253,33 @@ class SelectProductsPageState extends State<SelectProductsPage> {
         child: SideButtons(
           buttonText: _getButtonText(),
           onClick: () {
-            showItemsBottomsheet(allproducts);
+            selectProductsBottomSheet(
+                context,
+                _scaffoldKey,
+                Products.getProductsFromCategorysIds(
+                    allproducts, selectedCategory, selectedProducts),
+                itemTextController, (context, product) {
+              if (product != null) {
+                setState(() {
+                  finalAmountReset();
+                  if (!selectedProducts.contains(product) &&
+                      !productPresent(product)) {
+                    selectedProducts.add(product);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text("Item is already in the list!"),
+                      duration: const Duration(seconds: 3),
+                      behavior: SnackBarBehavior.floating,
+                    ));
+                  }
+                  calculateTotal();
+                });
+              }
+            });
           },
         ),
       ),
     );
-  }
-
-  void showItemsBottomsheet(List<Product> allproducts) {
-    showModelBottomSheet(
-        context,
-        _scaffoldKey,
-        Products.getProductsFromCategorysIds(allproducts, selectedCategory),
-        itemTextController, (product) {
-      if (product != null) {
-        setState(() {
-          finalAmountReset();
-          if (!selectedProducts.contains(product)) {
-            selectedProducts.add(product);
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text("Item is already in the list!"),
-              duration: const Duration(seconds: 3),
-              behavior: SnackBarBehavior.floating,
-            ));
-          }
-          calculateTotal();
-        });
-      }
-    });
   }
 
   @override
@@ -551,6 +537,23 @@ class SelectProductsPageState extends State<SelectProductsPage> {
     );
   }
 
+  Widget showDoneButton() {
+    return CustomButton(
+      buttonText: RUPEE_SYMBOL + " " + price.dispTotal(),
+      onClick: () async {
+        if (selectedProducts.isNotEmpty && price.total > 0) {
+          modalBottomSheetColor(context);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Add items before moving ahead."),
+            duration: const Duration(seconds: 2),
+            behavior: SnackBarBehavior.floating,
+          ));
+        }
+      },
+    );
+  }
+
   void calculateTotal() {
     price.total = 0;
     for (var item in selectedProducts) {
@@ -564,5 +567,12 @@ class SelectProductsPageState extends State<SelectProductsPage> {
     price.finalAmt = price.total;
     discountController.clear();
     discountedPriceController.clear();
+  }
+
+  bool productPresent(Product product) {
+    return selectedProducts.any((element) {
+      return element.id == product.id &&
+          element.productCategoryId == product.productCategoryId;
+    });
   }
 }
