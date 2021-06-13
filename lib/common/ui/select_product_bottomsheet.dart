@@ -59,6 +59,9 @@ void selectProductsBottomSheet(
                         ],
                       ),
                     ),
+                    if (_getListViewItemCount(_listAfterSearch, productList) <
+                        1)
+                      Text("No more products to add!"),
                     Expanded(
                       child: ListView.separated(
                         controller: scrollController,
