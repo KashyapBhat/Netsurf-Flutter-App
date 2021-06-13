@@ -9,10 +9,11 @@ import 'package:project_netsurf/common/models/billing.dart';
 import 'package:project_netsurf/common/models/billing_info.dart';
 import 'package:project_netsurf/common/models/customer.dart';
 import 'package:project_netsurf/common/models/price.dart';
-import 'package:project_netsurf/common/ui/bottomsheet.dart';
+import 'package:project_netsurf/common/ui/select_product_bottomsheet.dart';
 import 'package:project_netsurf/common/ui/edittext.dart';
 import 'package:project_netsurf/common/models/product.dart';
 import 'package:project_netsurf/common/product_constant.dart';
+import 'package:project_netsurf/common/ui/select_category_bottomsheet.dart';
 import 'package:project_netsurf/ui/biller.dart';
 
 class SelectProductsPage extends StatefulWidget {
@@ -85,20 +86,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
               selectItemFromProducts(widget.allProducts),
             ],
           ),
-          CustomButton(
-            buttonText: RUPEE_SYMBOL + " " + price.dispTotal(),
-            onClick: () async {
-              if (selectedProducts.isNotEmpty && price.total > 0) {
-                modalBottomSheetColor(context);
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text("Add items before moving ahead."),
-                  duration: const Duration(seconds: 2),
-                  behavior: SnackBarBehavior.floating,
-                ));
-              }
-            },
-          ),
+          showDoneButton(),
           SizedBox(height: 5),
         ],
       ),
@@ -243,7 +231,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
         child: SideButtons(
             buttonText: buttonText,
             onClick: () {
-              showModelBottomSheet(
+              showSelectCategoryBottomSheet(
                   context, _scaffoldKey, allCategories, categoryTextController,
                   (product) {
                 if (product != null) {
@@ -273,7 +261,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
   }
 
   void showItemsBottomsheet(List<Product> allproducts) {
-    showModelBottomSheet(
+    selectProductsBottomSheet(
         context,
         _scaffoldKey,
         Products.getProductsFromCategorysIds(allproducts, selectedCategory),
@@ -548,6 +536,23 @@ class SelectProductsPageState extends State<SelectProductsPage> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget showDoneButton() {
+    return CustomButton(
+      buttonText: RUPEE_SYMBOL + " " + price.dispTotal(),
+      onClick: () async {
+        if (selectedProducts.isNotEmpty && price.total > 0) {
+          modalBottomSheetColor(context);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Add items before moving ahead."),
+            duration: const Duration(seconds: 2),
+            behavior: SnackBarBehavior.floating,
+          ));
+        }
+      },
     );
   }
 
