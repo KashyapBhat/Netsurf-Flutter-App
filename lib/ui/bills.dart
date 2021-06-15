@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:project_netsurf/common/contants.dart';
@@ -8,7 +7,6 @@ import 'package:project_netsurf/common/models/display_data.dart';
 import 'package:project_netsurf/common/sp_utils.dart';
 import 'package:project_netsurf/common/ui/loader.dart';
 import 'package:project_netsurf/ui/biller.dart';
-import 'package:project_netsurf/ui/drawer.dart';
 
 class BillsPage extends StatefulWidget {
   final DisplayData displayData;
@@ -23,10 +21,34 @@ class BillsPage extends StatefulWidget {
 class HomePageState extends State<BillsPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   List<Billing> bills;
+  Icon actionIcon = new Icon(
+    Icons.search,
+    color: Colors.white,
+  );
+  bool _isSearching;
+  String _searchText = "";
+  final TextEditingController _searchQuery = new TextEditingController();
+  Widget appBarTitle = new Text(
+    SAVED,
+    style: new TextStyle(color: Colors.white),
+  );
 
   @override
   void initState() {
     super.initState();
+    _isSearching = false;
+    _searchQuery.addListener(() {
+      if (_searchQuery.text.isEmpty) {
+        setState(() {
+          _searchText = "";
+        });
+      } else {
+        setState(() {
+          _isSearching = true;
+          _searchText = _searchQuery.text;
+        });
+      }
+    });
   }
 
   @override
@@ -36,34 +58,100 @@ class HomePageState extends State<BillsPage> {
         WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
       },
       child: Scaffold(
-          appBar: AppBar(
-            title: Text(SAVED, textAlign: TextAlign.center),
-            centerTitle: true,
-          ),
-          key: _scaffoldKey,
-          body: FutureBuilder(
-            future: Preference.getBills(),
-            builder: (context, AsyncSnapshot<List<Billing>> snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                bills = snapshot.data;
-                if (bills != null && bills.isNotEmpty) {
-                  bills.forEach((element) {
-                    print("BILLS: " + element.price.dispFinalAmt());
-                  });
-                  return inputDataAndNext();
-                } else {
-                  return Center(child: Text("No bills found!"));
-                }
-              } else if (snapshot.connectionState == ConnectionState.none) {
-                return Text("No product data found");
+        appBar: AppBar(
+          title: appBarTitle,
+          centerTitle: true,
+          actions: <Widget>[
+            new IconButton(
+              icon: actionIcon,
+              onPressed: () {
+                setState(() {
+                  if (this.actionIcon.icon == Icons.search) {
+                    this.actionIcon = new Icon(
+                      Icons.close,
+                      color: Colors.white,
+                    );
+                    this.appBarTitle = new TextField(
+                      controller: _searchQuery,
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                      decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.search, color: Colors.white),
+                          hintText: "Enter name/phno/billno...",
+                          hintStyle: new TextStyle(color: Colors.white)),
+                    );
+                    _handleSearchStart();
+                  } else {
+                    _handleSearchEnd();
+                  }
+                });
+              },
+            ),
+          ],
+        ),
+        key: _scaffoldKey,
+        body: FutureBuilder(
+          future: Preference.getBills(),
+          builder: (context, AsyncSnapshot<List<Billing>> snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              bills = snapshot.data;
+              if (bills != null && bills.isNotEmpty) {
+                bills.forEach((element) {
+                  print("BILLS: " + element.price.dispFinalAmt());
+                });
+                return inputDataAndNext(
+                    _isSearching ? _buildSearchList(bills) : bills);
+              } else {
+                return Center(child: Text("No bills found!"));
               }
-              return CustomLoader();
-            },
-          )),
+            } else if (snapshot.connectionState == ConnectionState.none) {
+              return Text("No product data found");
+            }
+            return CustomLoader();
+          },
+        ),
+      ),
     );
   }
 
-  Widget inputDataAndNext() {
+  List<Billing> _buildSearchList(List<Billing> bills) {
+    if (_searchText.isEmpty) {
+      return bills;
+    } else {
+      return bills
+          .where((bill) =>
+              bill.billingInfo.number.contains(_searchText) ||
+              bill.customer.mobileNo.contains(_searchText) ||
+              bill.customer.name
+                  .toLowerCase()
+                  .contains(_searchText.toLowerCase()))
+          .toList();
+    }
+  }
+
+  void _handleSearchStart() {
+    setState(() {
+      _isSearching = true;
+    });
+  }
+
+  void _handleSearchEnd() {
+    setState(() {
+      this.actionIcon = Icon(
+        Icons.search,
+        color: Colors.white,
+      );
+      this.appBarTitle = Text(
+        SAVED,
+        style: TextStyle(color: Colors.white),
+      );
+      _isSearching = false;
+      _searchQuery.clear();
+    });
+  }
+
+  Widget inputDataAndNext(List<Billing> bills) {
     return Container(
       child: ListView.builder(
         scrollDirection: Axis.vertical,
@@ -76,27 +164,28 @@ class HomePageState extends State<BillsPage> {
               borderRadius: BorderRadius.circular(15.0),
             ),
             elevation: 5.0,
-            margin: new EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: Row(
               children: [
-                IconButton(
-                  onPressed: () {
-                    setState(() {
-                      print(bills.length);
-                      bills.remove(bills[index]);
-                      print(bills.length);
-                      bills.forEach((element) {
-                        print("" + element.price.dispFinalAmt());
+                if (!_isSearching)
+                  IconButton(
+                    onPressed: () {
+                      setState(() {
+                        print(bills.length);
+                        bills.remove(bills[index]);
+                        print(bills.length);
+                        bills.forEach((element) {
+                          print("" + element.price.dispFinalAmt());
+                        });
+                        Preference.addBills(bills);
                       });
-                      Preference.addBills(bills);
-                    });
-                  },
-                  icon: Icon(
-                    Icons.delete_forever_rounded,
-                    size: 30,
+                    },
+                    icon: Icon(
+                      Icons.delete_forever_rounded,
+                      size: 30,
+                    ),
+                    color: Colors.black87,
                   ),
-                  color: Colors.black87,
-                ),
                 Expanded(
                   child: GestureDetector(
                     onTap: () {
@@ -108,15 +197,15 @@ class HomePageState extends State<BillsPage> {
                     },
                     child: Container(
                       constraints: BoxConstraints(minHeight: 125),
-                      decoration: new BoxDecoration(
-                        color: new Color(0xFF333366),
+                      decoration: BoxDecoration(
+                        color: Color(0xFF333366),
                         shape: BoxShape.rectangle,
-                        borderRadius: new BorderRadius.circular(15.0),
+                        borderRadius: BorderRadius.circular(15.0),
                         boxShadow: <BoxShadow>[
-                          new BoxShadow(
+                          BoxShadow(
                             color: Colors.black12,
                             blurRadius: 10.0,
-                            offset: new Offset(0.0, 10.0),
+                            offset: Offset(0.0, 10.0),
                           ),
                         ],
                       ),
