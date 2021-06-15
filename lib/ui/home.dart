@@ -159,7 +159,7 @@ class HomePageState extends State<HomePage> {
           imageUrl: widget.displayData.banner ?? "",
           progressIndicatorBuilder: (context, url, downloadProgress) =>
               CustomLoader(),
-          fit: BoxFit.cover,
+          fit: BoxFit.contain,
           fadeInCurve: Curves.easeInToLinear,
           errorWidget: (context, url, error) => Icon(Icons.error),
         ),
