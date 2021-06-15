@@ -32,7 +32,7 @@ class EditText extends StatelessWidget {
     }
     return Container(
       constraints: BoxConstraints(minHeight: 55, minWidth: double.infinity),
-      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: 26),
       child: TextFormField(
         controller: _controller,
         maxLines: maxline,
@@ -98,7 +98,7 @@ class CustomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: new EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+        padding: new EdgeInsets.symmetric(vertical: 2, horizontal: 16),
         width: MediaQuery.of(context).size.width,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
