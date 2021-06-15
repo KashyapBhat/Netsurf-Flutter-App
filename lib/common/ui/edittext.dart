@@ -35,6 +35,7 @@ class EditText extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 26),
       child: TextFormField(
         controller: _controller,
+        textCapitalization: TextCapitalization.characters,
         maxLines: maxline,
         decoration: InputDecoration(
           labelText: editTextName + (required ? " \*" : ""),
