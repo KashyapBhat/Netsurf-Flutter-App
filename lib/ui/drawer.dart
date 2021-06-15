@@ -33,7 +33,7 @@ class AppDrawer extends StatelessWidget {
                   imageUrl: displayData.drawer,
                   progressIndicatorBuilder: (context, url, downloadProgress) =>
                       CustomLoader(),
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain,
                   fadeInCurve: Curves.easeInToLinear,
                   errorWidget: (context, url, error) =>
                       Icon(Icons.error_outlined),
