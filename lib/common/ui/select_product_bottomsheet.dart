@@ -89,11 +89,14 @@ void selectProductsBottomSheet(
                         },
                       ),
                     ),
-                    CustomButton(
-                      buttonText: "DONE",
-                      onClick: () {
-                        Navigator.of(context).pop();
-                      },
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 8, top: 8),
+                      child: CustomButton(
+                        buttonText: "DONE",
+                        onClick: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
                     )
                   ],
                 );

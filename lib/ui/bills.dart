@@ -62,31 +62,51 @@ class HomePageState extends State<BillsPage> {
           title: appBarTitle,
           centerTitle: true,
           actions: <Widget>[
-            new IconButton(
-              icon: actionIcon,
-              onPressed: () {
-                setState(() {
-                  if (this.actionIcon.icon == Icons.search) {
-                    this.actionIcon = new Icon(
-                      Icons.close,
-                      color: Colors.white,
-                    );
-                    this.appBarTitle = new TextField(
-                      controller: _searchQuery,
-                      style: TextStyle(
+            Container(
+              margin: EdgeInsets.only(right: 8),
+              child: IconButton(
+                icon: actionIcon,
+                onPressed: () {
+                  setState(() {
+                    if (this.actionIcon.icon == Icons.search) {
+                      this.actionIcon = Icon(
+                        Icons.close,
                         color: Colors.white,
-                      ),
-                      decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.search, color: Colors.white),
-                          hintText: "Enter name/phno/billno...",
-                          hintStyle: new TextStyle(color: Colors.white)),
-                    );
-                    _handleSearchStart();
-                  } else {
-                    _handleSearchEnd();
-                  }
-                });
-              },
+                      );
+                      this.appBarTitle = Container(
+                        decoration: BoxDecoration(
+                          color: Colors.black26,
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: TextField(
+                          controller: _searchQuery,
+                          style: TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            prefixIcon: Icon(
+                              Icons.search,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                            prefixIconConstraints: BoxConstraints(
+                              minWidth: 30,
+                              minHeight: 30,
+                            ),
+                            hintText: "Search by name, phno or bill no",
+                            hintStyle: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      );
+                      _handleSearchStart();
+                    } else {
+                      _handleSearchEnd();
+                    }
+                  });
+                },
+              ),
             ),
           ],
         ),

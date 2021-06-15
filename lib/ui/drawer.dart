@@ -80,7 +80,7 @@ class AppDrawer extends StatelessWidget {
                 ),
                 _createDrawerItem(
                   icon: Icons.account_box_rounded,
-                  text: 'Distributor Logout',
+                  text: 'Distributor logout',
                   onTap: () async {
                     if (await Preference.remove(SP_RETAILER))
                       Phoenix.rebirth(buildContext);
