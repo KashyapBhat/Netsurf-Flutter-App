@@ -14,3 +14,5 @@ const String SP_BILLING = "SP_Billing";
 const String SP_BILLING_ID = "SP_BillingID";
 
 const String SP_DISPLAY = "SP_Display";
+
+const String SP_DT_REFRESH = "SP_DT_REFRESH";

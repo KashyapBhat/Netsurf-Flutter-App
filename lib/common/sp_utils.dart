@@ -150,4 +150,15 @@ class Preference {
     final SharedPreferences prefs = await _prefs;
     return prefs.remove(SP_BILLING);
   }
+
+  static Future<bool> setDateTime(String key) async {
+    final SharedPreferences prefs = await _prefs;
+    return await prefs.setString(key, DateTime.now().toIso8601String());
+  }
+
+  static Future<DateTime> getDateTime(String key) async {
+    final SharedPreferences prefs = await _prefs;
+    String displayString = prefs.getString(key);
+    return DateTime.parse(displayString);
+  }
 }
