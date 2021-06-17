@@ -9,6 +9,7 @@ import 'package:project_netsurf/common/models/display_data.dart';
 import 'package:project_netsurf/common/product_constant.dart';
 import 'package:project_netsurf/common/sp_constants.dart';
 import 'package:project_netsurf/common/sp_utils.dart';
+import 'package:project_netsurf/common/ui/error.dart';
 import 'package:project_netsurf/common/ui/loader.dart';
 import 'package:project_netsurf/ui/bills.dart';
 import 'package:share_plus/share_plus.dart';
@@ -82,18 +83,35 @@ class AppDrawer extends StatelessWidget {
                   icon: Icons.refresh_rounded,
                   text: 'Refresh App',
                   onTap: () async {
-                    Products.getDisplayData(FirebaseFirestore.instance, true);
-                    Products.getAllProducts(FirebaseFirestore.instance, true);
-                    // if (await Preference.remove(SP_RETAILER))
-                    //   Phoenix.rebirth(buildContext);
+                    Navigator.of(context).pop();
+                    if (await Preference.contains(SP_DT_REFRESH)) {
+                      DateTime oldDateTime =
+                          await Preference.getDateTime(SP_DT_REFRESH);
+                      DateTime timeNow = DateTime.now();
+                      Duration timeDifference = timeNow.difference(oldDateTime);
+                      print("TimeDif: " + timeDifference.inDays.toString());
+                      if (timeDifference.inDays > 1) {
+                        refresh(context);
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content:
+                                Text("Already updated! No need to refresh."),
+                            duration: const Duration(seconds: 2),
+                            behavior: SnackBarBehavior.fixed,
+                          ),
+                        );
+                      }
+                    } else {
+                      refresh(context);
+                    }
                   },
                 ),
                 _createDrawerItem(
                   icon: Icons.account_box_rounded,
                   text: 'Distributor logout',
                   onTap: () async {
-                    if (await Preference.remove(SP_RETAILER))
-                      Phoenix.rebirth(buildContext);
+                    showLogoutErrorDialog(context);
                   },
                 ),
                 Divider(),
@@ -144,6 +162,13 @@ class AppDrawer extends StatelessWidget {
         }
       },
     );
+  }
+
+  void refresh(BuildContext context) async {
+    await Preference.setDateTime(SP_DT_REFRESH);
+    Products.getDisplayData(FirebaseFirestore.instance, true);
+    Products.getAllProducts(FirebaseFirestore.instance, true);
+    Phoenix.rebirth(context);
   }
 }
 
