@@ -232,9 +232,11 @@ class Products {
       FirebaseFirestore instance, bool forceDownload) async {
     if (!forceDownload &&
         await Preference.contains(SP_CATEGORY_IDS) &&
-        await Preference.contains(SP_PRODUCTS)) {
+        await Preference.contains(SP_PRODUCTS) &&
+        await getDurationInDays() < 3) {
       return null;
     }
+    await Preference.setDateTime(SP_DT_REFRESH);
     final QuerySnapshot productNamesCollection =
         await instance.collection(FSC_PRODUCT_NAMES).get();
     List<Product> productsList = [];
@@ -246,6 +248,7 @@ class Products {
       productDetails
           .add(Product(productName[FS_ID], productName[FS_NAME], "", 0, 0, 0));
     });
+    print("Fetching...");
     Preference.setProducts(productDetails, SP_CATEGORY_IDS);
     paths.forEach((path) async {
       final QuerySnapshot productsResult =
@@ -269,9 +272,12 @@ class Products {
 
   static Future<DisplayData> getDisplayData(
       FirebaseFirestore instance, bool forceDownload) async {
-    if (!forceDownload && await Preference.contains(SP_DISPLAY)) {
+    if (!forceDownload &&
+        await Preference.contains(SP_DISPLAY) &&
+        await getDurationInDays() < 3) {
       return await Preference.getDisplayData();
     }
+    print("Fetching...");
     DocumentReference<Map<String, dynamic>> displayDataCollection =
         instance.collection(FS_DISPLAY_DATA).doc(FS_DISPLAY);
     final dataRef = displayDataCollection.withConverter<DisplayData>(
@@ -280,5 +286,13 @@ class Products {
     final data = await dataRef.get();
     await Preference.setDisplayData(data.data());
     return data.data();
+  }
+
+  static Future<int> getDurationInDays() async {
+    DateTime oldDateTime = await Preference.getDateTime(SP_DT_REFRESH);
+    DateTime timeNow = DateTime.now();
+    Duration timeDifference = timeNow.difference(oldDateTime);
+    print("Day Dif: " + timeDifference.inDays.toString());
+    return timeDifference.inDays;
   }
 }
