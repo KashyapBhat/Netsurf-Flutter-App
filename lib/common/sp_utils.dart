@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:project_netsurf/common/models/billing.dart';
 import 'package:project_netsurf/common/models/customer.dart';
+import 'package:project_netsurf/common/models/display_data.dart';
 import 'package:project_netsurf/common/sp_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -73,6 +74,24 @@ class Preference {
   Future<List<String>> getListData(String key) async {
     final SharedPreferences prefs = await _prefs;
     return prefs.getStringList(key);
+  }
+
+  static Future<bool> contains(String name) async {
+    final SharedPreferences prefs = await _prefs;
+    return prefs.containsKey(name);
+  }
+
+  static Future<bool> setDisplayData(DisplayData displayData) async {
+    final SharedPreferences prefs = await _prefs;
+    final String encodedData = DisplayData.encode(displayData);
+    return await prefs.setString(SP_DISPLAY, encodedData);
+  }
+
+  static Future<DisplayData> getDisplayData() async {
+    final SharedPreferences prefs = await _prefs;
+    String displayString = prefs.getString(SP_DISPLAY);
+    final DisplayData decodedData = DisplayData.decode(displayString);
+    return decodedData;
   }
 
   static Future<bool> setProducts(List<Product> products, String name) async {

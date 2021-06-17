@@ -57,19 +57,20 @@ class MyApp extends StatelessWidget {
         builder: (context, AsyncSnapshot<FirebaseApp> snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             return FutureBuilder(
-              future: Products.getDisplayData(FirebaseFirestore.instance),
+              future:
+                  Products.getDisplayData(FirebaseFirestore.instance, false),
               builder: (context,
-                  AsyncSnapshot<DocumentSnapshot<DisplayData>> snapshot) {
+                  AsyncSnapshot<DisplayData> snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
                   if (snapshot.data != null) {
-                    DisplayData displayData = snapshot.data.data();
+                    DisplayData displayData = snapshot.data;
                     return FutureBuilder(
                       future: _initialization,
                       builder: (context, AsyncSnapshot<FirebaseApp> snapshot) {
                         if (snapshot.connectionState == ConnectionState.done) {
                           return FutureBuilder(
                             future: Products.getAllProducts(
-                                FirebaseFirestore.instance),
+                                FirebaseFirestore.instance, false),
                             builder: (context, snapshot) {
                               if (snapshot.connectionState ==
                                   ConnectionState.done) {

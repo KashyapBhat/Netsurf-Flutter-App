@@ -2,6 +2,8 @@
 { "Aemail": "info.codingcurve@gmail.com", "Alink": "https://codingcurve.in/", "Aname": "Author", "banner": "", "drawer": "", playlink : "" }
 */
 
+import 'dart:convert';
+
 class DisplayData {
   String _aemail;
   String _alink;
@@ -56,4 +58,10 @@ class DisplayData {
     map["playlink"] = _playlink;
     return map;
   }
+
+  static String encode(DisplayData displayData) =>
+      json.encode(displayData.toJson());
+
+  static DisplayData decode(String displayData) =>
+      DisplayData.fromJson(json.decode(displayData));
 }

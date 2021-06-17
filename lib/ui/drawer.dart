@@ -1,10 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:project_netsurf/common/contants.dart';
 import 'package:project_netsurf/common/models/customer.dart';
 import 'package:project_netsurf/common/models/display_data.dart';
+import 'package:project_netsurf/common/product_constant.dart';
 import 'package:project_netsurf/common/sp_constants.dart';
 import 'package:project_netsurf/common/sp_utils.dart';
 import 'package:project_netsurf/common/ui/loader.dart';
@@ -71,11 +73,19 @@ class AppDrawer extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (__) =>
-                              BillsPage(
-                                  retailer: retailer,
-                                  displayData: displayData)),
+                          builder: (__) => BillsPage(
+                              retailer: retailer, displayData: displayData)),
                     );
+                  },
+                ),
+                _createDrawerItem(
+                  icon: Icons.refresh_rounded,
+                  text: 'Refresh App',
+                  onTap: () async {
+                    Products.getDisplayData(FirebaseFirestore.instance, true);
+                    Products.getAllProducts(FirebaseFirestore.instance, true);
+                    // if (await Preference.remove(SP_RETAILER))
+                    //   Phoenix.rebirth(buildContext);
                   },
                 ),
                 _createDrawerItem(
