@@ -12,3 +12,5 @@ const String SP_RETAILER = "SP_Retailer";
 const String SP_BILLING = "SP_Billing";
 
 const String SP_BILLING_ID = "SP_BillingID";
+
+const String SP_DISPLAY = "SP_Display";

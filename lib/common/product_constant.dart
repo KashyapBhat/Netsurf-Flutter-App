@@ -229,7 +229,12 @@ class Products {
   }
 
   static Future<QuerySnapshot> getAllProducts(
-      FirebaseFirestore instance) async {
+      FirebaseFirestore instance, bool forceDownload) async {
+    if (!forceDownload &&
+        await Preference.contains(SP_CATEGORY_IDS) &&
+        await Preference.contains(SP_PRODUCTS)) {
+      return null;
+    }
     final QuerySnapshot productNamesCollection =
         await instance.collection(FSC_PRODUCT_NAMES).get();
     List<Product> productsList = [];
@@ -262,14 +267,18 @@ class Products {
     return productNamesCollection;
   }
 
-  static Future<DocumentSnapshot<DisplayData>> getDisplayData(
-      FirebaseFirestore instance) async {
+  static Future<DisplayData> getDisplayData(
+      FirebaseFirestore instance, bool forceDownload) async {
+    if (!forceDownload && await Preference.contains(SP_DISPLAY)) {
+      return await Preference.getDisplayData();
+    }
     DocumentReference<Map<String, dynamic>> displayDataCollection =
         instance.collection(FS_DISPLAY_DATA).doc(FS_DISPLAY);
     final dataRef = displayDataCollection.withConverter<DisplayData>(
         fromFirestore: (snapshot, _) => DisplayData.fromJson(snapshot.data()),
         toFirestore: (data, _) => data.toJson());
     final data = await dataRef.get();
-    return data;
+    await Preference.setDisplayData(data.data());
+    return data.data();
   }
 }
