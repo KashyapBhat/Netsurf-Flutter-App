@@ -109,7 +109,7 @@ class PdfInvoiceApi {
             child: Text(
               'ESTIMATE',
               textAlign: pw.TextAlign.center,
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ),
           if (invoice.billingInfo.description.isNotEmpty)
