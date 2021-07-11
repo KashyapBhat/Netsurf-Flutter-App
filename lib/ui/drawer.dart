@@ -81,7 +81,7 @@ class AppDrawer extends StatelessWidget {
                 ),
                 _createDrawerItem(
                   icon: Icons.refresh_rounded,
-                  text: 'Refresh App',
+                  text: 'Refresh app',
                   onTap: () async {
                     Navigator.of(context).pop();
                     if (await Preference.contains(SP_DT_REFRESH)) {
@@ -123,16 +123,8 @@ class AppDrawer extends StatelessWidget {
                   },
                 ),
                 _createDrawerItem(
-                  icon: Icons.mobile_screen_share_rounded,
-                  text: "Share this app",
-                  onTap: () {
-                    print("Play Link: " + displayData.playlink);
-                    Share.share(displayData.playlink);
-                  },
-                ),
-                _createDrawerItem(
                   icon: Icons.bug_report,
-                  text: 'Report an issue',
+                  text: 'Report issue',
                   onTap: () async {
                     final Uri params = Uri(
                       scheme: 'mailto',
@@ -143,9 +135,20 @@ class AppDrawer extends StatelessWidget {
                     _launchURL(params.toString());
                   },
                 ),
+                _createDrawerItem(
+                  icon: Icons.mobile_screen_share_rounded,
+                  text: "Share with friends",
+                  onTap: () {
+                    print("Play Link: " + displayData.playlink);
+                    Share.share(displayData.playlink);
+                  },
+                ),
                 Divider(),
                 ListTile(
-                  title: Text("v " + snapshot.data.version),
+                  title: Text(
+                    "Version - " + snapshot.data.version,
+                    style: TextStyle(fontSize: 12),
+                  ),
                   onTap: () {},
                 ),
               ],

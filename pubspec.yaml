@@ -3,7 +3,7 @@ description: Much more from nature
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.3+15
+version: 1.1.1+17
 
 environment:
   sdk: ">=2.7.0 <3.0.0"

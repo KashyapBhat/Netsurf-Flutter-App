@@ -129,7 +129,7 @@ class HomePageState extends State<BillerPage> {
         children: [
           Text(
             'ESTIMATE',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ],
       );
@@ -158,7 +158,7 @@ class HomePageState extends State<BillerPage> {
                 padding: EdgeInsets.only(left: 5, top: 0, right: 5, bottom: 0),
                 child: Divider(
                   thickness: 1,
-                  height: 6,
+                  height: 4,
                 ),
               );
             },
@@ -233,13 +233,21 @@ class HomePageState extends State<BillerPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   buildText(
-                    title: 'Total',
+                    title: 'Total Amount',
+                    titleStyle: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.normal,
+                    ),
                     // TODO: price
                     value: netTotal,
                     unite: true,
                   ),
                   buildText(
                     title: 'Discount',
+                    titleStyle: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.normal,
+                    ),
                     // TODO: price
                     // value: Utils.formatPrice(discount),
                     value: discount,
@@ -247,7 +255,7 @@ class HomePageState extends State<BillerPage> {
                   ),
                   Divider(height: 5),
                   buildText(
-                    title: 'Total amount',
+                    title: 'Final Amount',
                     titleStyle: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
@@ -258,7 +266,6 @@ class HomePageState extends State<BillerPage> {
                     unite: true,
                   ),
                   SizedBox(height: 3),
-                  Container(height: 1, color: Colors.grey.shade400),
                 ],
               ),
             ),
