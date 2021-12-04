@@ -6,31 +6,32 @@ import 'package:project_netsurf/common/sp_constants.dart';
 import 'package:project_netsurf/common/sp_utils.dart';
 
 class Products {
-  static Product getProductCategorys(List<Product> allCategories, int id) {
+  static Product? getProductCategorys(List<Product?> allCategories, int id) {
     if (id == null) {
       return allCategories
-          .firstWhere((element) => element.id == 0 || element.id == 1);
+          .firstWhere((element) => element?.id == 0 || element?.id == 1);
     }
-    return allCategories.firstWhere((element) => element.id == id);
+    return allCategories.firstWhere((element) => element?.id == id);
   }
 
-  static List<Product> getProductsFromCategorysIds(List<Product> allProducts,
-      Product selectedProduct, List<Product> selectedProducts) {
+  static List<Product> getProductsFromCategorysIds(List<Product?> allProducts,
+      Product? selectedProduct, List<Product?> selectedProducts) {
     List<Product> products = [];
     allProducts.forEach((element) {
-      if (element.productCategoryId == selectedProduct.id &&
+      if (element?.productCategoryId == selectedProduct?.id &&
           !productPresent(selectedProducts, element)) {
-        products.add(element);
+        products.add(element!);
       }
     });
     products.sort((a, b) => a.id.compareTo(b.id));
     return products;
   }
 
-  static bool productPresent(List<Product> selectedProducts, Product product) {
+  static bool productPresent(
+      List<Product?> selectedProducts, Product? product) {
     return selectedProducts.any((element) {
-      return element.id == product.id &&
-          element.productCategoryId == product.productCategoryId;
+      return element?.id == product?.id &&
+          element?.productCategoryId == product?.productCategoryId;
     });
   }
 
@@ -228,7 +229,7 @@ class Products {
     });
   }
 
-  static Future<QuerySnapshot> getAllProducts(
+  static Future<QuerySnapshot?> getAllProducts(
       FirebaseFirestore instance, bool forceDownload) async {
     if (!forceDownload &&
         await Preference.contains(SP_CATEGORY_IDS) &&
@@ -261,7 +262,7 @@ class Products {
         productsList.add(await productRef
             .doc(products.id)
             .get()
-            .then((snapshot) => snapshot.data()));
+            .then((snapshot) => snapshot.data()!));
         productsList.forEach((element) {
           Preference.setProducts(productsList, SP_PRODUCTS);
         });
@@ -270,7 +271,7 @@ class Products {
     return productNamesCollection;
   }
 
-  static Future<DisplayData> getDisplayData(
+  static Future<DisplayData?> getDisplayData(
       FirebaseFirestore instance, bool forceDownload) async {
     if (!forceDownload &&
         await Preference.contains(SP_DISPLAY) &&
@@ -284,7 +285,7 @@ class Products {
         fromFirestore: (snapshot, _) => DisplayData.fromJson(snapshot.data()),
         toFirestore: (data, _) => data.toJson());
     final data = await dataRef.get();
-    await Preference.setDisplayData(data.data());
+    if (data.data() != null) await Preference.setDisplayData(data.data()!);
     return data.data();
   }
 

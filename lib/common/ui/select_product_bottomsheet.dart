@@ -8,7 +8,7 @@ void selectProductsBottomSheet(
     List<Product> productList,
     TextEditingController textController,
     Function(BuildContext context, Product) onClick) {
-  List<Product> _listAfterSearch;
+  List<Product>? _listAfterSearch;
   print("Recreated");
   showModalBottomSheet(
       context: context,
@@ -141,7 +141,7 @@ List<Product> _buildSearchList(
 }
 
 Product _getClickedProduct(
-    List<Product> _listAfterSearch, List<Product> productList, int index) {
+    List<Product>? _listAfterSearch, List<Product> productList, int index) {
   if ((_listAfterSearch != null && _listAfterSearch.length > 0)) {
     return _listAfterSearch[index];
   } else {
@@ -150,7 +150,7 @@ Product _getClickedProduct(
 }
 
 int _getListViewItemCount(
-    List<Product> _listAfterSearch, List<Product> productList) {
+    List<Product>? _listAfterSearch, List<Product> productList) {
   if ((_listAfterSearch != null && _listAfterSearch.length > 0)) {
     return _listAfterSearch.length;
   } else {
@@ -159,7 +159,7 @@ int _getListViewItemCount(
 }
 
 Widget _getProductListAndWidget(
-    List<Product> _listAfterSearch, List<Product> productList, int index) {
+    List<Product>? _listAfterSearch, List<Product> productList, int index) {
   if ((_listAfterSearch != null && _listAfterSearch.length > 0)) {
     return _showBottomSheetWithSearch(index, _listAfterSearch);
   } else {

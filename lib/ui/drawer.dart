@@ -19,7 +19,8 @@ class AppDrawer extends StatelessWidget {
   final User retailer;
   final DisplayData displayData;
 
-  const AppDrawer({Key key, this.retailer, this.displayData}) : super(key: key);
+  const AppDrawer({Key? key, required this.retailer, required this.displayData})
+      : super(key: key);
 
   @override
   Widget build(BuildContext buildContext) {
@@ -122,19 +123,20 @@ class AppDrawer extends StatelessWidget {
                     _launchURL(displayData.alink);
                   },
                 ),
-                _createDrawerItem(
-                  icon: Icons.bug_report,
-                  text: 'Report issue',
-                  onTap: () async {
-                    final Uri params = Uri(
-                      scheme: 'mailto',
-                      path: displayData.aemail,
-                      query: 'subject=App Feedback&body=App Version: ' +
-                          snapshot.data.version, //add subject and body here
-                    );
-                    _launchURL(params.toString());
-                  },
-                ),
+                if (snapshot.data != null)
+                  _createDrawerItem(
+                    icon: Icons.bug_report,
+                    text: 'Report issue',
+                    onTap: () async {
+                      final Uri params = Uri(
+                        scheme: 'mailto',
+                        path: displayData.aemail,
+                        query: 'subject=App Feedback&body=App Version: ' +
+                            snapshot.data!.version, //add subject and body here
+                      );
+                      _launchURL(params.toString());
+                    },
+                  ),
                 _createDrawerItem(
                   icon: Icons.mobile_screen_share_rounded,
                   text: "Share with friends",
@@ -144,13 +146,14 @@ class AppDrawer extends StatelessWidget {
                   },
                 ),
                 Divider(),
-                ListTile(
-                  title: Text(
-                    "Version - " + snapshot.data.version,
-                    style: TextStyle(fontSize: 12),
+                if (snapshot.data != null)
+                  ListTile(
+                    title: Text(
+                      "Version - " + snapshot.data!.version,
+                      style: TextStyle(fontSize: 12),
+                    ),
+                    onTap: () {},
                   ),
-                  onTap: () {},
-                ),
               ],
             ),
           );
@@ -176,7 +179,9 @@ class AppDrawer extends StatelessWidget {
 }
 
 Widget _createDrawerItem(
-    {IconData icon, String text, GestureTapCallback onTap}) {
+    {required IconData icon,
+    required String text,
+    required GestureTapCallback onTap}) {
   return ListTile(
     title: Row(
       children: <Widget>[

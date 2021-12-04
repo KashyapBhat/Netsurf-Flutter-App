@@ -16,15 +16,14 @@ import 'package:project_netsurf/ui/select_products.dart';
 class HomePage extends StatefulWidget {
   final String billingIdVal;
   final bool isRetailer;
-  final User retailer;
+  final User? retailer;
   final DisplayData displayData;
 
-  HomePage(
-      {Key key,
-      this.isRetailer,
-      this.retailer,
-      this.displayData,
-      this.billingIdVal})
+  HomePage({Key? key,
+    required this.isRetailer,
+    this.retailer,
+    required this.displayData,
+    required this.billingIdVal})
       : super(key: key);
 
   @override
@@ -34,13 +33,13 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController categoryTextController =
-      new TextEditingController();
+  new TextEditingController();
   final TextEditingController itemTextController = new TextEditingController();
-  ScrollController _controller;
+  late ScrollController _controller;
   bool silverCollapsed = false;
 
-  List<Product> allCategories;
-  List<Product> allProducts;
+  List<Product?>? allCategories;
+  List<Product?>? allProducts;
   bool isRetailer = false;
   String textValue = "";
   User user = User("", "", "", "", "");
@@ -52,8 +51,8 @@ class HomePageState extends State<HomePage> {
     _controller = ScrollController();
     isRetailer = widget.isRetailer;
     if (widget.retailer != null &&
-        widget.retailer.name.isNotEmpty &&
-        widget.retailer.mobileNo.isNotEmpty) retailer = widget.retailer;
+        widget.retailer!.name.isNotEmpty &&
+        widget.retailer!.mobileNo.isNotEmpty) retailer = widget.retailer!;
     _controller.addListener(() {
       if (_controller.offset > 100 && !_controller.position.outOfRange) {
         if (!silverCollapsed) {
@@ -72,11 +71,11 @@ class HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Listener(
       onPointerDown: (_) {
-        WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
+        WidgetsBinding.instance!.focusManager.primaryFocus?.unfocus();
       },
       child: Scaffold(
           drawer:
-              AppDrawer(retailer: retailer, displayData: widget.displayData),
+          AppDrawer(retailer: retailer, displayData: widget.displayData),
           key: _scaffoldKey,
           body: FutureBuilder(
             future: Preference.getProducts(SP_CATEGORY_IDS),
@@ -94,12 +93,12 @@ class HomePageState extends State<HomePage> {
                           if (snapshot.connectionState ==
                               ConnectionState.done) {
                             if (snapshot.data != null &&
-                                snapshot.data.name.isNotEmpty &&
-                                snapshot.data.mobileNo.isNotEmpty) {
-                              print("RetailerData: " + snapshot.data.name);
+                                snapshot.data!.name.isNotEmpty &&
+                                snapshot.data!.mobileNo.isNotEmpty) {
+                              print("RetailerData: " + snapshot.data!.name);
                               if (retailer.name.isEmpty &&
                                   retailer.mobileNo.isEmpty)
-                                retailer = snapshot.data;
+                                retailer = snapshot.data!;
                               isRetailer = false;
                               return scrollView();
                             } else {
@@ -156,7 +155,7 @@ class HomePageState extends State<HomePage> {
         ),
         centerTitle: true,
         background: CachedNetworkImage(
-          imageUrl: widget.displayData.banner ?? "",
+          imageUrl: widget.displayData.banner,
           progressIndicatorBuilder: (context, url, downloadProgress) =>
               CustomLoader(),
           fit: BoxFit.contain,
@@ -185,7 +184,7 @@ class HomePageState extends State<HomePage> {
             Flexible(
               child: EditText(
                   required: true,
-                  initTextValue: user.name ?? "",
+                  initTextValue: user.name,
                   type: TextInputType.name,
                   editTextName: textValue + " Name",
                   onText: (text) async {
@@ -200,7 +199,7 @@ class HomePageState extends State<HomePage> {
             Flexible(
               child: EditText(
                   required: true,
-                  initTextValue: user.mobileNo ?? "",
+                  initTextValue: user.mobileNo,
                   type: TextInputType.phone,
                   isPhone: true,
                   editTextName: textValue + " Mobile Number",
@@ -216,7 +215,7 @@ class HomePageState extends State<HomePage> {
             Flexible(
               child: EditText(
                   required: false,
-                  initTextValue: user.cRefId ?? "",
+                  initTextValue: user.cRefId,
                   editTextName: textValue + " Reference ID",
                   onText: (text) async {
                     user.cRefId = text;
@@ -247,7 +246,7 @@ class HomePageState extends State<HomePage> {
               Flexible(
                 child: EditText(
                     required: false,
-                    initTextValue: user.email ?? "",
+                    initTextValue: user.email,
                     editTextName: "Email",
                     type: TextInputType.emailAddress,
                     onText: (text) async {
@@ -286,13 +285,24 @@ class HomePageState extends State<HomePage> {
                   Preference.setRetailer(user);
                   Phoenix.rebirth(context);
                 } else {
+                  if (allCategories == null || allCategories!.isEmpty ||
+                      allProducts == null || allProducts!.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text("Products "),
+                      duration: const Duration(seconds: 2),
+                      behavior: SnackBarBehavior.fixed,
+                      backgroundColor: Colors.red,
+                    ));
+                    return;
+                  }
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (__) => new SelectProductsPage(
+                      builder: (__) =>
+                      new SelectProductsPage(
                         customerData: user,
-                        allCategories: allCategories,
-                        allProducts: allProducts,
+                        allCategories: allCategories!,
+                        allProducts: allProducts!,
                         retailer: retailer,
                         billingIdVal: widget.billingIdVal,
                       ),

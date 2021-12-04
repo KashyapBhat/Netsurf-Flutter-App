@@ -59,11 +59,10 @@ class MyApp extends StatelessWidget {
             return FutureBuilder(
               future:
                   Products.getDisplayData(FirebaseFirestore.instance, false),
-              builder: (context,
-                  AsyncSnapshot<DisplayData> snapshot) {
+              builder: (context, AsyncSnapshot<DisplayData?> snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
                   if (snapshot.data != null) {
-                    DisplayData displayData = snapshot.data;
+                    DisplayData displayData = snapshot.data!;
                     return FutureBuilder(
                       future: _initialization,
                       builder: (context, AsyncSnapshot<FirebaseApp> snapshot) {
@@ -80,7 +79,7 @@ class MyApp extends StatelessWidget {
                                       AsyncSnapshot<String> snapshot) {
                                     if (snapshot.connectionState ==
                                         ConnectionState.done) {
-                                      String billingId = snapshot.data;
+                                      String? billingId = snapshot.data;
                                       if (billingId == null ||
                                           billingId.isEmpty) {
                                         billingId = "1001";
@@ -97,22 +96,23 @@ class MyApp extends StatelessWidget {
                                           if (snapshot.connectionState ==
                                               ConnectionState.done) {
                                             if (snapshot.data != null &&
-                                                snapshot.data.name.isNotEmpty &&
                                                 snapshot
-                                                    .data.mobileNo.isNotEmpty) {
+                                                    .data!.name.isNotEmpty &&
+                                                snapshot.data!.mobileNo
+                                                    .isNotEmpty) {
                                               print("RetailerData: " +
-                                                  snapshot.data.name);
+                                                  snapshot.data!.name);
                                               return HomePage(
                                                   isRetailer: false,
-                                                  retailer: snapshot.data,
+                                                  retailer: snapshot.data!,
                                                   displayData: displayData,
-                                                  billingIdVal: billingId);
+                                                  billingIdVal: billingId!);
                                             } else {
                                               return HomePage(
                                                   isRetailer: true,
                                                   retailer: null,
                                                   displayData: displayData,
-                                                  billingIdVal: billingId);
+                                                  billingIdVal: billingId!);
                                             }
                                           } else if (snapshot.hasError) {
                                             return showErrorMessage(context);

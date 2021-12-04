@@ -2,21 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class EditText extends StatelessWidget {
-  String editTextName = "";
-  String initTextValue = "";
-  TextInputType type = TextInputType.name;
+  String? editTextName = "";
+  String? initTextValue = "";
+  TextInputType? type = TextInputType.name;
   bool required = false;
-  bool isPhone = false;
-  int maxline = 1;
-  Function(String) onText;
-  TextEditingController _controller;
-  Function() onTap;
+  bool? isPhone = false;
+  int? maxline = 1;
+  Function(String)? onText;
+  TextEditingController? _controller;
+  Function()? onTap;
 
   EditText(
-      {Key key,
+      {Key? key,
       this.editTextName,
       this.type,
-      this.required,
+      required this.required,
       this.maxline,
       this.onText,
       this.onTap,
@@ -38,22 +38,23 @@ class EditText extends StatelessWidget {
         textCapitalization: TextCapitalization.characters,
         maxLines: maxline,
         decoration: InputDecoration(
-          labelText: editTextName + (required ? " \*" : ""),
+          labelText: editTextName ?? "NA" + (required ? " \*" : ""),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(25.0),
             borderSide: BorderSide(),
           ),
         ),
         inputFormatters: [
-          if (isPhone) FilteringTextInputFormatter.allow((RegExp("[.0-9]"))),
+          if (isPhone ?? false)
+            FilteringTextInputFormatter.allow((RegExp("[.0-9]"))),
         ],
-        maxLength: isPhone ? 10 : null,
+        maxLength: isPhone ?? false ? 10 : null,
         keyboardType: type,
         onChanged: (value) {
-          onText.call(_controller.text);
+          onText?.call(_controller?.text ?? "NA");
         },
         onTap: () {
-          onTap.call();
+          onTap?.call();
         },
       ),
     );
@@ -61,12 +62,13 @@ class EditText extends StatelessWidget {
 }
 
 class InputText extends StatelessWidget {
-  String keyText = "";
-  int maxline = 1;
-  Function(String) onText;
-  TextEditingController controller;
+  String? keyText = "";
+  int? maxline = 1;
+  Function(String?)? onText;
+  TextEditingController? controller;
 
-  InputText({Key key, this.maxline, this.onText, this.keyText, this.controller})
+  InputText(
+      {Key? key, this.maxline, this.onText, this.keyText, this.controller})
       : super(key: key);
 
   @override
@@ -84,17 +86,17 @@ class InputText extends StatelessWidget {
       ),
       keyboardType: TextInputType.number,
       onChanged: (value) {
-        onText.call(controller.text);
+        onText?.call(controller?.text);
       },
     );
   }
 }
 
 class CustomButton extends StatelessWidget {
-  String buttonText = "";
-  Function onClick;
+  String? buttonText = "";
+  Function? onClick;
 
-  CustomButton({Key key, this.buttonText, this.onClick}) : super(key: key);
+  CustomButton({Key? key, this.buttonText, this.onClick}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +111,7 @@ class CustomButton extends StatelessWidget {
             fixedSize: Size(120, 48),
           ),
           child: Text(
-            buttonText,
+            buttonText ?? "",
             style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -117,17 +119,17 @@ class CustomButton extends StatelessWidget {
                 letterSpacing: 1.1),
           ),
           onPressed: () {
-            onClick.call();
+            onClick?.call();
           },
         ));
   }
 }
 
 class SideButtons extends StatelessWidget {
-  String buttonText = "";
-  Function onClick;
+  String? buttonText = "";
+  Function? onClick;
 
-  SideButtons({Key key, this.buttonText, this.onClick}) : super(key: key);
+  SideButtons({Key? key, this.buttonText, this.onClick}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -139,7 +141,7 @@ class SideButtons extends StatelessWidget {
         fixedSize: Size(120, 48),
       ),
       child: Text(
-        buttonText,
+        buttonText ?? "NA",
         textAlign: TextAlign.center,
         style: TextStyle(
             fontSize: 16,
@@ -148,7 +150,7 @@ class SideButtons extends StatelessWidget {
             letterSpacing: 1.1),
       ),
       onPressed: () {
-        onClick.call();
+        onClick?.call();
       },
     );
   }

@@ -17,21 +17,21 @@ import 'package:project_netsurf/common/ui/select_category_bottomsheet.dart';
 import 'package:project_netsurf/ui/biller.dart';
 
 class SelectProductsPage extends StatefulWidget {
-  final String title;
+  final String? title;
   final User customerData;
   final User retailer;
-  final List<Product> allProducts;
-  final List<Product> allCategories;
+  final List<Product?> allProducts;
+  final List<Product?> allCategories;
   final String billingIdVal;
 
   SelectProductsPage(
-      {Key key,
+      {Key? key,
       this.title,
-      this.customerData,
-      this.allProducts,
-      this.allCategories,
-      this.retailer,
-      this.billingIdVal})
+      required this.customerData,
+      required this.allProducts,
+      required this.allCategories,
+      required this.retailer,
+      required this.billingIdVal})
       : super(key: key);
 
   @override
@@ -49,21 +49,21 @@ class SelectProductsPageState extends State<SelectProductsPage> {
   final TextEditingController discountController = new TextEditingController();
 
   Price price = Price(0, 0, 0);
-  List<Product> selectedProducts = [];
-  Product selectedCategory;
+  List<Product?> selectedProducts = [];
+  Product? selectedCategory;
   bool isFirstTime = true;
 
   @override
   void initState() {
     super.initState();
-    print("Selected customer: " + widget.customerData.name ?? "");
-    widget.allCategories.sort((a, b) => a.id.compareTo(b.id));
+    print("Selected customer: " + widget.customerData.name);
+    widget.allCategories.sort((a, b) => a!.id.compareTo(b!.id));
     selectedCategory = Products.getProductCategorys(widget.allCategories, 1);
     widget.allCategories.forEach((element) {
-      print("Products Names: " + element.name);
+      if (element != null) print("Products Names: " + element.name);
     });
     widget.allProducts.forEach((element) {
-      print("Products: " + element.name);
+      if (element != null) print("Products: " + element.name);
     });
   }
 
@@ -101,7 +101,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
           child: ListView.separated(
               shrinkWrap: true,
               physics: ClampingScrollPhysics(),
-              itemCount: selectedProducts.length ?? 0,
+              itemCount: selectedProducts.length,
               separatorBuilder: (context, int) {
                 return Container(
                   padding:
@@ -122,7 +122,8 @@ class SelectProductsPageState extends State<SelectProductsPage> {
                       child: Container(
                         padding: EdgeInsets.only(
                             left: 0, top: 8, right: 5, bottom: 8),
-                        child: Text(selectedProducts[index].getDisplayName(),
+                        child: Text(
+                            selectedProducts[index]?.getDisplayName() ?? "NA",
                             style: TextStyle(
                                 color: Colors.black, fontSize: 14, height: 1.3),
                             textAlign: TextAlign.start),
@@ -147,17 +148,17 @@ class SelectProductsPageState extends State<SelectProductsPage> {
                             print(value);
                             if (value != null) {
                               if (value.isEmpty) {
-                                selectedProducts[index].quantity = 0;
-                                selectedCategory.quantity = 0;
+                                selectedProducts[index]?.quantity = 0;
+                                selectedCategory?.quantity = 0;
                                 _controllers[index].clear();
                               } else {
                                 int quant = double.parse(value).ceil();
                                 if (quant > 0) {
-                                  selectedProducts[index].quantity = quant;
-                                  selectedCategory.quantity = quant;
+                                  selectedProducts[index]?.quantity = quant;
+                                  selectedCategory?.quantity = quant;
                                 } else {
-                                  selectedProducts[index].quantity = 0;
-                                  selectedCategory.quantity = 0;
+                                  selectedProducts[index]?.quantity = 0;
+                                  selectedCategory?.quantity = 0;
                                   _controllers[index].clear();
                                 }
                               }
@@ -218,12 +219,12 @@ class SelectProductsPageState extends State<SelectProductsPage> {
     );
   }
 
-  Widget selectProductList(List<Product> allCategories) {
+  Widget selectProductList(List<Product?> allCategories) {
     final buttonText = isFirstTime ||
-            selectedCategory.name == null ||
-            selectedCategory.name.isEmpty
+            selectedCategory?.name == null ||
+            selectedCategory!.name.isEmpty
         ? "Select Category"
-        : selectedCategory.name;
+        : selectedCategory?.name;
     isFirstTime = false;
     return Expanded(
       child: Container(
@@ -246,7 +247,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
     );
   }
 
-  Widget selectItemFromProducts(List<Product> allproducts) {
+  Widget selectItemFromProducts(List<Product?> allproducts) {
     return Expanded(
       child: Container(
         padding: new EdgeInsets.only(left: 8, top: 8, bottom: 5, right: 16),
@@ -289,8 +290,8 @@ class SelectProductsPageState extends State<SelectProductsPage> {
 
   String _getButtonText() {
     if (selectedCategory != null &&
-        selectedCategory.name != null &&
-        selectedCategory.name.isNotEmpty) {
+        selectedCategory!.name != null &&
+        selectedCategory!.name.isNotEmpty) {
       return "Add products";
     } else {
       return "Select product category first";
@@ -300,7 +301,8 @@ class SelectProductsPageState extends State<SelectProductsPage> {
   String itemPrice(int index) {
     return RUPEE_SYMBOL +
         " " +
-        (selectedProducts[index].price * selectedProducts[index].quantity)
+        (selectedProducts[index]?.price ??
+                0 * selectedProducts[index]!.quantity)
             .ceil()
             .toString();
   }
@@ -557,8 +559,8 @@ class SelectProductsPageState extends State<SelectProductsPage> {
   void calculateTotal() {
     price.total = 0;
     for (var item in selectedProducts) {
-      print(item.price);
-      price.total += item.price * item.quantity;
+      print(item?.price);
+      price.total += item?.price ?? 0 * item!.quantity;
       price.finalAmt = price.total;
     }
   }
@@ -571,8 +573,8 @@ class SelectProductsPageState extends State<SelectProductsPage> {
 
   bool productPresent(Product product) {
     return selectedProducts.any((element) {
-      return element.id == product.id &&
-          element.productCategoryId == product.productCategoryId;
+      return element?.id == product.id &&
+          element?.productCategoryId == product.productCategoryId;
     });
   }
 }

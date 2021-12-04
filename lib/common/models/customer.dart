@@ -1,11 +1,11 @@
 import 'dart:convert';
 
 class User {
-  String _name;
-  String _mobileNo;
-  String _cRefId;
-  String _address;
-  String _email;
+  String _name = "";
+  String _mobileNo = "";
+  String _cRefId = "";
+  String _address = "";
+  String _email = "";
 
   String get name => _name;
 

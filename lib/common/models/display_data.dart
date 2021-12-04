@@ -5,12 +5,12 @@
 import 'dart:convert';
 
 class DisplayData {
-  String _aemail;
-  String _alink;
-  String _aname;
-  String _banner;
-  String _drawer;
-  String _playlink;
+  String _aemail = "";
+  String _alink = "";
+  String _aname = "";
+  String _banner = "";
+  String _drawer = "";
+  String _playlink = "";
 
   String get aemail => _aemail;
 
@@ -25,12 +25,12 @@ class DisplayData {
   String get playlink => _playlink;
 
   DisplayData(
-      {String aemail,
-      String alink,
-      String aname,
-      String banner,
-      String drawer,
-      String playlink}) {
+      {required String aemail,
+      required String alink,
+      required String aname,
+      required String banner,
+      required String drawer,
+      required String playlink}) {
     _aemail = aemail;
     _alink = alink;
     _aname = aname;
