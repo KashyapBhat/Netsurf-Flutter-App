@@ -133,11 +133,11 @@ class PdfInvoiceApi {
         ' ${item?.getDispTotal()}',
       ];
     }).toList();
-    if (data != null) return Text("NA");
+    if (data == null) return Text("NA");
     return Table.fromTextArray(
       headers: headers,
       headerAlignment: Alignment.centerRight,
-      data: data!,
+      data: data,
       border: null,
       headerStyle: TextStyle(fontWeight: FontWeight.bold),
       headerDecoration: BoxDecoration(color: PdfColors.grey300),
