@@ -11,6 +11,7 @@ class DisplayData {
   String _banner = "";
   String _drawer = "";
   String _playlink = "";
+  List<String>? _bannerList;
 
   String get aemail => _aemail;
 
@@ -23,6 +24,8 @@ class DisplayData {
   String get drawer => _drawer;
 
   String get playlink => _playlink;
+
+  List<String>? get bannerList => _bannerList;
 
   DisplayData(
       {required String aemail,
@@ -46,6 +49,7 @@ class DisplayData {
     _banner = json["banner"];
     _drawer = json["drawer"];
     _playlink = json["playlink"];
+    _bannerList = json['bannerList'] != null ? json['bannerList'].cast<String>() : [];
   }
 
   Map<String, dynamic> toJson() {
@@ -56,6 +60,7 @@ class DisplayData {
     map["banner"] = _banner;
     map["drawer"] = _drawer;
     map["playlink"] = _playlink;
+    map['bannerList'] = _bannerList;
     return map;
   }
 

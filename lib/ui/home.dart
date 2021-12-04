@@ -1,8 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:project_netsurf/common/contants.dart';
 import 'package:project_netsurf/common/models/customer.dart';
 import 'package:project_netsurf/common/models/display_data.dart';
 import 'package:project_netsurf/common/models/product.dart';
@@ -19,11 +21,12 @@ class HomePage extends StatefulWidget {
   final User? retailer;
   final DisplayData displayData;
 
-  HomePage({Key? key,
-    required this.isRetailer,
-    this.retailer,
-    required this.displayData,
-    required this.billingIdVal})
+  HomePage(
+      {Key? key,
+      required this.isRetailer,
+      this.retailer,
+      required this.displayData,
+      required this.billingIdVal})
       : super(key: key);
 
   @override
@@ -33,7 +36,7 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController categoryTextController =
-  new TextEditingController();
+      new TextEditingController();
   final TextEditingController itemTextController = new TextEditingController();
   late ScrollController _controller;
   bool silverCollapsed = false;
@@ -75,7 +78,7 @@ class HomePageState extends State<HomePage> {
       },
       child: Scaffold(
           drawer:
-          AppDrawer(retailer: retailer, displayData: widget.displayData),
+              AppDrawer(retailer: retailer, displayData: widget.displayData),
           key: _scaffoldKey,
           body: FutureBuilder(
             future: Preference.getProducts(SP_CATEGORY_IDS),
@@ -144,9 +147,18 @@ class HomePageState extends State<HomePage> {
   }
 
   Widget scrollAppBar() {
+    List<String>? bannerList = widget.displayData.bannerList;
+    int length = 1;
+    if (bannerList != null && bannerList.isNotEmpty) {
+      length = widget.displayData.bannerList!.length;
+    } else {
+      bannerList = [];
+      bannerList.add(widget.displayData.banner);
+    }
     return SliverAppBar(
       expandedHeight: 200,
       pinned: false,
+      iconTheme: IconThemeData(color: Color(PRIMARY_COLOR)),
       backgroundColor: Colors.white,
       flexibleSpace: FlexibleSpaceBar(
         title: Text(
@@ -154,13 +166,32 @@ class HomePageState extends State<HomePage> {
           style: TextStyle(color: Colors.grey[100]),
         ),
         centerTitle: true,
-        background: CachedNetworkImage(
-          imageUrl: widget.displayData.banner,
-          progressIndicatorBuilder: (context, url, downloadProgress) =>
-              CustomLoader(),
-          fit: BoxFit.contain,
-          fadeInCurve: Curves.easeInToLinear,
-          errorWidget: (context, url, error) => Icon(Icons.error),
+        background: Center(
+          child: CarouselSlider(
+            options: CarouselOptions(height: 400.0),
+            items: Iterable<int>.generate(length).toList().map((i) {
+              return Builder(
+                builder: (BuildContext context) {
+                  return Container(
+                    width: MediaQuery.of(context).size.width,
+                    margin:
+                        EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
+                    decoration: BoxDecoration(
+                        color: Colors.blueGrey.shade50,
+                        borderRadius: BorderRadius.all(Radius.circular(8))),
+                    child: CachedNetworkImage(
+                      imageUrl: bannerList![i],
+                      progressIndicatorBuilder:
+                          (context, url, downloadProgress) => CustomLoader(),
+                      fit: BoxFit.contain,
+                      fadeInCurve: Curves.easeInToLinear,
+                      errorWidget: (context, url, error) => Icon(Icons.error),
+                    ),
+                  );
+                },
+              );
+            }).toList(),
+          ),
         ),
       ),
     );
@@ -169,6 +200,7 @@ class HomePageState extends State<HomePage> {
   Widget inputDataAndNext() {
     return SliverFillRemaining(
       child: Container(
+        color: Colors.white,
         child: Column(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -285,8 +317,10 @@ class HomePageState extends State<HomePage> {
                   Preference.setRetailer(user);
                   Phoenix.rebirth(context);
                 } else {
-                  if (allCategories == null || allCategories!.isEmpty ||
-                      allProducts == null || allProducts!.isEmpty) {
+                  if (allCategories == null ||
+                      allCategories!.isEmpty ||
+                      allProducts == null ||
+                      allProducts!.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       content: Text("Products "),
                       duration: const Duration(seconds: 2),
@@ -298,8 +332,7 @@ class HomePageState extends State<HomePage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (__) =>
-                      new SelectProductsPage(
+                      builder: (__) => new SelectProductsPage(
                         customerData: user,
                         allCategories: allCategories!,
                         allProducts: allProducts!,
