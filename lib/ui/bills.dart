@@ -58,81 +58,87 @@ class HomePageState extends State<BillsPage> {
         WidgetsBinding.instance?.focusManager.primaryFocus?.unfocus();
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: appBarTitle,
-          centerTitle: true,
-          actions: <Widget>[
-            Container(
-              margin: EdgeInsets.only(right: 8),
-              child: IconButton(
-                icon: actionIcon,
-                onPressed: () {
-                  setState(() {
-                    if (this.actionIcon.icon == Icons.search) {
-                      this.actionIcon = Icon(
-                        Icons.close,
-                        color: Colors.white,
-                      );
-                      this.appBarTitle = Container(
-                        decoration: BoxDecoration(
-                          color: Colors.black26,
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: TextField(
-                          controller: _searchQuery,
-                          style: TextStyle(color: Colors.white),
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            prefixIcon: Icon(
-                              Icons.search,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                            prefixIconConstraints: BoxConstraints(
-                              minWidth: 30,
-                              minHeight: 30,
-                            ),
-                            hintText: "Search by name, phno or bill no",
-                            hintStyle: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 13,
+          appBar: AppBar(
+            title: appBarTitle,
+            centerTitle: true,
+            actions: <Widget>[
+              Container(
+                margin: EdgeInsets.only(right: 8),
+                child: IconButton(
+                  icon: actionIcon,
+                  onPressed: () {
+                    setState(() {
+                      if (this.actionIcon.icon == Icons.search) {
+                        this.actionIcon = Icon(
+                          Icons.close,
+                          color: Colors.white,
+                        );
+                        this.appBarTitle = Container(
+                          decoration: BoxDecoration(
+                            color: Colors.black26,
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: TextField(
+                            controller: _searchQuery,
+                            style: TextStyle(color: Colors.white),
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              prefixIcon: Icon(
+                                Icons.search,
+                                size: 20,
+                                color: Colors.white,
+                              ),
+                              prefixIconConstraints: BoxConstraints(
+                                minWidth: 30,
+                                minHeight: 30,
+                              ),
+                              hintText: "Search saved bills",
+                              hintStyle: TextStyle(
+                                color: Colors.white70,
+                                fontSize: 13,
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                      _handleSearchStart();
+                        );
+                        _handleSearchStart();
+                      } else {
+                        _handleSearchEnd();
+                      }
+                    });
+                  },
+                ),
+              ),
+            ],
+          ),
+          key: _scaffoldKey,
+          body: Column(
+            children: [
+              FutureBuilder(
+                future: Preference.getBills(),
+                builder: (context, AsyncSnapshot<List<Billing>> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    if (snapshot.data != null && snapshot.data!.isNotEmpty) {
+                      snapshot.data!.forEach((element) {
+                        if (element.price != null)
+                          print("BILLS: " + element.price!.dispFinalAmt());
+                      });
+                      return inputDataAndNext(_isSearching
+                          ? _buildSearchList(snapshot.data!)
+                          : snapshot.data!);
                     } else {
-                      _handleSearchEnd();
+                      return Center(child: Text("No bills found!"));
                     }
-                  });
+                  } else if (snapshot.connectionState == ConnectionState.none) {
+                    return Text("No product data found");
+                  }
+                  return CustomLoader();
                 },
               ),
-            ),
-          ],
-        ),
-        key: _scaffoldKey,
-        body: FutureBuilder(
-          future: Preference.getBills(),
-          builder: (context, AsyncSnapshot<List<Billing>> snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              if (snapshot.data != null && snapshot.data!.isNotEmpty) {
-                snapshot.data!.forEach((element) {
-                  if (element.price != null)
-                    print("BILLS: " + element.price!.dispFinalAmt());
-                });
-                return inputDataAndNext(_isSearching
-                    ? _buildSearchList(snapshot.data!)
-                    : snapshot.data!);
-              } else {
-                return Center(child: Text("No bills found!"));
-              }
-            } else if (snapshot.connectionState == ConnectionState.none) {
-              return Text("No product data found");
-            }
-            return CustomLoader();
-          },
-        ),
-      ),
+              SizedBox(height: 5),
+              Text("You can search by name, phone number or bill number",
+                  style: TextStyle(fontSize: 11)),
+            ],
+          )),
     );
   }
 
@@ -222,7 +228,7 @@ class HomePageState extends State<BillsPage> {
                     child: Container(
                       constraints: BoxConstraints(minHeight: 125),
                       decoration: BoxDecoration(
-                        color: Color(0xFF333366),
+                        color: Color(SECONDARY_COLOR),
                         shape: BoxShape.rectangle,
                         borderRadius: BorderRadius.circular(15.0),
                         boxShadow: <BoxShadow>[
@@ -303,7 +309,7 @@ class HomePageState extends State<BillsPage> {
                                             bills[index].price!.dispFinalAmt(),
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
-                                            color: Colors.white70,
+                                            color: Colors.white,
                                             fontSize: 16),
                                       ),
                                     ),
