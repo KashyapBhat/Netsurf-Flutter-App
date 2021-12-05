@@ -482,6 +482,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
                         }
                       }
                     } else {
+                      price.discountAmt = 0;
                       price.finalAmt = price.total;
                     }
                   }
@@ -527,6 +528,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
                         }
                       }
                     } else {
+                      price.discountAmt = 0;
                       price.finalAmt = price.total;
                     }
                   }
