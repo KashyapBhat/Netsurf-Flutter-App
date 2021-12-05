@@ -40,6 +40,12 @@ class MyApp extends StatelessWidget {
           headline6: TextStyle(fontSize: 36.0, fontStyle: FontStyle.italic),
           bodyText2: TextStyle(fontSize: 14.0),
         ),
+        appBarTheme: AppBarTheme(
+          centerTitle: true,
+          toolbarTextStyle: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+          titleTextStyle: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+          color: const Color(PRIMARY_COLOR),
+        ),
         primaryColor: Color(PRIMARY_COLOR),
         accentColor: Color(SECONDARY_COLOR),
         primarySwatch: MaterialColor(SECONDARY_COLOR, THEME_COLOR),
