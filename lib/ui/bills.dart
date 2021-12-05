@@ -1,5 +1,7 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:project_netsurf/common/analytics.dart';
 import 'package:project_netsurf/common/contants.dart';
 import 'package:project_netsurf/common/models/billing.dart';
 import 'package:project_netsurf/common/models/customer.dart';
@@ -20,6 +22,7 @@ class BillsPage extends StatefulWidget {
 }
 
 class HomePageState extends State<BillsPage> {
+  static FirebaseAnalytics analytics = FirebaseAnalytics();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   Icon actionIcon = new Icon(
     Icons.search,
@@ -53,6 +56,7 @@ class HomePageState extends State<BillsPage> {
 
   @override
   Widget build(BuildContext context) {
+    analytics.setCurrentScreen(screenName: CT_SAVED_BILLS);
     return Listener(
       onPointerDown: (_) {
         WidgetsBinding.instance?.focusManager.primaryFocus?.unfocus();

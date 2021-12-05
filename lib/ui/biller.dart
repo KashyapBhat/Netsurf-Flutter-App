@@ -1,8 +1,12 @@
 import 'dart:io';
 
+import 'package:device_info/device_info.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:intl/intl.dart';
+import 'package:project_netsurf/common/analytics.dart';
 import 'package:project_netsurf/common/contants.dart';
 import 'package:project_netsurf/common/models/billing.dart';
 import 'package:project_netsurf/common/models/billing_info.dart';
@@ -27,6 +31,7 @@ class BillerPage extends StatefulWidget {
 }
 
 class HomePageState extends State<BillerPage> {
+  static FirebaseAnalytics analytics = FirebaseAnalytics();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -36,6 +41,7 @@ class HomePageState extends State<BillerPage> {
 
   @override
   Widget build(BuildContext context) {
+    analytics.setCurrentScreen(screenName: CT_BILLING);
     return Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
@@ -49,7 +55,6 @@ class HomePageState extends State<BillerPage> {
               child: Column(
                 children: [
                   buildHeader(widget.billing),
-                  SizedBox(height: 5),
                   buildTitle(widget.billing),
                   SizedBox(height: 5),
                   buildInvoice(widget.billing),
@@ -280,6 +285,32 @@ class HomePageState extends State<BillerPage> {
             child: CustomButton(
               buttonText: isAlreadySaved ? "Share PDF" : "SAVE",
               onClick: () async {
+                DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+                AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+                var formatter = new DateFormat('dd/MM/yyyy – HH:mm');
+                String formattedDate = "";
+                if (invoice.billingInfo != null &&
+                    invoice.billingInfo!.date != null) {
+                  formattedDate = formatter.format(invoice.billingInfo!.date!);
+                  print("Formated Date" + formattedDate);
+                }
+                analytics.setCurrentScreen(screenName: CT_PDF_CREATION);
+                analytics.logEvent(
+                  name: CT_SAVE_BILL,
+                  parameters: <String, dynamic>{
+                    CT_DISTRIBUTOR_NAME: invoice.retailer?.name,
+                    CT_DISTRIBUTOR_PH_NO: invoice.retailer?.mobileNo,
+                    CT_CUSTOMER_NAME: invoice.customer?.name,
+                    CT_CUSTOMER_PH_NO: invoice.customer?.mobileNo,
+                    CT_BILLING_NO: invoice.billingInfo?.number,
+                    CT_BILLING_DATE: formattedDate,
+                    CT_MODEL_NAME: androidInfo.model,
+                    CT_MANUFACTURER_NAME: androidInfo.manufacturer,
+                    CT_ANDROID_ID: androidInfo.androidId,
+                    CT_ANDROID_VERSION_STRING: androidInfo.version.release,
+                    CT_ANDROID_VERSION: androidInfo.version.baseOS
+                  },
+                );
                 if (!isAlreadySaved)
                   await Preference.setItem(
                       SP_BILLING_ID, invoice.billingInfo?.number ?? "");

@@ -1,9 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:device_info/device_info.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:project_netsurf/common/analytics.dart';
 import 'package:project_netsurf/common/contants.dart';
 import 'package:project_netsurf/common/models/customer.dart';
 import 'package:project_netsurf/common/models/display_data.dart';
@@ -34,6 +37,7 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
+  static FirebaseAnalytics analytics = FirebaseAnalytics();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController categoryTextController =
       new TextEditingController();
@@ -72,6 +76,8 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    analytics.setCurrentScreen(
+        screenName: isRetailer ? CT_DISTRIBUTER_SCREEN : CT_USER_SCREEN);
     return Listener(
       onPointerDown: (_) {
         WidgetsBinding.instance!.focusManager.primaryFocus?.unfocus();
@@ -292,7 +298,7 @@ class HomePageState extends State<HomePage> {
               ),
             CustomButton(
               buttonText: isRetailer ? "Save" : "Next",
-              onClick: () {
+              onClick: () async {
                 if (user.name.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text("Please fill the " + textValue + " name!"),
@@ -314,6 +320,20 @@ class HomePageState extends State<HomePage> {
                   return;
                 }
                 if (isRetailer) {
+                  DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+                  AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+                  analytics.logEvent(
+                    name: CT_DISTRIBUTOR_LOGIN,
+                    parameters: <String, dynamic>{
+                      CT_DISTRIBUTOR_NAME: retailer.name,
+                      CT_DISTRIBUTOR_PH_NO: retailer.mobileNo,
+                      CT_MODEL_NAME: androidInfo.model,
+                      CT_MANUFACTURER_NAME: androidInfo.manufacturer,
+                      CT_ANDROID_ID: androidInfo.androidId,
+                      CT_ANDROID_VERSION_STRING: androidInfo.version.release,
+                      CT_ANDROID_VERSION: androidInfo.version.baseOS
+                    },
+                  );
                   Preference.setRetailer(user);
                   Phoenix.rebirth(context);
                 } else {

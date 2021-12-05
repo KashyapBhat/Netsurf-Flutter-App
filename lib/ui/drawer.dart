@@ -1,8 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:device_info/device_info.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:project_netsurf/common/analytics.dart';
 import 'package:project_netsurf/common/contants.dart';
 import 'package:project_netsurf/common/models/customer.dart';
 import 'package:project_netsurf/common/models/display_data.dart';
@@ -16,6 +19,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AppDrawer extends StatelessWidget {
+  static FirebaseAnalytics analytics = FirebaseAnalytics();
   final User retailer;
   final DisplayData displayData;
 
@@ -24,6 +28,7 @@ class AppDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext buildContext) {
+    analytics.setCurrentScreen(screenName: CT_DRAWER);
     return FutureBuilder(
       future: PackageInfo.fromPlatform(),
       builder: (context, AsyncSnapshot<PackageInfo> snapshot) {
@@ -128,6 +133,21 @@ class AppDrawer extends StatelessWidget {
                   icon: Icons.account_box_rounded,
                   text: 'Distributor logout',
                   onTap: () async {
+                    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+                    AndroidDeviceInfo androidInfo =
+                        await deviceInfo.androidInfo;
+                    analytics.logEvent(
+                      name: CT_LOGOUT,
+                      parameters: <String, dynamic>{
+                        CT_DISTRIBUTOR_NAME: retailer.name,
+                        CT_DISTRIBUTOR_PH_NO: retailer.mobileNo,
+                        CT_MODEL_NAME: androidInfo.model,
+                        CT_MANUFACTURER_NAME: androidInfo.manufacturer,
+                        CT_ANDROID_ID: androidInfo.androidId,
+                        CT_ANDROID_VERSION_STRING: androidInfo.version.release,
+                        CT_ANDROID_VERSION: androidInfo.version.baseOS
+                      },
+                    );
                     showLogoutErrorDialog(context);
                   },
                 ),
@@ -135,7 +155,22 @@ class AppDrawer extends StatelessWidget {
                 _createDrawerItem(
                   icon: Icons.face_retouching_natural,
                   text: displayData.aname,
-                  onTap: () {
+                  onTap: () async {
+                    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+                    AndroidDeviceInfo androidInfo =
+                        await deviceInfo.androidInfo;
+                    analytics.logEvent(
+                      name: CT_AUTHOR,
+                      parameters: <String, dynamic>{
+                        CT_DISTRIBUTOR_NAME: retailer.name,
+                        CT_DISTRIBUTOR_PH_NO: retailer.mobileNo,
+                        CT_MODEL_NAME: androidInfo.model,
+                        CT_MANUFACTURER_NAME: androidInfo.manufacturer,
+                        CT_ANDROID_ID: androidInfo.androidId,
+                        CT_ANDROID_VERSION_STRING: androidInfo.version.release,
+                        CT_ANDROID_VERSION: androidInfo.version.baseOS
+                      },
+                    );
                     _launchURL(displayData.alink);
                   },
                 ),
@@ -144,6 +179,22 @@ class AppDrawer extends StatelessWidget {
                     icon: Icons.bug_report,
                     text: 'Report issue',
                     onTap: () async {
+                      DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+                      AndroidDeviceInfo androidInfo =
+                          await deviceInfo.androidInfo;
+                      analytics.logEvent(
+                        name: CT_REPORT_ISSUE,
+                        parameters: <String, dynamic>{
+                          CT_DISTRIBUTOR_NAME: retailer.name,
+                          CT_DISTRIBUTOR_PH_NO: retailer.mobileNo,
+                          CT_MODEL_NAME: androidInfo.model,
+                          CT_MANUFACTURER_NAME: androidInfo.manufacturer,
+                          CT_ANDROID_ID: androidInfo.androidId,
+                          CT_ANDROID_VERSION_STRING:
+                              androidInfo.version.release,
+                          CT_ANDROID_VERSION: androidInfo.version.baseOS
+                        },
+                      );
                       final Uri params = Uri(
                         scheme: 'mailto',
                         path: displayData.aemail,
@@ -156,7 +207,22 @@ class AppDrawer extends StatelessWidget {
                 _createDrawerItem(
                   icon: Icons.mobile_screen_share_rounded,
                   text: "Share with friends",
-                  onTap: () {
+                  onTap: () async {
+                    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+                    AndroidDeviceInfo androidInfo =
+                        await deviceInfo.androidInfo;
+                    analytics.logEvent(
+                      name: CT_SHARE_APP,
+                      parameters: <String, dynamic>{
+                        CT_DISTRIBUTOR_NAME: retailer.name,
+                        CT_DISTRIBUTOR_PH_NO: retailer.mobileNo,
+                        CT_MODEL_NAME: androidInfo.model,
+                        CT_MANUFACTURER_NAME: androidInfo.manufacturer,
+                        CT_ANDROID_ID: androidInfo.androidId,
+                        CT_ANDROID_VERSION_STRING: androidInfo.version.release,
+                        CT_ANDROID_VERSION: androidInfo.version.baseOS
+                      },
+                    );
                     print("Play Link: " + displayData.playlink);
                     Share.share(displayData.playlink);
                   },
