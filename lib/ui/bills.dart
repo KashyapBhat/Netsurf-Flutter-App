@@ -126,7 +126,14 @@ class HomePageState extends State<BillsPage> {
                           ? _buildSearchList(snapshot.data!)
                           : snapshot.data!);
                     } else {
-                      return Center(child: Text("No bills found!"));
+                      return Container(
+                          margin: EdgeInsets.only(
+                              left: 10, right: 10, top: 10, bottom: 5),
+                          child: Center(
+                              child: Text(
+                                "No bills found",
+                                style: TextStyle(fontSize: 16),
+                              )));
                     }
                   } else if (snapshot.connectionState == ConnectionState.none) {
                     return Text("No product data found");
@@ -135,28 +142,38 @@ class HomePageState extends State<BillsPage> {
                 },
               ),
               SizedBox(height: 5),
-              Text("You can search by name, phone number or bill number",
-                  style: TextStyle(fontSize: 11)),
+              Container(
+                margin: EdgeInsets.only(left: 18, right: 18),
+                child: Text(
+                    "You can search the saved bills by name, phone number or bill number!",
+                    style: TextStyle(fontSize: 11)),
+              ),
             ],
           )),
     );
   }
 
   List<Billing> _buildSearchList(List<Billing> bills) {
+    print("_searchText");
     if (_searchText.isEmpty) {
+      print("isEmpty");
       return bills;
     } else {
-      return bills
-          .where((bill) =>
-              bill.billingInfo?.number.contains(_searchText) ??
-              false ||
-                  (bill.customer != null &&
-                      (bill.customer!.mobileNo.contains(_searchText) ||
-                          bill.customer!.name
-                              .toLowerCase()
-                              .contains(_searchText.toLowerCase()))))
-          .toList();
+      return bills.where((bill) => checkBill(bill)).toList();
     }
+  }
+
+  bool checkBill(Billing bill) {
+    bool hasSearch = false;
+    if (bill.billingInfo != null) {
+      hasSearch = hasSearch || bill.billingInfo!.number.contains(_searchText);
+    }
+    if (bill.customer != null) {
+      hasSearch = hasSearch ||
+          (bill.customer!.mobileNo.contains(_searchText) || bill.customer!.name
+              .toLowerCase().contains(_searchText.toLowerCase()));
+    }
+    return hasSearch;
   }
 
   void _handleSearchStart() {
@@ -248,12 +265,12 @@ class HomePageState extends State<BillsPage> {
                                   left: 24, top: 8, bottom: 8, right: 8),
                               child: Column(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                         bills[index].customer?.name ?? "NA",
@@ -274,7 +291,7 @@ class HomePageState extends State<BillsPage> {
                                   SizedBox(height: 10),
                                   Row(
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                     children: [
                                       if (bills[index].billingInfo != null)
                                         Text(

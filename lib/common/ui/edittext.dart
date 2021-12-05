@@ -77,6 +77,9 @@ class InputText extends StatelessWidget {
       cursorWidth: 1.3,
       controller: controller,
       textAlign: TextAlign.center,
+      inputFormatters: <TextInputFormatter>[
+        FilteringTextInputFormatter.digitsOnly
+      ],
       style: TextStyle(
         fontSize: 15,
       ),

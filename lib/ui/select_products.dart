@@ -145,8 +145,8 @@ class SelectProductsPageState extends State<SelectProductsPage> {
                         controller: _controllers[index],
                         onText: (value) {
                           setState(() {
-                            print(value);
                             if (value != null) {
+                              print("VALUE: " + value);
                               if (value.isEmpty) {
                                 selectedProducts[index]?.quantity = 0;
                                 selectedCategory?.quantity = 0;
@@ -559,7 +559,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
   void calculateTotal() {
     price.total = 0;
     for (var item in selectedProducts) {
-      print(item?.price);
+      print("TOTAL ${item?.price.toString()}");
       price.total += item?.price ?? 0 * item!.quantity;
       price.finalAmt = price.total;
     }
