@@ -111,44 +111,48 @@ class HomePageState extends State<BillsPage> {
             ],
           ),
           key: _scaffoldKey,
-          body: Column(
-            children: [
-              FutureBuilder(
-                future: Preference.getBills(),
-                builder: (context, AsyncSnapshot<List<Billing>> snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    if (snapshot.data != null && snapshot.data!.isNotEmpty) {
-                      snapshot.data!.forEach((element) {
-                        if (element.price != null)
-                          print("BILLS: " + element.price!.dispFinalAmt());
-                      });
-                      return inputDataAndNext(_isSearching
-                          ? _buildSearchList(snapshot.data!)
-                          : snapshot.data!);
-                    } else {
-                      return Container(
-                          margin: EdgeInsets.only(
-                              left: 10, right: 10, top: 10, bottom: 5),
-                          child: Center(
-                              child: Text(
-                                "No bills found",
-                                style: TextStyle(fontSize: 16),
-                              )));
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                FutureBuilder(
+                  future: Preference.getBills(),
+                  builder: (context, AsyncSnapshot<List<Billing>> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      if (snapshot.data != null && snapshot.data!.isNotEmpty) {
+                        snapshot.data!.forEach((element) {
+                          if (element.price != null)
+                            print("BILLS: " + element.price!.dispFinalAmt());
+                        });
+                        return inputDataAndNext(_isSearching
+                            ? _buildSearchList(snapshot.data!)
+                            : snapshot.data!);
+                      } else {
+                        return Container(
+                            margin: EdgeInsets.only(
+                                left: 10, right: 10, top: 10, bottom: 0),
+                            child: Center(
+                                child: Text(
+                              "No bills found",
+                              style: TextStyle(fontSize: 16),
+                            )));
+                      }
+                    } else if (snapshot.connectionState ==
+                        ConnectionState.none) {
+                      return Text("No product data found");
                     }
-                  } else if (snapshot.connectionState == ConnectionState.none) {
-                    return Text("No product data found");
-                  }
-                  return CustomLoader();
-                },
-              ),
-              SizedBox(height: 5),
-              Container(
-                margin: EdgeInsets.only(left: 18, right: 18),
-                child: Text(
-                    "You can search the saved bills by name, phone number or bill number!",
-                    style: TextStyle(fontSize: 11)),
-              ),
-            ],
+                    return CustomLoader();
+                  },
+                ),
+                SizedBox(height: 5),
+                Container(
+                  margin:
+                      EdgeInsets.only(left: 18, right: 18, bottom: 18, top: 5),
+                  child: Text(
+                      "You can search the saved bills by name, phone number or bill number!",
+                      style: TextStyle(fontSize: 11)),
+                ),
+              ],
+            ),
           )),
     );
   }
@@ -170,8 +174,10 @@ class HomePageState extends State<BillsPage> {
     }
     if (bill.customer != null) {
       hasSearch = hasSearch ||
-          (bill.customer!.mobileNo.contains(_searchText) || bill.customer!.name
-              .toLowerCase().contains(_searchText.toLowerCase()));
+          (bill.customer!.mobileNo.contains(_searchText) ||
+              bill.customer!.name
+                  .toLowerCase()
+                  .contains(_searchText.toLowerCase()));
     }
     return hasSearch;
   }
@@ -265,12 +271,12 @@ class HomePageState extends State<BillsPage> {
                                   left: 24, top: 8, bottom: 8, right: 8),
                               child: Column(
                                 mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
                                     mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                         bills[index].customer?.name ?? "NA",
@@ -291,7 +297,7 @@ class HomePageState extends State<BillsPage> {
                                   SizedBox(height: 10),
                                   Row(
                                     mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       if (bills[index].billingInfo != null)
                                         Text(

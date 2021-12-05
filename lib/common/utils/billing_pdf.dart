@@ -26,7 +26,8 @@ class PdfInvoiceApi {
     ));
 
     String billNumber = invoice.billingInfo?.number ?? "";
-    String fileName = invoice.customer?.mobileNo ?? "" + billNumber + ".pdf";
+    String mbNo = invoice.customer?.mobileNo ?? "";
+    String fileName = mbNo + "-" + billNumber + ".pdf";
     return PdfApi.saveDocument(name: fileName, pdf: pdf);
   }
 
