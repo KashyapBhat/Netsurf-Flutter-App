@@ -44,35 +44,38 @@ class AppDrawer extends StatelessWidget {
                 ),
                 if (retailer.name.isNotEmpty) SizedBox(height: 8),
                 if (retailer.name.isNotEmpty)
-                  Padding(
-                    padding: EdgeInsets.only(left: 8, right: 16),
-                    child: Row(
-                      children: [
-                        Icon(Icons.account_circle_rounded,
-                            size: 40, color: Color(PRIMARY_COLOR)),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(left: 8),
-                              child: Text(
-                                retailer.name,
-                                style: TextStyle(
-                                    fontSize: 15.0,
-                                    fontWeight: FontWeight.w600),
+                  Container(
+                    margin: EdgeInsets.only(top: 6, bottom: 6),
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 12, right: 16),
+                      child: Row(
+                        children: [
+                          Icon(Icons.account_circle_rounded,
+                              size: 35, color: Color(PRIMARY_COLOR)),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(left: 8),
+                                child: Text(
+                                  retailer.name,
+                                  style: TextStyle(
+                                      fontSize: 15.0,
+                                      fontWeight: FontWeight.w600),
+                                ),
                               ),
-                            ),
-                            SizedBox(height: 2),
-                            Padding(
-                              padding: EdgeInsets.only(left: 8),
-                              child: Text(
-                                retailer.mobileNo,
-                                style: TextStyle(fontSize: 13.0),
+                              SizedBox(height: 2),
+                              Padding(
+                                padding: EdgeInsets.only(left: 8),
+                                child: Text(
+                                  retailer.mobileNo,
+                                  style: TextStyle(fontSize: 13.0),
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 if (retailer.name.isNotEmpty) Divider(),
