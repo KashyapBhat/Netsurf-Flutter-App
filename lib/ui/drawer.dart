@@ -47,11 +47,11 @@ class AppDrawer extends StatelessWidget {
                   Container(
                     margin: EdgeInsets.only(top: 6, bottom: 6),
                     child: Padding(
-                      padding: EdgeInsets.only(left: 12, right: 16),
+                      padding: EdgeInsets.only(left: 14, right: 16),
                       child: Row(
                         children: [
                           Icon(Icons.account_circle_rounded,
-                              size: 35, color: Color(PRIMARY_COLOR)),
+                              size: 32, color: Color(PRIMARY_COLOR)),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -83,7 +83,7 @@ class AppDrawer extends StatelessWidget {
                   icon: Icon(
                     Icons.collections_bookmark_rounded,
                     size: 28,
-                    color: Color(SECONDARY_COLOR),
+                    color: Color(PRIMARY_COLOR),
                   ),
                   text: SAVED,
                   onTap: () {
