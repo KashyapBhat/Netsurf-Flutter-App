@@ -239,7 +239,7 @@ class HomePageState extends State<BillerPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   buildText(
-                    title: 'Total Amount',
+                    title: TOTAL_AMOUNT,
                     titleStyle: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.normal,
@@ -249,7 +249,7 @@ class HomePageState extends State<BillerPage> {
                     unite: true,
                   ),
                   buildText(
-                    title: 'Discount',
+                    title: DISCOUNT,
                     titleStyle: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.normal,
@@ -261,7 +261,7 @@ class HomePageState extends State<BillerPage> {
                   ),
                   Divider(height: 5),
                   buildText(
-                    title: 'Final Amount',
+                    title: FINAL_AMOUNT,
                     titleStyle: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
