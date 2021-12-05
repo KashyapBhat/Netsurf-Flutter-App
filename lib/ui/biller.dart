@@ -146,7 +146,8 @@ class HomePageState extends State<BillerPage> {
         ' ${item?.getDispTotal()}',
       ];
     }).toList();
-    data?.insert(0, headers);
+    if (data == null) return Text("NA");
+    data.insert(0, headers);
 
     return Expanded(
       child: Container(
@@ -154,7 +155,7 @@ class HomePageState extends State<BillerPage> {
         child: ListView.separated(
             physics: ClampingScrollPhysics(),
             shrinkWrap: true,
-            itemCount: data?.length ?? 0,
+            itemCount: data.length,
             separatorBuilder: (context, int) {
               return Container(
                 padding: EdgeInsets.only(left: 5, top: 0, right: 5, bottom: 0),

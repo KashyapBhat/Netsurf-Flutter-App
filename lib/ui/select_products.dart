@@ -299,10 +299,10 @@ class SelectProductsPageState extends State<SelectProductsPage> {
   }
 
   String itemPrice(int index) {
+    if (selectedProducts[index] == null) return "";
     return RUPEE_SYMBOL +
         " " +
-        (selectedProducts[index]?.price ??
-                0 * selectedProducts[index]!.quantity)
+        (selectedProducts[index]!.price * selectedProducts[index]!.quantity)
             .ceil()
             .toString();
   }
@@ -559,8 +559,10 @@ class SelectProductsPageState extends State<SelectProductsPage> {
   void calculateTotal() {
     price.total = 0;
     for (var item in selectedProducts) {
-      print("TOTAL ${item?.price.toString()}");
-      price.total += item?.price ?? 0 * item!.quantity;
+      print("TOTAL ${item?.price.toString()}  Quant: ${item?.quantity}");
+      if (item == null) return;
+      print("TOTALss ${item.price * item.quantity}");
+      price.total += item.price * item.quantity;
       price.finalAmt = price.total;
     }
   }
