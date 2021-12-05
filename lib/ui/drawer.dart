@@ -37,7 +37,7 @@ class AppDrawer extends StatelessWidget {
                   imageUrl: displayData.drawer,
                   progressIndicatorBuilder: (context, url, downloadProgress) =>
                       CustomLoader(),
-                  fit: BoxFit.contain,
+                  fit: BoxFit.fill,
                   fadeInCurve: Curves.easeInToLinear,
                   errorWidget: (context, url, error) =>
                       Icon(Icons.error_outlined),
@@ -46,30 +46,42 @@ class AppDrawer extends StatelessWidget {
                 if (retailer.name.isNotEmpty)
                   Padding(
                     padding: EdgeInsets.only(left: 8, right: 16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Row(
                       children: [
-                        Padding(
-                          padding: EdgeInsets.only(left: 8),
-                          child: Text(
-                            retailer.name,
-                            style: TextStyle(
-                                fontSize: 15.0, fontWeight: FontWeight.w600),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(left: 8),
-                          child: Text(
-                            retailer.mobileNo,
-                            style: TextStyle(fontSize: 13.0),
-                          ),
+                        Icon(Icons.account_circle_rounded,
+                            size: 40, color: Color(PRIMARY_COLOR)),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(left: 8),
+                              child: Text(
+                                retailer.name,
+                                style: TextStyle(
+                                    fontSize: 15.0,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                            ),
+                            SizedBox(height: 2),
+                            Padding(
+                              padding: EdgeInsets.only(left: 8),
+                              child: Text(
+                                retailer.mobileNo,
+                                style: TextStyle(fontSize: 13.0),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   ),
                 if (retailer.name.isNotEmpty) Divider(),
-                _createDrawerItem(
-                  icon: Icons.collections_bookmark_rounded,
+                _createDrawerIconItem(
+                  icon: Icon(
+                    Icons.collections_bookmark_rounded,
+                    size: 28,
+                    color: Color(SECONDARY_COLOR),
+                  ),
                   text: SAVED,
                   onTap: () {
                     Navigator.push(
@@ -80,6 +92,7 @@ class AppDrawer extends StatelessWidget {
                     );
                   },
                 ),
+                Divider(),
                 _createDrawerItem(
                   icon: Icons.refresh_rounded,
                   text: 'Refresh app',
@@ -182,10 +195,17 @@ Widget _createDrawerItem(
     {required IconData icon,
     required String text,
     required GestureTapCallback onTap}) {
+  return _createDrawerIconItem(icon: Icon(icon), text: text, onTap: onTap);
+}
+
+Widget _createDrawerIconItem(
+    {required Icon icon,
+    required String text,
+    required GestureTapCallback onTap}) {
   return ListTile(
     title: Row(
       children: <Widget>[
-        Icon(icon),
+        icon,
         Padding(
           padding: EdgeInsets.only(left: 8.0),
           child: Text(text),
