@@ -1,8 +1,8 @@
 class BillingInfo {
-  String _description;
-  String _number;
-  DateTime _date;
-  DateTime _dueDate;
+  String _description = "";
+  String _number = "";
+  DateTime? _date;
+  DateTime? _dueDate;
 
   String get description => _description;
 
@@ -12,24 +12,24 @@ class BillingInfo {
 
   String get number => _number;
 
-  DateTime get date => _date;
+  DateTime? get date => _date;
 
-  DateTime get dueDate => _dueDate;
+  DateTime? get dueDate => _dueDate;
 
   set number(String value) {
     _number = value;
   }
 
-  set dueDate(DateTime value) {
+  set dueDate(DateTime? value) {
     _dueDate = value;
   }
 
-  set date(DateTime value) {
+  set date(DateTime? value) {
     _date = value;
   }
 
-  BillingInfo(String description, String number, DateTime date,
-      {DateTime dueDate}) {
+  BillingInfo(String description, String number, DateTime? date,
+      {DateTime? dueDate}) {
     _description = description;
     _number = number;
     _date = date;
@@ -47,7 +47,7 @@ class BillingInfo {
     var map = <String, dynamic>{};
     map["description"] = _description;
     map["number"] = _number;
-    map["date"] = _date.toIso8601String();
+    map["date"] = _date?.toIso8601String();
     map["dueDate"] = _dueDate?.toIso8601String();
     return map;
   }

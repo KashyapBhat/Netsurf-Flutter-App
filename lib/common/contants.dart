@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 const String APP_NAME = "Netsurfs Calci";
 const String SAVED = "Saved bills";
 const String RUPEE_SYMBOL = "\u20B9";
+const String TOTAL_AMOUNT = "Total amount (" + RUPEE_SYMBOL +") ";
+const String DISCOUNT = "Discount (" + RUPEE_SYMBOL +") ";
+const String FINAL_AMOUNT = "Final Amount (" + RUPEE_SYMBOL +") ";
 
 const int PRIMARY_COLOR = 0xFF333366;
 const int SECONDARY_COLOR = 0xFF5555aa;

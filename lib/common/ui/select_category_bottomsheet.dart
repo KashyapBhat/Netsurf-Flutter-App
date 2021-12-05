@@ -5,9 +5,9 @@ import 'package:project_netsurf/common/models/product.dart';
 void showSelectCategoryBottomSheet(
     BuildContext context,
     GlobalKey<ScaffoldState> scaffoldKey,
-    List<Product> productList,
+    List<Product?> productList,
     TextEditingController textController,
-    Function(Product) onClick) {
+    Function(Product?) onClick) {
   showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -66,10 +66,10 @@ void showSelectCategoryBottomSheet(
       });
 }
 
-Widget _showBottomSheetWithSearch(int index, List<Product> productList) {
+Widget _showBottomSheetWithSearch(int index, List<Product?> productList) {
   return Container(
     padding: EdgeInsets.only(left: 16, top: 8, right: 16, bottom: 8),
-    child: Text(productList[index].getDisplayName(),
+    child: Text(productList[index]?.getDisplayName() ?? "NA",
         style: TextStyle(
           fontSize: 15,
           height: 1.5,

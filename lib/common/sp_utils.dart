@@ -33,7 +33,7 @@ class Preference {
 
   static Future<int> getIntItem(String name) async {
     final SharedPreferences prefs = await _prefs;
-    return prefs.getInt(name) ?? '';
+    return prefs.getInt(name) ?? 0;
   }
 
   static Future<bool> setIntItem(String name, int value) async {
@@ -43,7 +43,7 @@ class Preference {
 
   static Future<double> getDoubleItem(String name) async {
     final SharedPreferences prefs = await _prefs;
-    return prefs.getDouble(name) ?? '';
+    return prefs.getDouble(name) ?? 0;
   }
 
   static Future<bool> setDoubleItem(String name, double value) async {
@@ -53,7 +53,7 @@ class Preference {
 
   static Future<bool> getBoolItem(String name) async {
     final SharedPreferences prefs = await _prefs;
-    return prefs.getBool(name) ?? '';
+    return prefs.getBool(name) ?? false;
   }
 
   static Future<bool> setBoolItem(String name, bool value) async {
@@ -71,7 +71,7 @@ class Preference {
     return prefs.setStringList(key, value);
   }
 
-  Future<List<String>> getListData(String key) async {
+  Future<List<String>?> getListData(String key) async {
     final SharedPreferences prefs = await _prefs;
     return prefs.getStringList(key);
   }
@@ -89,7 +89,7 @@ class Preference {
 
   static Future<DisplayData> getDisplayData() async {
     final SharedPreferences prefs = await _prefs;
-    String displayString = prefs.getString(SP_DISPLAY);
+    String displayString = prefs.getString(SP_DISPLAY) ?? "";
     final DisplayData decodedData = DisplayData.decode(displayString);
     return decodedData;
   }
@@ -102,7 +102,7 @@ class Preference {
 
   static Future<List<Product>> getProducts(String name) async {
     final SharedPreferences prefs = await _prefs;
-    String productsEncoded = prefs.getString(name);
+    String productsEncoded = prefs.getString(name) ?? "";
     final List<Product> decodedData = Product.decode(productsEncoded);
     return decodedData;
   }
@@ -115,7 +115,7 @@ class Preference {
 
   static Future<User> getRetailer() async {
     final SharedPreferences prefs = await _prefs;
-    String decodedData = prefs.getString(SP_RETAILER);
+    String decodedData = prefs.getString(SP_RETAILER) ?? "";
     final User decodedRetailer = User.decode(decodedData);
     return decodedRetailer;
   }
@@ -141,7 +141,7 @@ class Preference {
 
   static Future<List<Billing>> getBills() async {
     final SharedPreferences prefs = await _prefs;
-    String decodedData = prefs.getString(SP_BILLING);
+    String decodedData = prefs.getString(SP_BILLING) ?? "";
     final List<Billing> decodedRetailer = Billing.decodeList(decodedData);
     return decodedRetailer;
   }
@@ -158,7 +158,7 @@ class Preference {
 
   static Future<DateTime> getDateTime(String key) async {
     final SharedPreferences prefs = await _prefs;
-    String displayString = prefs.getString(key);
+    String displayString = prefs.getString(key) ?? "";
     return DateTime.parse(displayString);
   }
 }

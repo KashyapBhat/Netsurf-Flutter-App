@@ -12,11 +12,11 @@ import 'package:project_netsurf/common/models/product.dart';
 */
 
 class Billing {
-  BillingInfo billingInfo;
-  User retailer;
-  User customer;
-  List<Product> selectedProducts;
-  Price price;
+  BillingInfo? billingInfo;
+  User? retailer;
+  User? customer;
+  List<Product?>? selectedProducts;
+  Price? price;
 
   Billing(this.billingInfo, this.retailer, this.customer, this.selectedProducts,
       this.price);
@@ -32,7 +32,7 @@ class Billing {
     if (json["selectedProducts"] != null) {
       selectedProducts = [];
       json["selectedProducts"].forEach((v) {
-        selectedProducts.add(Product.fromJson(v));
+        selectedProducts?.add(Product.fromJson(v));
       });
     }
     price = json["price"] != null ? Price.fromJson(json["price"]) : null;
@@ -41,20 +41,20 @@ class Billing {
   Map<String, dynamic> toJson() {
     var map = <String, dynamic>{};
     if (billingInfo != null) {
-      map["billingInfo"] = billingInfo.toJson();
+      map["billingInfo"] = billingInfo?.toJson();
     }
     if (retailer != null) {
-      map["retailer"] = retailer.toJson();
+      map["retailer"] = retailer?.toJson();
     }
     if (customer != null) {
-      map["customer"] = customer.toJson();
+      map["customer"] = customer?.toJson();
     }
     if (selectedProducts != null) {
       map["selectedProducts"] =
-          selectedProducts.map((v) => v.toJson()).toList();
+          selectedProducts?.map((v) => v?.toJson()).toList();
     }
     if (price != null) {
-      map["price"] = price.toJson();
+      map["price"] = price?.toJson();
     }
     return map;
   }

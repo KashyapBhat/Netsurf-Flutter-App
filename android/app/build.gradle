@@ -44,6 +44,7 @@ android {
         applicationId "in.codingcurve.netsurfs_calci"
         minSdkVersion 23
         targetSdkVersion 30
+        multiDexEnabled true
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
@@ -80,4 +81,6 @@ dependencies {
 
     def material = "1.3.0"
     implementation "com.google.android.material:material:$material"
+    def multidex = "1.0.3"
+    implementation "com.android.support:multidex:$multidex"
 }

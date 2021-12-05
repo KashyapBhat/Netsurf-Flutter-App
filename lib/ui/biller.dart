@@ -1,8 +1,12 @@
 import 'dart:io';
 
+import 'package:device_info/device_info.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:intl/intl.dart';
+import 'package:project_netsurf/common/analytics.dart';
 import 'package:project_netsurf/common/contants.dart';
 import 'package:project_netsurf/common/models/billing.dart';
 import 'package:project_netsurf/common/models/billing_info.dart';
@@ -19,7 +23,7 @@ class BillerPage extends StatefulWidget {
   final bool isAlreadySaved;
   final Billing billing;
 
-  BillerPage({Key key, this.billing, this.isAlreadySaved = true})
+  BillerPage({Key? key, required this.billing, this.isAlreadySaved = true})
       : super(key: key);
 
   @override
@@ -27,6 +31,7 @@ class BillerPage extends StatefulWidget {
 }
 
 class HomePageState extends State<BillerPage> {
+  static FirebaseAnalytics analytics = FirebaseAnalytics();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -36,6 +41,7 @@ class HomePageState extends State<BillerPage> {
 
   @override
   Widget build(BuildContext context) {
+    analytics.setCurrentScreen(screenName: CT_BILLING);
     return Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
@@ -49,7 +55,6 @@ class HomePageState extends State<BillerPage> {
               child: Column(
                 children: [
                   buildHeader(widget.billing),
-                  SizedBox(height: 5),
                   buildTitle(widget.billing),
                   SizedBox(height: 5),
                   buildInvoice(widget.billing),
@@ -70,8 +75,10 @@ class HomePageState extends State<BillerPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(child: buildCustomerAddress(invoice.customer)),
-              Expanded(child: buildInvoiceInfo(invoice.billingInfo)),
+              if (invoice.customer != null)
+                Expanded(child: buildCustomerAddress(invoice.customer!)),
+              if (invoice.billingInfo != null)
+                Expanded(child: buildInvoiceInfo(invoice.billingInfo!)),
             ],
           ),
         ],
@@ -105,7 +112,7 @@ class HomePageState extends State<BillerPage> {
     ];
     final data = <String>[
       info.number,
-      formatDate(info.date),
+      if (info.date != null) formatDate(info.date!),
       // paymentTerms,
       // formatDate(info.dueDate),
     ];
@@ -136,14 +143,15 @@ class HomePageState extends State<BillerPage> {
 
   static Widget buildInvoice(Billing invoice) {
     final headers = ['TITLE', 'QTY', 'MRP', 'TOTAL'];
-    final data = invoice.selectedProducts.map((item) {
+    final data = invoice.selectedProducts?.map((item) {
       return [
-        item.name,
-        '${item.quantity}',
-        ' ${item.getDispPrice()}',
-        ' ${item.getDispTotal()}',
+        item?.name,
+        '${item?.quantity}',
+        ' ${item?.getDispPrice()}',
+        ' ${item?.getDispTotal()}',
       ];
     }).toList();
+    if (data == null) return Text("NA");
     data.insert(0, headers);
 
     return Expanded(
@@ -152,7 +160,7 @@ class HomePageState extends State<BillerPage> {
         child: ListView.separated(
             physics: ClampingScrollPhysics(),
             shrinkWrap: true,
-            itemCount: data.length ?? 0,
+            itemCount: data.length,
             separatorBuilder: (context, int) {
               return Container(
                 padding: EdgeInsets.only(left: 5, top: 0, right: 5, bottom: 0),
@@ -163,6 +171,9 @@ class HomePageState extends State<BillerPage> {
               );
             },
             itemBuilder: (context, index) {
+              if (data == null) {
+                return Container(child: Center(child: Text("NA")));
+              }
               return Container(
                   child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -179,7 +190,7 @@ class HomePageState extends State<BillerPage> {
                     child: Container(
                       padding:
                           EdgeInsets.only(left: 0, top: 8, right: 5, bottom: 8),
-                      child: Text(data[index][0],
+                      child: Text(data[index][0] ?? "NA",
                           style: TextStyle(
                               color: Colors.black, fontSize: 14, height: 1.3),
                           textAlign: TextAlign.start),
@@ -188,7 +199,7 @@ class HomePageState extends State<BillerPage> {
                   Container(
                     width: 45,
                     child: Center(
-                      child: Text(data[index][1],
+                      child: Text(data[index][1] ?? "NA",
                           style: TextStyle(color: Colors.black, fontSize: 15),
                           textAlign: TextAlign.left),
                     ),
@@ -196,7 +207,7 @@ class HomePageState extends State<BillerPage> {
                   Container(
                     width: 50,
                     child: Center(
-                      child: Text(data[index][2],
+                      child: Text(data[index][2] ?? "NA",
                           style: TextStyle(color: Colors.black, fontSize: 15),
                           textAlign: TextAlign.left),
                     ),
@@ -204,7 +215,7 @@ class HomePageState extends State<BillerPage> {
                   Container(
                     width: 65,
                     child: Center(
-                      child: Text(data[index][3],
+                      child: Text(data[index][3] ?? "NA",
                           style: TextStyle(color: Colors.black, fontSize: 15),
                           textAlign: TextAlign.left),
                     ),
@@ -218,9 +229,9 @@ class HomePageState extends State<BillerPage> {
 
   static Widget buildTotal(
       BuildContext context, Billing invoice, bool isAlreadySaved) {
-    final netTotal = invoice.price.dispTotal();
-    final discount = invoice.price.dispDiscAmt();
-    final total = invoice.price.dispFinalAmt();
+    final netTotal = invoice.price?.dispTotal() ?? "NA";
+    final discount = invoice.price?.dispDiscAmt() ?? "NA";
+    final total = invoice.price?.dispFinalAmt() ?? "NA";
 
     return Container(
       alignment: Alignment.centerLeft,
@@ -233,7 +244,7 @@ class HomePageState extends State<BillerPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   buildText(
-                    title: 'Total Amount',
+                    title: TOTAL_AMOUNT,
                     titleStyle: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.normal,
@@ -243,7 +254,7 @@ class HomePageState extends State<BillerPage> {
                     unite: true,
                   ),
                   buildText(
-                    title: 'Discount',
+                    title: DISCOUNT,
                     titleStyle: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.normal,
@@ -255,7 +266,7 @@ class HomePageState extends State<BillerPage> {
                   ),
                   Divider(height: 5),
                   buildText(
-                    title: 'Final Amount',
+                    title: FINAL_AMOUNT,
                     titleStyle: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
@@ -274,13 +285,40 @@ class HomePageState extends State<BillerPage> {
             child: CustomButton(
               buttonText: isAlreadySaved ? "Share PDF" : "SAVE",
               onClick: () async {
+                DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+                AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+                var formatter = new DateFormat('dd/MM/yyyy – HH:mm');
+                String formattedDate = "";
+                if (invoice.billingInfo != null &&
+                    invoice.billingInfo!.date != null) {
+                  formattedDate = formatter.format(invoice.billingInfo!.date!);
+                  print("Formated Date" + formattedDate);
+                }
+                analytics.setCurrentScreen(screenName: CT_PDF_CREATION);
+                analytics.logEvent(
+                  name: CT_SAVE_BILL,
+                  parameters: <String, dynamic>{
+                    CT_DISTRIBUTOR_NAME: invoice.retailer?.name,
+                    CT_DISTRIBUTOR_PH_NO: invoice.retailer?.mobileNo,
+                    CT_CUSTOMER_NAME: invoice.customer?.name,
+                    CT_CUSTOMER_PH_NO: invoice.customer?.mobileNo,
+                    CT_BILLING_NO: invoice.billingInfo?.number,
+                    CT_BILLING_DATE: formattedDate,
+                    CT_MODEL_NAME: androidInfo.model,
+                    CT_MANUFACTURER_NAME: androidInfo.manufacturer,
+                    CT_ANDROID_ID: androidInfo.androidId,
+                    CT_ANDROID_VERSION_STRING: androidInfo.version.release,
+                    CT_ANDROID_VERSION: androidInfo.version.baseOS
+                  },
+                );
                 if (!isAlreadySaved)
                   await Preference.setItem(
-                      SP_BILLING_ID, invoice.billingInfo.number);
+                      SP_BILLING_ID, invoice.billingInfo?.number ?? "");
                 if (!isAlreadySaved) await Preference.addBill(invoice);
                 final billings = await Preference.getBills();
                 billings.forEach((element) {
-                  print("BILLS" + element.price.dispFinalAmt());
+                  if (element.price != null)
+                    print("BILLS" + element.price!.dispFinalAmt());
                 });
                 File pdf = await PdfInvoiceApi.generate(invoice);
                 PdfApi.openFile(pdf);
@@ -301,19 +339,19 @@ class HomePageState extends State<BillerPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              buildSupplierAddress(invoice.retailer),
+              if (invoice.retailer != null)
+                buildSupplierAddress(invoice.retailer!),
             ],
           ),
           SizedBox(height: 6),
-          if (invoice.retailer.address != null &&
-              invoice.retailer.address.isNotEmpty)
-            buildSimpleText(title: 'Address', value: invoice.retailer.address),
+          if (invoice.retailer != null && invoice.retailer!.address.isNotEmpty)
+            buildSimpleText(title: 'Address', value: invoice.retailer!.address),
         ],
       );
 
   static buildSimpleText({
-    String title,
-    String value,
+    required String title,
+    required String value,
   }) {
     final style = TextStyle(fontWeight: FontWeight.bold);
 
@@ -329,10 +367,10 @@ class HomePageState extends State<BillerPage> {
   }
 
   static buildText({
-    String title,
-    String value,
+    required String title,
+    required String value,
     double width = double.infinity,
-    TextStyle titleStyle,
+    TextStyle? titleStyle,
     bool unite = false,
   }) {
     final style = titleStyle ?? TextStyle(fontWeight: FontWeight.bold);

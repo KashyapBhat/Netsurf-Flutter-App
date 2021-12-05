@@ -5,12 +5,13 @@
 import 'dart:convert';
 
 class DisplayData {
-  String _aemail;
-  String _alink;
-  String _aname;
-  String _banner;
-  String _drawer;
-  String _playlink;
+  String _aemail = "";
+  String _alink = "";
+  String _aname = "";
+  String _banner = "";
+  String _drawer = "";
+  String _playlink = "";
+  List<String>? _bannerList;
 
   String get aemail => _aemail;
 
@@ -24,13 +25,15 @@ class DisplayData {
 
   String get playlink => _playlink;
 
+  List<String>? get bannerList => _bannerList;
+
   DisplayData(
-      {String aemail,
-      String alink,
-      String aname,
-      String banner,
-      String drawer,
-      String playlink}) {
+      {required String aemail,
+      required String alink,
+      required String aname,
+      required String banner,
+      required String drawer,
+      required String playlink}) {
     _aemail = aemail;
     _alink = alink;
     _aname = aname;
@@ -46,6 +49,7 @@ class DisplayData {
     _banner = json["banner"];
     _drawer = json["drawer"];
     _playlink = json["playlink"];
+    _bannerList = json['bannerList'] != null ? json['bannerList'].cast<String>() : [];
   }
 
   Map<String, dynamic> toJson() {
@@ -56,6 +60,7 @@ class DisplayData {
     map["banner"] = _banner;
     map["drawer"] = _drawer;
     map["playlink"] = _playlink;
+    map['bannerList'] = _bannerList;
     return map;
   }
 

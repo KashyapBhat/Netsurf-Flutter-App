@@ -1,12 +1,12 @@
 import 'dart:convert';
 
 class Product {
-  num _id;
-  String _name;
-  String _weight;
-  num _price;
-  num _quantity;
-  num _productCategoryId;
+  num _id = 0;
+  String _name = "";
+  String _weight = "";
+  num _price = 0;
+  num _quantity = 0;
+  num _productCategoryId = 0;
 
   num get id => _id;
 
@@ -36,7 +36,7 @@ class Product {
     _quantity = value;
   }
 
-  set price(double value) {
+  set price(num value) {
     _price = value;
   }
 

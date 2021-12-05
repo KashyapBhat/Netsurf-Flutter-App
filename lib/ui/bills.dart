@@ -1,5 +1,7 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:project_netsurf/common/analytics.dart';
 import 'package:project_netsurf/common/contants.dart';
 import 'package:project_netsurf/common/models/billing.dart';
 import 'package:project_netsurf/common/models/customer.dart';
@@ -12,20 +14,21 @@ class BillsPage extends StatefulWidget {
   final DisplayData displayData;
   final User retailer;
 
-  BillsPage({Key key, this.retailer, this.displayData}) : super(key: key);
+  BillsPage({Key? key, required this.retailer, required this.displayData})
+      : super(key: key);
 
   @override
   HomePageState createState() => HomePageState();
 }
 
 class HomePageState extends State<BillsPage> {
+  static FirebaseAnalytics analytics = FirebaseAnalytics();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  List<Billing> bills;
   Icon actionIcon = new Icon(
     Icons.search,
     color: Colors.white,
   );
-  bool _isSearching;
+  late bool _isSearching;
   String _searchText = "";
   final TextEditingController _searchQuery = new TextEditingController();
   Widget appBarTitle = new Text(
@@ -53,101 +56,134 @@ class HomePageState extends State<BillsPage> {
 
   @override
   Widget build(BuildContext context) {
+    analytics.setCurrentScreen(screenName: CT_SAVED_BILLS);
     return Listener(
       onPointerDown: (_) {
-        WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
+        WidgetsBinding.instance?.focusManager.primaryFocus?.unfocus();
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: appBarTitle,
-          centerTitle: true,
-          actions: <Widget>[
-            Container(
-              margin: EdgeInsets.only(right: 8),
-              child: IconButton(
-                icon: actionIcon,
-                onPressed: () {
-                  setState(() {
-                    if (this.actionIcon.icon == Icons.search) {
-                      this.actionIcon = Icon(
-                        Icons.close,
-                        color: Colors.white,
-                      );
-                      this.appBarTitle = Container(
-                        decoration: BoxDecoration(
-                          color: Colors.black26,
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: TextField(
-                          controller: _searchQuery,
-                          style: TextStyle(color: Colors.white),
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            prefixIcon: Icon(
-                              Icons.search,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                            prefixIconConstraints: BoxConstraints(
-                              minWidth: 30,
-                              minHeight: 30,
-                            ),
-                            hintText: "Search by name, phno or bill no",
-                            hintStyle: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 13,
+          appBar: AppBar(
+            title: appBarTitle,
+            centerTitle: true,
+            actions: <Widget>[
+              Container(
+                margin: EdgeInsets.only(right: 8),
+                child: IconButton(
+                  icon: actionIcon,
+                  onPressed: () {
+                    setState(() {
+                      if (this.actionIcon.icon == Icons.search) {
+                        this.actionIcon = Icon(
+                          Icons.close,
+                          color: Colors.white,
+                        );
+                        this.appBarTitle = Container(
+                          decoration: BoxDecoration(
+                            color: Colors.black26,
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: TextField(
+                            controller: _searchQuery,
+                            style: TextStyle(color: Colors.white),
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              prefixIcon: Icon(
+                                Icons.search,
+                                size: 20,
+                                color: Colors.white,
+                              ),
+                              prefixIconConstraints: BoxConstraints(
+                                minWidth: 30,
+                                minHeight: 30,
+                              ),
+                              hintText: "Search saved bills",
+                              hintStyle: TextStyle(
+                                color: Colors.white70,
+                                fontSize: 13,
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                      _handleSearchStart();
-                    } else {
-                      _handleSearchEnd();
-                    }
-                  });
-                },
+                        );
+                        _handleSearchStart();
+                      } else {
+                        _handleSearchEnd();
+                      }
+                    });
+                  },
+                ),
               ),
+            ],
+          ),
+          key: _scaffoldKey,
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                FutureBuilder(
+                  future: Preference.getBills(),
+                  builder: (context, AsyncSnapshot<List<Billing>> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      if (snapshot.data != null && snapshot.data!.isNotEmpty) {
+                        snapshot.data!.forEach((element) {
+                          if (element.price != null)
+                            print("BILLS: " + element.price!.dispFinalAmt());
+                        });
+                        return inputDataAndNext(_isSearching
+                            ? _buildSearchList(snapshot.data!)
+                            : snapshot.data!);
+                      } else {
+                        return Container(
+                            margin: EdgeInsets.only(
+                                left: 10, right: 10, top: 10, bottom: 0),
+                            child: Center(
+                                child: Text(
+                              "No bills found",
+                              style: TextStyle(fontSize: 16),
+                            )));
+                      }
+                    } else if (snapshot.connectionState ==
+                        ConnectionState.none) {
+                      return Text("No product data found");
+                    }
+                    return CustomLoader();
+                  },
+                ),
+                SizedBox(height: 5),
+                Container(
+                  margin:
+                      EdgeInsets.only(left: 18, right: 18, bottom: 18, top: 5),
+                  child: Text(
+                      "You can search the saved bills by name, phone number or bill number!",
+                      style: TextStyle(fontSize: 11)),
+                ),
+              ],
             ),
-          ],
-        ),
-        key: _scaffoldKey,
-        body: FutureBuilder(
-          future: Preference.getBills(),
-          builder: (context, AsyncSnapshot<List<Billing>> snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              bills = snapshot.data;
-              if (bills != null && bills.isNotEmpty) {
-                bills.forEach((element) {
-                  print("BILLS: " + element.price.dispFinalAmt());
-                });
-                return inputDataAndNext(
-                    _isSearching ? _buildSearchList(bills) : bills);
-              } else {
-                return Center(child: Text("No bills found!"));
-              }
-            } else if (snapshot.connectionState == ConnectionState.none) {
-              return Text("No product data found");
-            }
-            return CustomLoader();
-          },
-        ),
-      ),
+          )),
     );
   }
 
   List<Billing> _buildSearchList(List<Billing> bills) {
+    print("_searchText");
     if (_searchText.isEmpty) {
+      print("isEmpty");
       return bills;
     } else {
-      return bills
-          .where((bill) =>
-              bill.billingInfo.number.contains(_searchText) ||
-              bill.customer.mobileNo.contains(_searchText) ||
-              bill.customer.name
-                  .toLowerCase()
-                  .contains(_searchText.toLowerCase()))
-          .toList();
+      return bills.where((bill) => checkBill(bill)).toList();
     }
+  }
+
+  bool checkBill(Billing bill) {
+    bool hasSearch = false;
+    if (bill.billingInfo != null) {
+      hasSearch = hasSearch || bill.billingInfo!.number.contains(_searchText);
+    }
+    if (bill.customer != null) {
+      hasSearch = hasSearch ||
+          (bill.customer!.mobileNo.contains(_searchText) ||
+              bill.customer!.name
+                  .toLowerCase()
+                  .contains(_searchText.toLowerCase()));
+    }
+    return hasSearch;
   }
 
   void _handleSearchStart() {
@@ -195,7 +231,8 @@ class HomePageState extends State<BillsPage> {
                         bills.remove(bills[index]);
                         print(bills.length);
                         bills.forEach((element) {
-                          print("" + element.price.dispFinalAmt());
+                          if (element.price != null)
+                            print("" + element.price!.dispFinalAmt());
                         });
                         Preference.addBills(bills);
                       });
@@ -218,7 +255,7 @@ class HomePageState extends State<BillsPage> {
                     child: Container(
                       constraints: BoxConstraints(minHeight: 125),
                       decoration: BoxDecoration(
-                        color: Color(0xFF333366),
+                        color: Color(SECONDARY_COLOR),
                         shape: BoxShape.rectangle,
                         borderRadius: BorderRadius.circular(15.0),
                         boxShadow: <BoxShadow>[
@@ -246,14 +283,14 @@ class HomePageState extends State<BillsPage> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        bills[index].customer.name,
+                                        bills[index].customer?.name ?? "NA",
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             color: Colors.white,
                                             fontSize: 15),
                                       ),
                                       Text(
-                                        bills[index].customer.mobileNo,
+                                        bills[index].customer?.mobileNo ?? "NA",
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             color: Colors.white,
@@ -266,21 +303,23 @@ class HomePageState extends State<BillsPage> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(
-                                        "Bill No: " +
-                                            bills[index].billingInfo.number,
-                                        style: TextStyle(
-                                          color: Colors.white70,
-                                          fontSize: 12,
+                                      if (bills[index].billingInfo != null)
+                                        Text(
+                                          "Bill No: " +
+                                              bills[index].billingInfo!.number,
+                                          style: TextStyle(
+                                            color: Colors.white70,
+                                            fontSize: 12,
+                                          ),
                                         ),
-                                      ),
-                                      if (bills[index]
-                                          .customer
-                                          .cRefId
-                                          .isNotEmpty)
+                                      if (bills[index].customer != null &&
+                                          bills[index]
+                                              .customer!
+                                              .cRefId
+                                              .isNotEmpty)
                                         Text(
                                           "CRef: " +
-                                              bills[index].customer.cRefId,
+                                              bills[index].customer!.cRefId,
                                           style: TextStyle(
                                             color: Colors.white70,
                                             fontSize: 12,
@@ -289,17 +328,18 @@ class HomePageState extends State<BillsPage> {
                                     ],
                                   ),
                                   SizedBox(height: 10),
-                                  Center(
-                                    child: Text(
-                                      RUPEE_SYMBOL +
-                                          " " +
-                                          bills[index].price.dispFinalAmt(),
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white70,
-                                          fontSize: 16),
+                                  if (bills[index].price != null)
+                                    Center(
+                                      child: Text(
+                                        RUPEE_SYMBOL +
+                                            " " +
+                                            bills[index].price!.dispFinalAmt(),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                            fontSize: 16),
+                                      ),
                                     ),
-                                  ),
                                 ],
                               ),
                             ),

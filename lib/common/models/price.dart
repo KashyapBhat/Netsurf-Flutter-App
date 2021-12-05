@@ -1,7 +1,7 @@
 class Price {
-  double _total;
-  double _discountAmt;
-  double _finalAmt;
+  double _total = 0;
+  double _discountAmt = 0;
+  double _finalAmt = 0;
 
   double get total => _total;
 

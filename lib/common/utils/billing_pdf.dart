@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf/widgets.dart';
-import 'package:project_netsurf/common/contants.dart';
 import 'package:project_netsurf/common/models/billing.dart';
 import 'package:project_netsurf/common/models/billing_info.dart';
 import 'package:project_netsurf/common/models/customer.dart';
@@ -26,9 +25,10 @@ class PdfInvoiceApi {
       footer: (context) => buildFooter(invoice),
     ));
 
-    return PdfApi.saveDocument(
-        name: invoice.customer.mobileNo + invoice.billingInfo.number + ".pdf",
-        pdf: pdf);
+    String billNumber = invoice.billingInfo?.number ?? "";
+    String mbNo = invoice.customer?.mobileNo ?? "";
+    String fileName = mbNo + "-" + billNumber + ".pdf";
+    return PdfApi.saveDocument(name: fileName, pdf: pdf);
   }
 
   static Widget buildHeader(Billing invoice) => Column(
@@ -39,8 +39,10 @@ class PdfInvoiceApi {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              buildCustomerAddress(invoice.customer),
-              buildInvoiceInfo(invoice.billingInfo),
+              if (invoice.customer != null)
+                buildCustomerAddress(invoice.customer!),
+              if (invoice.billingInfo != null)
+                buildInvoiceInfo(invoice.billingInfo!),
             ],
           ),
           SizedBox(height: 0.8 * PdfPageFormat.mm),
@@ -56,9 +58,9 @@ class PdfInvoiceApi {
           Text("Phone: " + customer.mobileNo),
           SizedBox(height: 2),
           Text(customer.email),
-          if (customer.cRefId != null && customer.cRefId.isNotEmpty)
+          if (customer.cRefId.isNotEmpty)
             SizedBox(height: 2),
-          if (customer.cRefId != null && customer.cRefId.isNotEmpty)
+          if (customer.cRefId.isNotEmpty)
             Text("Ref: " + customer.cRefId,
                 style: TextStyle(fontWeight: FontWeight.bold)),
         ],
@@ -74,7 +76,7 @@ class PdfInvoiceApi {
     ];
     final data = <String>[
       info.number,
-      formatDate(info.date),
+      if (info.date != null) formatDate(info.date!),
       // paymentTerms,
       // formatDate(info.dueDate),
     ];
@@ -112,25 +114,27 @@ class PdfInvoiceApi {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ),
-          if (invoice.billingInfo.description.isNotEmpty)
+          if (invoice.billingInfo != null &&
+              invoice.billingInfo!.description.isNotEmpty)
             SizedBox(height: 0.8 * PdfPageFormat.cm),
-          if (invoice.billingInfo.description.isNotEmpty)
-            Text(invoice.billingInfo.description),
+          if (invoice.billingInfo != null &&
+              invoice.billingInfo!.description.isNotEmpty)
+            Text(invoice.billingInfo!.description),
           SizedBox(height: 0.8 * PdfPageFormat.mm),
         ],
       );
 
   static Widget buildInvoice(Billing invoice) {
     final headers = ['Title', 'Qty', 'MRP', 'Total'];
-    final data = invoice.selectedProducts.map((item) {
+    final data = invoice.selectedProducts?.map((item) {
       return [
-        item.name,
-        '${item.quantity}',
-        ' ${item.getDispPrice()}',
-        ' ${item.getDispTotal()}',
+        item?.name,
+        '${item?.quantity}',
+        ' ${item?.getDispPrice()}',
+        ' ${item?.getDispTotal()}',
       ];
     }).toList();
-
+    if (data == null) return Text("NA");
     return Table.fromTextArray(
       headers: headers,
       headerAlignment: Alignment.centerRight,
@@ -149,9 +153,9 @@ class PdfInvoiceApi {
   }
 
   static Widget buildTotal(Billing invoice) {
-    final netTotal = invoice.price.dispTotal();
-    final discount = invoice.price.dispDiscAmt();
-    final total = invoice.price.dispFinalAmt();
+    final netTotal = invoice.price?.dispTotal() ?? "NA";
+    final discount = invoice.price?.dispDiscAmt() ?? "NA";
+    final total = invoice.price?.dispFinalAmt() ?? "NA";
 
     return Container(
       alignment: Alignment.centerRight,
@@ -208,7 +212,8 @@ class PdfInvoiceApi {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              buildSupplierAddress(invoice.retailer),
+              if (invoice.retailer != null)
+                buildSupplierAddress(invoice.retailer!),
               // Barcode Removed for now
               // Container(
               //   height: 50,
@@ -228,8 +233,8 @@ class PdfInvoiceApi {
       );
 
   static buildSimpleText({
-    String title,
-    String value,
+    required String title,
+    required String value,
   }) {
     final style = TextStyle(fontWeight: FontWeight.bold);
 
@@ -245,10 +250,10 @@ class PdfInvoiceApi {
   }
 
   static buildText({
-    String title,
-    String value,
+    required String title,
+    required String value,
     double width = double.infinity,
-    TextStyle titleStyle,
+    TextStyle? titleStyle,
     bool unite = false,
   }) {
     final style = titleStyle ?? TextStyle(fontWeight: FontWeight.bold);

@@ -1,8 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:device_info/device_info.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:project_netsurf/common/analytics.dart';
+import 'package:project_netsurf/common/contants.dart';
 import 'package:project_netsurf/common/models/customer.dart';
 import 'package:project_netsurf/common/models/display_data.dart';
 import 'package:project_netsurf/common/models/product.dart';
@@ -16,15 +21,15 @@ import 'package:project_netsurf/ui/select_products.dart';
 class HomePage extends StatefulWidget {
   final String billingIdVal;
   final bool isRetailer;
-  final User retailer;
+  final User? retailer;
   final DisplayData displayData;
 
   HomePage(
-      {Key key,
-      this.isRetailer,
+      {Key? key,
+      required this.isRetailer,
       this.retailer,
-      this.displayData,
-      this.billingIdVal})
+      required this.displayData,
+      required this.billingIdVal})
       : super(key: key);
 
   @override
@@ -32,15 +37,16 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
+  static FirebaseAnalytics analytics = FirebaseAnalytics();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController categoryTextController =
       new TextEditingController();
   final TextEditingController itemTextController = new TextEditingController();
-  ScrollController _controller;
+  late ScrollController _controller;
   bool silverCollapsed = false;
 
-  List<Product> allCategories;
-  List<Product> allProducts;
+  List<Product?>? allCategories;
+  List<Product?>? allProducts;
   bool isRetailer = false;
   String textValue = "";
   User user = User("", "", "", "", "");
@@ -52,8 +58,8 @@ class HomePageState extends State<HomePage> {
     _controller = ScrollController();
     isRetailer = widget.isRetailer;
     if (widget.retailer != null &&
-        widget.retailer.name.isNotEmpty &&
-        widget.retailer.mobileNo.isNotEmpty) retailer = widget.retailer;
+        widget.retailer!.name.isNotEmpty &&
+        widget.retailer!.mobileNo.isNotEmpty) retailer = widget.retailer!;
     _controller.addListener(() {
       if (_controller.offset > 100 && !_controller.position.outOfRange) {
         if (!silverCollapsed) {
@@ -70,9 +76,11 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    analytics.setCurrentScreen(
+        screenName: isRetailer ? CT_DISTRIBUTER_SCREEN : CT_USER_SCREEN);
     return Listener(
       onPointerDown: (_) {
-        WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
+        WidgetsBinding.instance!.focusManager.primaryFocus?.unfocus();
       },
       child: Scaffold(
           drawer:
@@ -94,12 +102,12 @@ class HomePageState extends State<HomePage> {
                           if (snapshot.connectionState ==
                               ConnectionState.done) {
                             if (snapshot.data != null &&
-                                snapshot.data.name.isNotEmpty &&
-                                snapshot.data.mobileNo.isNotEmpty) {
-                              print("RetailerData: " + snapshot.data.name);
+                                snapshot.data!.name.isNotEmpty &&
+                                snapshot.data!.mobileNo.isNotEmpty) {
+                              print("RetailerData: " + snapshot.data!.name);
                               if (retailer.name.isEmpty &&
                                   retailer.mobileNo.isEmpty)
-                                retailer = snapshot.data;
+                                retailer = snapshot.data!;
                               isRetailer = false;
                               return scrollView();
                             } else {
@@ -145,9 +153,18 @@ class HomePageState extends State<HomePage> {
   }
 
   Widget scrollAppBar() {
+    List<String>? bannerList = widget.displayData.bannerList;
+    int length = 1;
+    if (bannerList != null && bannerList.isNotEmpty) {
+      length = widget.displayData.bannerList!.length;
+    } else {
+      bannerList = [];
+      bannerList.add(widget.displayData.banner);
+    }
     return SliverAppBar(
       expandedHeight: 200,
       pinned: false,
+      iconTheme: IconThemeData(color: Color(PRIMARY_COLOR)),
       backgroundColor: Colors.white,
       flexibleSpace: FlexibleSpaceBar(
         title: Text(
@@ -155,13 +172,32 @@ class HomePageState extends State<HomePage> {
           style: TextStyle(color: Colors.grey[100]),
         ),
         centerTitle: true,
-        background: CachedNetworkImage(
-          imageUrl: widget.displayData.banner ?? "",
-          progressIndicatorBuilder: (context, url, downloadProgress) =>
-              CustomLoader(),
-          fit: BoxFit.contain,
-          fadeInCurve: Curves.easeInToLinear,
-          errorWidget: (context, url, error) => Icon(Icons.error),
+        background: Center(
+          child: CarouselSlider(
+            options: CarouselOptions(height: 400.0),
+            items: Iterable<int>.generate(length).toList().map((i) {
+              return Builder(
+                builder: (BuildContext context) {
+                  return Container(
+                    width: MediaQuery.of(context).size.width,
+                    margin:
+                        EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
+                    decoration: BoxDecoration(
+                        color: Colors.blueGrey.shade50,
+                        borderRadius: BorderRadius.all(Radius.circular(8))),
+                    child: CachedNetworkImage(
+                      imageUrl: bannerList![i],
+                      progressIndicatorBuilder:
+                          (context, url, downloadProgress) => CustomLoader(),
+                      fit: BoxFit.contain,
+                      fadeInCurve: Curves.easeInToLinear,
+                      errorWidget: (context, url, error) => Icon(Icons.error),
+                    ),
+                  );
+                },
+              );
+            }).toList(),
+          ),
         ),
       ),
     );
@@ -170,6 +206,7 @@ class HomePageState extends State<HomePage> {
   Widget inputDataAndNext() {
     return SliverFillRemaining(
       child: Container(
+        color: Colors.white,
         child: Column(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -185,7 +222,7 @@ class HomePageState extends State<HomePage> {
             Flexible(
               child: EditText(
                   required: true,
-                  initTextValue: user.name ?? "",
+                  initTextValue: user.name,
                   type: TextInputType.name,
                   editTextName: textValue + " Name",
                   onText: (text) async {
@@ -200,7 +237,7 @@ class HomePageState extends State<HomePage> {
             Flexible(
               child: EditText(
                   required: true,
-                  initTextValue: user.mobileNo ?? "",
+                  initTextValue: user.mobileNo,
                   type: TextInputType.phone,
                   isPhone: true,
                   editTextName: textValue + " Mobile Number",
@@ -216,7 +253,7 @@ class HomePageState extends State<HomePage> {
             Flexible(
               child: EditText(
                   required: false,
-                  initTextValue: user.cRefId ?? "",
+                  initTextValue: user.cRefId,
                   editTextName: textValue + " Reference ID",
                   onText: (text) async {
                     user.cRefId = text;
@@ -247,7 +284,7 @@ class HomePageState extends State<HomePage> {
               Flexible(
                 child: EditText(
                     required: false,
-                    initTextValue: user.email ?? "",
+                    initTextValue: user.email,
                     editTextName: "Email",
                     type: TextInputType.emailAddress,
                     onText: (text) async {
@@ -261,7 +298,7 @@ class HomePageState extends State<HomePage> {
               ),
             CustomButton(
               buttonText: isRetailer ? "Save" : "Next",
-              onClick: () {
+              onClick: () async {
                 if (user.name.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text("Please fill the " + textValue + " name!"),
@@ -283,16 +320,42 @@ class HomePageState extends State<HomePage> {
                   return;
                 }
                 if (isRetailer) {
+                  DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+                  AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+                  analytics.logEvent(
+                    name: CT_DISTRIBUTOR_LOGIN,
+                    parameters: <String, dynamic>{
+                      CT_DISTRIBUTOR_NAME: retailer.name,
+                      CT_DISTRIBUTOR_PH_NO: retailer.mobileNo,
+                      CT_MODEL_NAME: androidInfo.model,
+                      CT_MANUFACTURER_NAME: androidInfo.manufacturer,
+                      CT_ANDROID_ID: androidInfo.androidId,
+                      CT_ANDROID_VERSION_STRING: androidInfo.version.release,
+                      CT_ANDROID_VERSION: androidInfo.version.baseOS
+                    },
+                  );
                   Preference.setRetailer(user);
                   Phoenix.rebirth(context);
                 } else {
+                  if (allCategories == null ||
+                      allCategories!.isEmpty ||
+                      allProducts == null ||
+                      allProducts!.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text("Products "),
+                      duration: const Duration(seconds: 2),
+                      behavior: SnackBarBehavior.fixed,
+                      backgroundColor: Colors.red,
+                    ));
+                    return;
+                  }
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (__) => new SelectProductsPage(
                         customerData: user,
-                        allCategories: allCategories,
-                        allProducts: allProducts,
+                        allCategories: allCategories!,
+                        allProducts: allProducts!,
                         retailer: retailer,
                         billingIdVal: widget.billingIdVal,
                       ),
