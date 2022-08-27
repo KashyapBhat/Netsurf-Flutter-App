@@ -59,7 +59,7 @@ class HomePageState extends State<BillsPage> {
     analytics.setCurrentScreen(screenName: CT_SAVED_BILLS);
     return Listener(
       onPointerDown: (_) {
-        WidgetsBinding.instance?.focusManager.primaryFocus?.unfocus();
+        WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
       },
       child: Scaffold(
           appBar: AppBar(
