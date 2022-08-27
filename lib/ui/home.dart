@@ -80,7 +80,7 @@ class HomePageState extends State<HomePage> {
         screenName: isRetailer ? CT_DISTRIBUTER_SCREEN : CT_USER_SCREEN);
     return Listener(
       onPointerDown: (_) {
-        WidgetsBinding.instance!.focusManager.primaryFocus?.unfocus();
+        WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
       },
       child: Scaffold(
           drawer:
