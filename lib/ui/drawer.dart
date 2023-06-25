@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:device_info/device_info.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
@@ -143,7 +143,6 @@ class AppDrawer extends StatelessWidget {
                         CT_DISTRIBUTOR_PH_NO: retailer.mobileNo,
                         CT_MODEL_NAME: androidInfo.model,
                         CT_MANUFACTURER_NAME: androidInfo.manufacturer,
-                        CT_ANDROID_ID: androidInfo.androidId,
                         CT_ANDROID_VERSION_STRING: androidInfo.version.release,
                         CT_ANDROID_VERSION: androidInfo.version.baseOS
                       },
@@ -166,7 +165,6 @@ class AppDrawer extends StatelessWidget {
                         CT_DISTRIBUTOR_PH_NO: retailer.mobileNo,
                         CT_MODEL_NAME: androidInfo.model,
                         CT_MANUFACTURER_NAME: androidInfo.manufacturer,
-                        CT_ANDROID_ID: androidInfo.androidId,
                         CT_ANDROID_VERSION_STRING: androidInfo.version.release,
                         CT_ANDROID_VERSION: androidInfo.version.baseOS
                       },
@@ -189,7 +187,6 @@ class AppDrawer extends StatelessWidget {
                           CT_DISTRIBUTOR_PH_NO: retailer.mobileNo,
                           CT_MODEL_NAME: androidInfo.model,
                           CT_MANUFACTURER_NAME: androidInfo.manufacturer,
-                          CT_ANDROID_ID: androidInfo.androidId,
                           CT_ANDROID_VERSION_STRING:
                               androidInfo.version.release,
                           CT_ANDROID_VERSION: androidInfo.version.baseOS
@@ -218,7 +215,6 @@ class AppDrawer extends StatelessWidget {
                         CT_DISTRIBUTOR_PH_NO: retailer.mobileNo,
                         CT_MODEL_NAME: androidInfo.model,
                         CT_MANUFACTURER_NAME: androidInfo.manufacturer,
-                        CT_ANDROID_ID: androidInfo.androidId,
                         CT_ANDROID_VERSION_STRING: androidInfo.version.release,
                         CT_ANDROID_VERSION: androidInfo.version.baseOS
                       },
