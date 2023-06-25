@@ -24,3 +24,6 @@ Map<int, Color> THEME_COLOR = {
   800: Color.fromRGBO(51, 51, 102, .9),
   900: Color.fromRGBO(51, 51, 102, 1),
 };
+
+const String BILLING_ID = "BillingID";
+const String BILLING_ID_START = "1001";

@@ -883,3 +883,6 @@ DerivedData/
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 
 .flutter-plugins-dependencies
+/.*
+/ios/Flutter/*.sh
+/ios/Flutter/*.xcconfig

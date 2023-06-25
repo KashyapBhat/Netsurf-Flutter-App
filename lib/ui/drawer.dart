@@ -252,9 +252,9 @@ class AppDrawer extends StatelessWidget {
   void refresh(BuildContext context) async {
     await Preference.setDateTime(SP_DT_REFRESH);
     FirebaseFirestore fireStore = GetIt.I.get<FirebaseFirestore>();
-    Products.getDisplayData(fireStore, true);
-    Products.getAllProducts(fireStore, true);
-    Phoenix.rebirth(context);
+    await Products.getDisplayData(fireStore, true);
+    await Products.getAllProducts(fireStore, true);
+    await Phoenix.rebirth(context);
   }
 }
 

@@ -320,8 +320,8 @@ class HomePageState extends State<BillerPage> {
                     print("BILLS" + element.price!.dispFinalAmt());
                 });
                 File pdf = await PdfInvoiceApi.generate(invoice);
-                PdfApi.openFile(pdf);
-                Phoenix.rebirth(context);
+                await PdfApi.openFile(pdf);
+                await Phoenix.rebirth(context);
               },
             ),
           ),
