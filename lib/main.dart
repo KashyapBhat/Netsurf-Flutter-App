@@ -29,12 +29,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
-    analytics.logAppOpen();
-    analytics.setCurrentScreen(screenName: CT_HOME_SCREEN);
+    onAppStart();
     return MaterialApp(
       title: APP_NAME,
       theme: NetsurfAppTheme(),
@@ -117,6 +112,15 @@ class MyApp extends StatelessWidget {
         },
       ),
     );
+  }
+
+  void onAppStart() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    analytics.logAppOpen();
+    analytics.setCurrentScreen(screenName: CT_HOME_SCREEN);
   }
 
   Widget showErrorMessage(BuildContext context) {
