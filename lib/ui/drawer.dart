@@ -4,6 +4,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:get_it/get_it.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:project_netsurf/common/analytics.dart';
 import 'package:project_netsurf/common/contants.dart';
@@ -19,7 +20,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AppDrawer extends StatelessWidget {
-  static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  static FirebaseAnalytics analytics = GetIt.I.get<FirebaseAnalytics>();
   final User retailer;
   final DisplayData displayData;
 
@@ -250,9 +251,10 @@ class AppDrawer extends StatelessWidget {
 
   void refresh(BuildContext context) async {
     await Preference.setDateTime(SP_DT_REFRESH);
-    Products.getDisplayData(FirebaseFirestore.instance, true);
-    Products.getAllProducts(FirebaseFirestore.instance, true);
-    Phoenix.rebirth(context);
+    FirebaseFirestore fireStore = GetIt.I.get<FirebaseFirestore>();
+    await Products.getDisplayData(fireStore, true);
+    await Products.getAllProducts(fireStore, true);
+    await Phoenix.rebirth(context);
   }
 }
 

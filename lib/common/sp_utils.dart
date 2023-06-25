@@ -113,9 +113,10 @@ class Preference {
     return await prefs.setString(SP_RETAILER, encodedData);
   }
 
-  static Future<User> getRetailer() async {
+  static Future<User?> getRetailer() async {
     final SharedPreferences prefs = await _prefs;
-    String decodedData = prefs.getString(SP_RETAILER) ?? "";
+    String? decodedData = prefs.getString(SP_RETAILER);
+    if (decodedData == null) return null;
     final User decodedRetailer = User.decode(decodedData);
     return decodedRetailer;
   }
@@ -158,7 +159,12 @@ class Preference {
 
   static Future<DateTime> getDateTime(String key) async {
     final SharedPreferences prefs = await _prefs;
-    String displayString = prefs.getString(key) ?? "";
-    return DateTime.parse(displayString);
+    String? displayString = prefs.getString(key);
+    if (displayString == null) {
+      var done = await setDateTime(SP_DT_REFRESH);
+      if (done)
+        displayString = prefs.getString(key);
+    }
+    return DateTime.parse(displayString!);
   }
 }

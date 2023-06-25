@@ -4,6 +4,8 @@ import 'package:project_netsurf/common/sp_constants.dart';
 import 'package:project_netsurf/common/sp_utils.dart';
 import 'package:project_netsurf/common/ui/edittext.dart';
 
+import '../../di/singletons.dart';
+
 void showLogoutErrorDialog(BuildContext buildContext) {
   showDialog(
     context: buildContext,
@@ -17,8 +19,10 @@ void showLogoutErrorDialog(BuildContext buildContext) {
             buttonText: "Logout",
             onClick: () async {
               Navigator.of(context).pop();
-              if (await Preference.remove(SP_RETAILER))
-                Phoenix.rebirth(buildContext);
+              if (await Preference.remove(SP_RETAILER)){
+                await setupRetailerDetails();
+                await Phoenix.rebirth(buildContext);
+              }
             },
           ),
         ],

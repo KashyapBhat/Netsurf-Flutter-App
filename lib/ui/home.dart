@@ -1,11 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:device_info/device_info.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:get_it/get_it.dart';
 import 'package:project_netsurf/common/analytics.dart';
 import 'package:project_netsurf/common/contants.dart';
 import 'package:project_netsurf/common/models/customer.dart';
@@ -17,6 +16,8 @@ import 'package:project_netsurf/common/ui/edittext.dart';
 import 'package:project_netsurf/common/ui/loader.dart';
 import 'package:project_netsurf/ui/drawer.dart';
 import 'package:project_netsurf/ui/select_products.dart';
+
+import '../di/singletons.dart';
 
 class HomePage extends StatefulWidget {
   final String billingIdVal;
@@ -37,7 +38,7 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  static FirebaseAnalytics analytics = GetIt.I.get<FirebaseAnalytics>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController categoryTextController =
       new TextEditingController();
@@ -96,35 +97,18 @@ class HomePageState extends State<HomePage> {
                   builder: (context, AsyncSnapshot<List<Product>> snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
                       allProducts = snapshot.data;
-                      return FutureBuilder(
-                        future: Preference.getRetailer(),
-                        builder: (context, AsyncSnapshot<User> snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.done) {
-                            if (snapshot.data != null &&
-                                snapshot.data!.name.isNotEmpty &&
-                                snapshot.data!.mobileNo.isNotEmpty) {
-                              print("RetailerData: " + snapshot.data!.name);
-                              if (retailer.name.isEmpty &&
-                                  retailer.mobileNo.isEmpty)
-                                retailer = snapshot.data!;
-                              isRetailer = false;
-                              return scrollView();
-                            } else {
-                              isRetailer = true;
-                              return scrollView();
-                            }
-                          } else if (snapshot.hasError) {
-                            return Text(
-                              "Sorry, Something went wrong.",
-                              style: TextStyle(color: Colors.red, fontSize: 14),
-                              textAlign: TextAlign.center,
-                            );
-                          } else {
-                            return CustomLoader();
-                          }
-                        },
-                      );
+                      User? retailUser = GetIt.I.get<User>();
+                      if (retailUser.name.isNotEmpty &&
+                          retailUser.mobileNo.isNotEmpty) {
+                        print("RetailerData: " + retailUser.name);
+                        if (retailer.name.isEmpty && retailer.mobileNo.isEmpty)
+                          retailer = retailUser;
+                        isRetailer = false;
+                        return scrollView();
+                      } else {
+                        isRetailer = true;
+                        return scrollView();
+                      }
                     } else if (snapshot.connectionState ==
                         ConnectionState.none) {
                       return Text("No product data found");
@@ -329,13 +313,13 @@ class HomePageState extends State<HomePage> {
                       CT_DISTRIBUTOR_PH_NO: retailer.mobileNo,
                       CT_MODEL_NAME: androidInfo.model,
                       CT_MANUFACTURER_NAME: androidInfo.manufacturer,
-                      CT_ANDROID_ID: androidInfo.androidId,
                       CT_ANDROID_VERSION_STRING: androidInfo.version.release,
                       CT_ANDROID_VERSION: androidInfo.version.baseOS
                     },
                   );
-                  Preference.setRetailer(user);
-                  Phoenix.rebirth(context);
+                  await Preference.setRetailer(user);
+                  await setupRetailerDetails();
+                  await Phoenix.rebirth(context);
                 } else {
                   if (allCategories == null ||
                       allCategories!.isEmpty ||

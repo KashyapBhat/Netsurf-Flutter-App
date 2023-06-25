@@ -1,10 +1,9 @@
 import 'dart:math';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_phoenix/generated/i18n.dart';
+import 'package:get_it/get_it.dart';
 import 'package:project_netsurf/common/analytics.dart';
 import 'package:project_netsurf/common/contants.dart';
 import 'package:project_netsurf/common/models/billing.dart';
@@ -41,7 +40,7 @@ class SelectProductsPage extends StatefulWidget {
 }
 
 class SelectProductsPageState extends State<SelectProductsPage> {
-  static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  static FirebaseAnalytics analytics = GetIt.I.get<FirebaseAnalytics>();
   List<TextEditingController> _controllers = [];
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController discountedPriceController =

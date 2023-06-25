@@ -1,176 +1,43 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_analytics/observer.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:get_it/get_it.dart';
 import 'package:project_netsurf/common/analytics.dart';
 import 'package:project_netsurf/common/contants.dart';
 import 'package:project_netsurf/common/models/customer.dart';
 import 'package:project_netsurf/common/models/display_data.dart';
 import 'package:project_netsurf/common/product_constant.dart';
-import 'package:project_netsurf/common/sp_constants.dart';
-import 'package:project_netsurf/common/sp_utils.dart';
 import 'package:project_netsurf/common/ui/loader.dart';
 import 'package:project_netsurf/ui/home.dart';
-import 'package:device_info/device_info.dart';
+import 'common/ui/theme.dart';
+import 'di/singletons.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await setupDependencies();
   runApp(Phoenix(child: MyApp()));
 }
 
-const String PATH_HOME = "/";
-const String PATH_PRODUCT = "/selectproducts";
-const String PATH_BILLER = "/billerpage";
-
 class MyApp extends StatelessWidget {
-  final Future<FirebaseApp> _initialization = Firebase.initializeApp();
-  static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  static FirebaseAnalytics analytics = GetIt.I.get<FirebaseAnalytics>();
+  static FirebaseFirestore fireStore = GetIt.I.get<FirebaseFirestore>();
+  DisplayData? displayData = GetIt.I.get<DisplayData>();
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
-    analytics.logAppOpen();
-    analytics.setCurrentScreen(screenName: CT_HOME_SCREEN);
+    onAppStart();
     return MaterialApp(
       title: APP_NAME,
-      navigatorObservers: [
-        FirebaseAnalyticsObserver(analytics: analytics),
-      ],
-      theme: ThemeData(
-        textTheme: TextTheme(
-          headline1: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
-          headline6: TextStyle(fontSize: 36.0, fontStyle: FontStyle.italic),
-          bodyText2: TextStyle(fontSize: 14.0),
-        ),
-        appBarTheme: AppBarTheme(
-          centerTitle: true,
-          toolbarTextStyle:
-              TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-          titleTextStyle:
-              TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-          color: const Color(PRIMARY_COLOR),
-        ),
-        primaryColor: Color(PRIMARY_COLOR),
-        hintColor: Color(SECONDARY_COLOR),
-        primarySwatch: MaterialColor(SECONDARY_COLOR, THEME_COLOR),
-      ),
-      builder: (context, child) => SafeArea(
-          child: Container(
-        height: MediaQuery.of(context).size.height,
-        decoration: BoxDecoration(
-          color: Colors.white,
-        ),
-        child: child,
-      )),
+      theme: NetsurfAppTheme(),
+      navigatorObservers: [FirebaseAnalyticsObserver(analytics: analytics)],
+      builder: (context, child) => AppContainer(context, child),
       home: FutureBuilder(
-        future: _initialization,
-        builder: (context, AsyncSnapshot<FirebaseApp> snapshot) {
+        future: Products.getAllProducts(fireStore, false),
+        builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            return FutureBuilder(
-              future:
-                  Products.getDisplayData(FirebaseFirestore.instance, false),
-              builder: (context, AsyncSnapshot<DisplayData?> snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  if (snapshot.data != null) {
-                    DisplayData displayData = snapshot.data!;
-                    return FutureBuilder(
-                      future: _initialization,
-                      builder: (context, AsyncSnapshot<FirebaseApp> snapshot) {
-                        if (snapshot.connectionState == ConnectionState.done) {
-                          return FutureBuilder(
-                            future: Products.getAllProducts(
-                                FirebaseFirestore.instance, false),
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.done) {
-                                return FutureBuilder(
-                                  future: Preference.getItem(SP_BILLING_ID),
-                                  builder: (context,
-                                      AsyncSnapshot<String> snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.done) {
-                                      String? billingId = snapshot.data;
-                                      if (billingId == null ||
-                                          billingId.isEmpty) {
-                                        billingId = "1001";
-                                      } else {
-                                        int lastBillID = int.parse(billingId);
-                                        lastBillID++;
-                                        billingId = lastBillID.toString();
-                                      }
-                                      print("Billing:" + billingId);
-                                      return FutureBuilder(
-                                        future: Preference.getRetailer(),
-                                        builder: (context,
-                                            AsyncSnapshot<User> snapshot) {
-                                          if (snapshot.connectionState ==
-                                              ConnectionState.done) {
-                                            if (snapshot.data != null &&
-                                                snapshot
-                                                    .data!.name.isNotEmpty &&
-                                                snapshot.data!.mobileNo
-                                                    .isNotEmpty) {
-                                              print("RetailerData: " +
-                                                  snapshot.data!.name);
-                                              return HomePage(
-                                                  isRetailer: false,
-                                                  retailer: snapshot.data!,
-                                                  displayData: displayData,
-                                                  billingIdVal: billingId!);
-                                            } else {
-                                              return HomePage(
-                                                  isRetailer: true,
-                                                  retailer: null,
-                                                  displayData: displayData,
-                                                  billingIdVal: billingId!);
-                                            }
-                                          } else if (snapshot.hasError) {
-                                            return showErrorMessage(context);
-                                          } else {
-                                            return CustomLoader();
-                                          }
-                                        },
-                                      );
-                                    } else if (snapshot.hasError) {
-                                      return showErrorMessage(context);
-                                    } else {
-                                      return CustomLoader();
-                                    }
-                                  },
-                                );
-                              } else if (snapshot.hasError) {
-                                return showErrorMessage(context);
-                              } else {
-                                return CustomLoader();
-                              }
-                            },
-                          );
-                        } else if (snapshot.hasError) {
-                          return showErrorMessage(context);
-                        } else {
-                          return CustomLoader();
-                        }
-                      },
-                    );
-                  } else {
-                    return showErrorMessage(context);
-                  }
-                } else if (snapshot.hasError) {
-                  return showErrorMessage(context);
-                } else {
-                  return CustomLoader();
-                }
-              },
-            );
+            return navigateToHome(context);
           } else if (snapshot.hasError) {
             return showErrorMessage(context);
           } else {
@@ -179,6 +46,31 @@ class MyApp extends StatelessWidget {
         },
       ),
     );
+  }
+
+  void onAppStart() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    analytics.logAppOpen();
+    analytics.setCurrentScreen(screenName: CT_HOME_SCREEN);
+  }
+
+  Widget navigateToHome(BuildContext context) {
+    User? retailUser = GetIt.I.get<User>();
+    String? billingId = GetIt.I.get<String>(instanceName: BILLING_ID);
+    if (displayData == null) {
+      return showErrorMessage(context);
+    }
+    var userLogin =
+        retailUser.name.isNotEmpty && retailUser.mobileNo.isNotEmpty;
+    print("RetailerData: " + retailUser.name);
+    return HomePage(
+        isRetailer: !userLogin,
+        retailer: userLogin ? retailUser : null,
+        displayData: displayData!,
+        billingIdVal: billingId);
   }
 
   Widget showErrorMessage(BuildContext context) {
