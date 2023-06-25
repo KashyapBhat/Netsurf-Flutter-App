@@ -28,6 +28,7 @@ dependencies:
   firebase_analytics: ^10.4.3
   carousel_slider: ^4.0.0
   device_info_plus: ^9.0.2
+  get_it: ^7.6.0
 
 flutter:
   uses-material-design: true

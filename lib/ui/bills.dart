@@ -1,6 +1,6 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:project_netsurf/common/analytics.dart';
 import 'package:project_netsurf/common/contants.dart';
 import 'package:project_netsurf/common/models/billing.dart';
@@ -22,7 +22,7 @@ class BillsPage extends StatefulWidget {
 }
 
 class HomePageState extends State<BillsPage> {
-  static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  static FirebaseAnalytics analytics = GetIt.I.get<FirebaseAnalytics>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   Icon actionIcon = new Icon(
     Icons.search,

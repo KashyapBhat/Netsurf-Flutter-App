@@ -1,10 +1,10 @@
 import 'dart:io';
 
-import 'package:device_info/device_info.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:project_netsurf/common/analytics.dart';
 import 'package:project_netsurf/common/contants.dart';
@@ -31,7 +31,7 @@ class BillerPage extends StatefulWidget {
 }
 
 class HomePageState extends State<BillerPage> {
-  static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  static FirebaseAnalytics analytics = GetIt.I.get<FirebaseAnalytics>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -306,7 +306,6 @@ class HomePageState extends State<BillerPage> {
                     CT_BILLING_DATE: formattedDate,
                     CT_MODEL_NAME: androidInfo.model,
                     CT_MANUFACTURER_NAME: androidInfo.manufacturer,
-                    CT_ANDROID_ID: androidInfo.androidId,
                     CT_ANDROID_VERSION_STRING: androidInfo.version.release,
                     CT_ANDROID_VERSION: androidInfo.version.baseOS
                   },

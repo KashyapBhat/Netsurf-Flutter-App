@@ -1,12 +1,10 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:get_it/get_it.dart';
 import 'package:project_netsurf/common/analytics.dart';
 import 'package:project_netsurf/common/contants.dart';
 import 'package:project_netsurf/common/models/customer.dart';
@@ -16,21 +14,17 @@ import 'package:project_netsurf/common/sp_constants.dart';
 import 'package:project_netsurf/common/sp_utils.dart';
 import 'package:project_netsurf/common/ui/loader.dart';
 import 'package:project_netsurf/ui/home.dart';
-import 'package:device_info/device_info.dart';
+import 'di/singletons.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await setupDependencies();
   runApp(Phoenix(child: MyApp()));
 }
 
-const String PATH_HOME = "/";
-const String PATH_PRODUCT = "/selectproducts";
-const String PATH_BILLER = "/billerpage";
-
 class MyApp extends StatelessWidget {
-  final Future<FirebaseApp> _initialization = Firebase.initializeApp();
-  static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  static FirebaseAnalytics analytics = GetIt.I.get<FirebaseAnalytics>();
+  static FirebaseFirestore fireStore = GetIt.I.get<FirebaseFirestore>();
 
   @override
   Widget build(BuildContext context) {
@@ -47,9 +41,9 @@ class MyApp extends StatelessWidget {
       ],
       theme: ThemeData(
         textTheme: TextTheme(
-          headline1: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
-          headline6: TextStyle(fontSize: 36.0, fontStyle: FontStyle.italic),
-          bodyText2: TextStyle(fontSize: 14.0),
+          displayLarge: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
+          titleLarge: TextStyle(fontSize: 36.0, fontStyle: FontStyle.italic),
+          bodyMedium: TextStyle(fontSize: 14.0),
         ),
         appBarTheme: AppBarTheme(
           centerTitle: true,
@@ -72,81 +66,50 @@ class MyApp extends StatelessWidget {
         child: child,
       )),
       home: FutureBuilder(
-        future: _initialization,
-        builder: (context, AsyncSnapshot<FirebaseApp> snapshot) {
+        future: Products.getDisplayData(fireStore, false),
+        builder: (context, AsyncSnapshot<DisplayData?> snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            return FutureBuilder(
-              future:
-                  Products.getDisplayData(FirebaseFirestore.instance, false),
-              builder: (context, AsyncSnapshot<DisplayData?> snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  if (snapshot.data != null) {
-                    DisplayData displayData = snapshot.data!;
+            if (snapshot.data != null) {
+              DisplayData displayData = snapshot.data!;
+              return FutureBuilder(
+                future:
+                    Products.getAllProducts(fireStore, false),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
                     return FutureBuilder(
-                      future: _initialization,
-                      builder: (context, AsyncSnapshot<FirebaseApp> snapshot) {
+                      future: Preference.getItem(SP_BILLING_ID),
+                      builder: (context, AsyncSnapshot<String> snapshot) {
                         if (snapshot.connectionState == ConnectionState.done) {
+                          String? billingId = snapshot.data;
+                          if (billingId == null || billingId.isEmpty) {
+                            billingId = "1001";
+                          } else {
+                            int lastBillID = int.parse(billingId);
+                            lastBillID++;
+                            billingId = lastBillID.toString();
+                          }
+                          print("Billing:" + billingId);
                           return FutureBuilder(
-                            future: Products.getAllProducts(
-                                FirebaseFirestore.instance, false),
-                            builder: (context, snapshot) {
+                            future: Preference.getRetailer(),
+                            builder: (context, AsyncSnapshot<User> snapshot) {
                               if (snapshot.connectionState ==
                                   ConnectionState.done) {
-                                return FutureBuilder(
-                                  future: Preference.getItem(SP_BILLING_ID),
-                                  builder: (context,
-                                      AsyncSnapshot<String> snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.done) {
-                                      String? billingId = snapshot.data;
-                                      if (billingId == null ||
-                                          billingId.isEmpty) {
-                                        billingId = "1001";
-                                      } else {
-                                        int lastBillID = int.parse(billingId);
-                                        lastBillID++;
-                                        billingId = lastBillID.toString();
-                                      }
-                                      print("Billing:" + billingId);
-                                      return FutureBuilder(
-                                        future: Preference.getRetailer(),
-                                        builder: (context,
-                                            AsyncSnapshot<User> snapshot) {
-                                          if (snapshot.connectionState ==
-                                              ConnectionState.done) {
-                                            if (snapshot.data != null &&
-                                                snapshot
-                                                    .data!.name.isNotEmpty &&
-                                                snapshot.data!.mobileNo
-                                                    .isNotEmpty) {
-                                              print("RetailerData: " +
-                                                  snapshot.data!.name);
-                                              return HomePage(
-                                                  isRetailer: false,
-                                                  retailer: snapshot.data!,
-                                                  displayData: displayData,
-                                                  billingIdVal: billingId!);
-                                            } else {
-                                              return HomePage(
-                                                  isRetailer: true,
-                                                  retailer: null,
-                                                  displayData: displayData,
-                                                  billingIdVal: billingId!);
-                                            }
-                                          } else if (snapshot.hasError) {
-                                            return showErrorMessage(context);
-                                          } else {
-                                            return CustomLoader();
-                                          }
-                                        },
-                                      );
-                                    } else if (snapshot.hasError) {
-                                      return showErrorMessage(context);
-                                    } else {
-                                      return CustomLoader();
-                                    }
-                                  },
-                                );
+                                if (snapshot.data != null &&
+                                    snapshot.data!.name.isNotEmpty &&
+                                    snapshot.data!.mobileNo.isNotEmpty) {
+                                  print("RetailerData: " + snapshot.data!.name);
+                                  return HomePage(
+                                      isRetailer: false,
+                                      retailer: snapshot.data!,
+                                      displayData: displayData,
+                                      billingIdVal: billingId!);
+                                } else {
+                                  return HomePage(
+                                      isRetailer: true,
+                                      retailer: null,
+                                      displayData: displayData,
+                                      billingIdVal: billingId!);
+                                }
                               } else if (snapshot.hasError) {
                                 return showErrorMessage(context);
                               } else {
@@ -161,16 +124,16 @@ class MyApp extends StatelessWidget {
                         }
                       },
                     );
-                  } else {
+                  } else if (snapshot.hasError) {
                     return showErrorMessage(context);
+                  } else {
+                    return CustomLoader();
                   }
-                } else if (snapshot.hasError) {
-                  return showErrorMessage(context);
-                } else {
-                  return CustomLoader();
-                }
-              },
-            );
+                },
+              );
+            } else {
+              return showErrorMessage(context);
+            }
           } else if (snapshot.hasError) {
             return showErrorMessage(context);
           } else {
