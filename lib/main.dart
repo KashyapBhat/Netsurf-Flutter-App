@@ -14,6 +14,7 @@ import 'package:project_netsurf/common/sp_constants.dart';
 import 'package:project_netsurf/common/sp_utils.dart';
 import 'package:project_netsurf/common/ui/loader.dart';
 import 'package:project_netsurf/ui/home.dart';
+import 'common/ui/theme.dart';
 import 'di/singletons.dart';
 
 void main() async {
@@ -36,35 +37,9 @@ class MyApp extends StatelessWidget {
     analytics.setCurrentScreen(screenName: CT_HOME_SCREEN);
     return MaterialApp(
       title: APP_NAME,
-      navigatorObservers: [
-        FirebaseAnalyticsObserver(analytics: analytics),
-      ],
-      theme: ThemeData(
-        textTheme: TextTheme(
-          displayLarge: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
-          titleLarge: TextStyle(fontSize: 36.0, fontStyle: FontStyle.italic),
-          bodyMedium: TextStyle(fontSize: 14.0),
-        ),
-        appBarTheme: AppBarTheme(
-          centerTitle: true,
-          toolbarTextStyle:
-              TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-          titleTextStyle:
-              TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-          color: const Color(PRIMARY_COLOR),
-        ),
-        primaryColor: Color(PRIMARY_COLOR),
-        hintColor: Color(SECONDARY_COLOR),
-        primarySwatch: MaterialColor(SECONDARY_COLOR, THEME_COLOR),
-      ),
-      builder: (context, child) => SafeArea(
-          child: Container(
-        height: MediaQuery.of(context).size.height,
-        decoration: BoxDecoration(
-          color: Colors.white,
-        ),
-        child: child,
-      )),
+      theme: NetsurfAppTheme(),
+      navigatorObservers: [FirebaseAnalyticsObserver(analytics: analytics)],
+      builder: (context, child) => AppContainer(context, child),
       home: FutureBuilder(
         future: Products.getDisplayData(fireStore, false),
         builder: (context, AsyncSnapshot<DisplayData?> snapshot) {
