@@ -17,7 +17,7 @@ Features:
 Built with :purple_heart: using Flutter. 
 Supports: Android - IOS - WEB
 
-### Learning these along the way:
+## Learning these along the way:
 **State Management**: For seamless data flow and app-wide state synchronization
 Provider ([https://pub.dev/packages/provider](https://pub.dev/packages/provider))
 Flutter Bloc ([https://pub.dev/packages/flutter_bloc](https://pub.dev/packages/flutter_bloc))
