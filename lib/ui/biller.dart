@@ -31,7 +31,7 @@ class BillerPage extends StatefulWidget {
 }
 
 class HomePageState extends State<BillerPage> {
-  static FirebaseAnalytics analytics = FirebaseAnalytics();
+  static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override

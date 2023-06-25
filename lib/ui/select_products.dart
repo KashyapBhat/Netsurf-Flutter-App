@@ -41,7 +41,7 @@ class SelectProductsPage extends StatefulWidget {
 }
 
 class SelectProductsPageState extends State<SelectProductsPage> {
-  static FirebaseAnalytics analytics = FirebaseAnalytics();
+  static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   List<TextEditingController> _controllers = [];
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController discountedPriceController =

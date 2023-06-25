@@ -22,7 +22,7 @@ class BillsPage extends StatefulWidget {
 }
 
 class HomePageState extends State<BillsPage> {
-  static FirebaseAnalytics analytics = FirebaseAnalytics();
+  static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   Icon actionIcon = new Icon(
     Icons.search,
