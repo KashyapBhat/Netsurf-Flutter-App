@@ -18,8 +18,9 @@ import 'package:project_netsurf/common/ui/loader.dart';
 import 'package:project_netsurf/ui/home.dart';
 import 'package:device_info/device_info.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(Phoenix(child: MyApp()));
 }
 
@@ -29,7 +30,7 @@ const String PATH_BILLER = "/billerpage";
 
 class MyApp extends StatelessWidget {
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
-  static FirebaseAnalytics analytics = FirebaseAnalytics();
+  static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +60,7 @@ class MyApp extends StatelessWidget {
           color: const Color(PRIMARY_COLOR),
         ),
         primaryColor: Color(PRIMARY_COLOR),
-        accentColor: Color(SECONDARY_COLOR),
+        hintColor: Color(SECONDARY_COLOR),
         primarySwatch: MaterialColor(SECONDARY_COLOR, THEME_COLOR),
       ),
       builder: (context, child) => SafeArea(

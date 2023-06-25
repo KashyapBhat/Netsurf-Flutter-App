@@ -37,7 +37,7 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  static FirebaseAnalytics analytics = FirebaseAnalytics();
+  static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController categoryTextController =
       new TextEditingController();
@@ -80,7 +80,7 @@ class HomePageState extends State<HomePage> {
         screenName: isRetailer ? CT_DISTRIBUTER_SCREEN : CT_USER_SCREEN);
     return Listener(
       onPointerDown: (_) {
-        WidgetsBinding.instance!.focusManager.primaryFocus?.unfocus();
+        WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
       },
       child: Scaffold(
           drawer:
