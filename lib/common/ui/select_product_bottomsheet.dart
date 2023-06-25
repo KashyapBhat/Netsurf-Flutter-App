@@ -142,7 +142,7 @@ List<Product> _buildSearchList(
 
 Product _getClickedProduct(
     List<Product>? _listAfterSearch, List<Product> productList, int index) {
-  if ((_listAfterSearch != null && _listAfterSearch.length > 0)) {
+  if ((_listAfterSearch != null && _listAfterSearch.isNotEmpty)) {
     return _listAfterSearch[index];
   } else {
     return productList[index];
@@ -151,7 +151,7 @@ Product _getClickedProduct(
 
 int _getListViewItemCount(
     List<Product>? _listAfterSearch, List<Product> productList) {
-  if ((_listAfterSearch != null && _listAfterSearch.length > 0)) {
+  if ((_listAfterSearch != null && _listAfterSearch.isNotEmpty)) {
     return _listAfterSearch.length;
   } else {
     return productList.length;
@@ -160,7 +160,7 @@ int _getListViewItemCount(
 
 Widget _getProductListAndWidget(
     List<Product>? _listAfterSearch, List<Product> productList, int index) {
-  if ((_listAfterSearch != null && _listAfterSearch.length > 0)) {
+  if ((_listAfterSearch != null && _listAfterSearch.isNotEmpty)) {
     return _showBottomSheetWithSearch(index, _listAfterSearch);
   } else {
     return _showBottomSheetWithSearch(index, productList);
