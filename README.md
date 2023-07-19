@@ -39,6 +39,8 @@ In addition, **use-case specific** dependencies such as firebase_core, fl_chart,
 
 Utilizing my familiarity/expertise in Android, it was easy to **relate flutter concepts to their Android counterparts**, making it a lot easier for me to grasp the new framework.
 
+This app is live on **Play Store** and has **4k+ daily active users** - https://play.google.com/store/apps/details?id=in.codingcurve.netsurfs_calci
+
 ## Learning materials:
 [Flutter By Example](https://flutterbyexample.com/) :pray:
 ###### And for noobs like me: :upside_down_face: :vulcan_salute:</br>
