@@ -2,7 +2,9 @@
 
 Netsurf billing calculator app is a non-profit **productivity app** focused to help retailers/vendors create bills for netsurf products. 
 
-Features:
+This app is live on **Play Store** and has **4k+ daily active users** - https://play.google.com/store/apps/details?id=in.codingcurve.netsurfs_calci
+
+**Features:**
 * Simple but **effective UX**
 * Display available offers using **banners**
 * 100+ **products** to select from
@@ -38,8 +40,6 @@ Retrofit ([https://pub.dev/packages/retrofit](https://pub.dev/packages/retrofit)
 In addition, **use-case specific** dependencies such as firebase_core, fl_chart, synchronized, path_provider, intl, cached_network_image, url_launcher, carousel, and more. I have deliberately selected only the essential dependencies in this application to maintain a minimal app size. 
 
 Utilizing my familiarity/expertise in Android, it was easy to **relate flutter concepts to their Android counterparts**, making it a lot easier for me to grasp the new framework.
-
-This app is live on **Play Store** and has **4k+ daily active users** - https://play.google.com/store/apps/details?id=in.codingcurve.netsurfs_calci
 
 ## Learning materials:
 [Flutter By Example](https://flutterbyexample.com/) :pray:
