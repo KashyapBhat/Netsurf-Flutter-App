@@ -1,6 +1,6 @@
 # Project NetSurf
 
-Netsurf billing calculator app is a non-profit **productivity app** focused to help retailers/vendors create bills for netsurf products. 
+Netsurf billing calculator app is a **non-profit productivity** app focused to help retailers/vendors create bills for netsurf products. 
 
 This app is live on **Play Store** and has **4k+ daily active users** - https://play.google.com/store/apps/details?id=in.codingcurve.netsurfs_calci
 
