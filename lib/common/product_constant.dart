@@ -7,10 +7,6 @@ import 'package:project_netsurf/common/sp_utils.dart';
 
 class Products {
   static Product? getProductCategorys(List<Product?> allCategories, int id) {
-    if (id == null) {
-      return allCategories
-          .firstWhere((element) => element?.id == 0 || element?.id == 1);
-    }
     return allCategories.firstWhere((element) => element?.id == id);
   }
 
@@ -43,9 +39,6 @@ class Products {
   ];
 
   static Product getProductCategory(int id) {
-    if (id == null) {
-      return _productCategories[0];
-    }
     return _productCategories[id];
   }
 
@@ -54,7 +47,7 @@ class Products {
   }
 
   static List<Product> getProductsFromCategoryId(Product product) {
-    if (product == null || product.name.isEmpty) {
+    if (product.name.isEmpty) {
       return getDefaultProducts();
     }
     List<Product> products = [];

@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 void elevatedButtonAdd() {
   ElevatedButton(
     style: ElevatedButton.styleFrom(
-      onPrimary: Colors.white,
-      elevation: 1,
+      foregroundColor: Colors.white, elevation: 1,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.0)),
       minimumSize: Size(15, 40),
     ),
@@ -22,8 +21,7 @@ void elevatedButtonAdd() {
 void elevatedButtonSub() {
   ElevatedButton(
     style: ElevatedButton.styleFrom(
-      onPrimary: Colors.white,
-      elevation: 1,
+      foregroundColor: Colors.white, elevation: 1,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.0)),
       minimumSize: Size(15, 40),
     ),

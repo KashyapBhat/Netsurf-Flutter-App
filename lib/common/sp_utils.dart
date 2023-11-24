@@ -17,153 +17,128 @@ class Preference {
   }
 
   static Future<bool> remove(String name) async {
-    final SharedPreferences prefs = await _prefs;
-    return prefs.remove(name);
+    return (await _prefs).remove(name);
   }
 
   static Future<String> getItem(String name) async {
-    final SharedPreferences prefs = await _prefs;
-    return prefs.getString(name) ?? '';
+    return (await _prefs).getString(name) ?? '';
   }
 
   static Future<bool> setItem(String name, String value) async {
-    final SharedPreferences prefs = await _prefs;
-    return prefs.setString(name, value);
+    return (await _prefs).setString(name, value);
   }
 
   static Future<int> getIntItem(String name) async {
-    final SharedPreferences prefs = await _prefs;
-    return prefs.getInt(name) ?? 0;
+    return (await _prefs).getInt(name) ?? 0;
   }
 
   static Future<bool> setIntItem(String name, int value) async {
-    final SharedPreferences prefs = await _prefs;
-    return prefs.setInt(name, value);
+    return (await _prefs).setInt(name, value);
   }
 
   static Future<double> getDoubleItem(String name) async {
-    final SharedPreferences prefs = await _prefs;
-    return prefs.getDouble(name) ?? 0;
+    return (await _prefs).getDouble(name) ?? 0;
   }
 
   static Future<bool> setDoubleItem(String name, double value) async {
-    final SharedPreferences prefs = await _prefs;
-    return prefs.setDouble(name, value);
+    return (await _prefs).setDouble(name, value);
   }
 
   static Future<bool> getBoolItem(String name) async {
-    final SharedPreferences prefs = await _prefs;
-    return prefs.getBool(name) ?? false;
+    return (await _prefs).getBool(name) ?? false;
   }
 
   static Future<bool> setBoolItem(String name, bool value) async {
-    final SharedPreferences prefs = await _prefs;
-    return prefs.setBool(name, value);
+    return (await _prefs).setBool(name, value);
   }
 
   static Future<Set<String>> getAll() async {
-    final SharedPreferences prefs = await _prefs;
-    return prefs.getKeys();
+    return (await _prefs).getKeys();
   }
 
   static Future<bool> setListData(String key, List<String> value) async {
-    final SharedPreferences prefs = await _prefs;
-    return prefs.setStringList(key, value);
+    return (await _prefs).setStringList(key, value);
   }
 
   Future<List<String>?> getListData(String key) async {
-    final SharedPreferences prefs = await _prefs;
-    return prefs.getStringList(key);
+    return (await _prefs).getStringList(key);
   }
 
   static Future<bool> contains(String name) async {
-    final SharedPreferences prefs = await _prefs;
-    return prefs.containsKey(name);
+    return (await _prefs).containsKey(name);
   }
 
   static Future<bool> setDisplayData(DisplayData displayData) async {
-    final SharedPreferences prefs = await _prefs;
     final String encodedData = DisplayData.encode(displayData);
-    return await prefs.setString(SP_DISPLAY, encodedData);
+    return (await _prefs).setString(SP_DISPLAY, encodedData);
   }
 
   static Future<DisplayData> getDisplayData() async {
-    final SharedPreferences prefs = await _prefs;
-    String displayString = prefs.getString(SP_DISPLAY) ?? "";
+    String displayString = (await _prefs).getString(SP_DISPLAY) ?? "";
     final DisplayData decodedData = DisplayData.decode(displayString);
     return decodedData;
   }
 
   static Future<bool> setProducts(List<Product> products, String name) async {
-    final SharedPreferences prefs = await _prefs;
     final String encodedData = Product.encode(products);
-    return await prefs.setString(name, encodedData);
+    return await (await _prefs).setString(name, encodedData);
   }
 
   static Future<List<Product>> getProducts(String name) async {
-    final SharedPreferences prefs = await _prefs;
-    String productsEncoded = prefs.getString(name) ?? "";
+    String productsEncoded = (await _prefs).getString(name) ?? "";
     final List<Product> decodedData = Product.decode(productsEncoded);
     return decodedData;
   }
 
   static Future<bool> setRetailer(User retailer) async {
-    final SharedPreferences prefs = await _prefs;
     final String encodedData = User.encode(retailer);
-    return await prefs.setString(SP_RETAILER, encodedData);
+    return (await _prefs).setString(SP_RETAILER, encodedData);
   }
 
   static Future<User?> getRetailer() async {
-    final SharedPreferences prefs = await _prefs;
-    String? decodedData = prefs.getString(SP_RETAILER);
+    String? decodedData = (await _prefs).getString(SP_RETAILER);
     if (decodedData == null) return null;
     final User decodedRetailer = User.decode(decodedData);
     return decodedRetailer;
   }
 
   static Future<bool> addBill(Billing billing) async {
-    final SharedPreferences prefs = await _prefs;
     List<Billing> bills = [];
-    if (!prefs.containsKey(SP_BILLING)) {
+    if (!(await _prefs).containsKey(SP_BILLING)) {
       bills.add(billing);
     } else {
       bills = await getBills();
       bills.insert(0, billing);
     }
     final String encodedData = Billing.encodeList(bills);
-    return await prefs.setString(SP_BILLING, encodedData);
+    return (await _prefs).setString(SP_BILLING, encodedData);
   }
 
   static Future<bool> addBills(List<Billing> billing) async {
-    final SharedPreferences prefs = await _prefs;
     final String encodedData = Billing.encodeList(billing);
-    return await prefs.setString(SP_BILLING, encodedData);
+    return (await _prefs).setString(SP_BILLING, encodedData);
   }
 
   static Future<List<Billing>> getBills() async {
-    final SharedPreferences prefs = await _prefs;
-    String decodedData = prefs.getString(SP_BILLING) ?? "";
+    String decodedData = (await _prefs).getString(SP_BILLING) ?? "";
     final List<Billing> decodedRetailer = Billing.decodeList(decodedData);
     return decodedRetailer;
   }
 
   static Future<bool> clearAllBills() async {
-    final SharedPreferences prefs = await _prefs;
-    return prefs.remove(SP_BILLING);
+    return (await _prefs).remove(SP_BILLING);
   }
 
   static Future<bool> setDateTime(String key) async {
-    final SharedPreferences prefs = await _prefs;
-    return await prefs.setString(key, DateTime.now().toIso8601String());
+    return await (await _prefs).setString(key, DateTime.now().toIso8601String());
   }
 
   static Future<DateTime> getDateTime(String key) async {
-    final SharedPreferences prefs = await _prefs;
-    String? displayString = prefs.getString(key);
+    String? displayString = (await _prefs).getString(key);
     if (displayString == null) {
       var done = await setDateTime(SP_DT_REFRESH);
       if (done)
-        displayString = prefs.getString(key);
+        displayString = (await _prefs).getString(key);
     }
     return DateTime.parse(displayString!);
   }

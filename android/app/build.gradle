@@ -89,4 +89,6 @@ dependencies {
     implementation "com.google.android.material:material:$material"
     def multidex = "1.0.3"
     implementation "com.android.support:multidex:$multidex"
+    def activity = "1.6.0-alpha05"
+    implementation "androidx.activity:activity:$activity"
 }
