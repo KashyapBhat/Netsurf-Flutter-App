@@ -17,7 +17,6 @@ import 'package:project_netsurf/common/ui/edittext.dart';
 import 'package:project_netsurf/common/utils/billing_pdf.dart';
 import 'package:project_netsurf/common/utils/common_utils.dart';
 import 'package:project_netsurf/common/utils/pdf_api.dart';
-import 'package:project_netsurf/main.dart';
 
 class BillerPage extends StatefulWidget {
   final bool isAlreadySaved;
@@ -171,9 +170,6 @@ class HomePageState extends State<BillerPage> {
               );
             },
             itemBuilder: (context, index) {
-              if (data == null) {
-                return Container(child: Center(child: Text("NA")));
-              }
               return Container(
                   child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

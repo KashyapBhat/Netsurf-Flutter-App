@@ -1,4 +1,3 @@
-import 'dart:math';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
@@ -263,23 +262,21 @@ class SelectProductsPageState extends State<SelectProductsPage> {
                 Products.getProductsFromCategorysIds(
                     allproducts, selectedCategory, selectedProducts),
                 itemTextController, (context, product) {
-              if (product != null) {
-                setState(() {
-                  finalAmountReset();
-                  if (!selectedProducts.contains(product) &&
-                      !productPresent(product)) {
-                    selectedProducts.add(product);
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text("Item is already in the list!"),
-                      duration: const Duration(seconds: 3),
-                      behavior: SnackBarBehavior.floating,
-                    ));
-                  }
-                  calculateTotal();
-                });
-              }
-            });
+              setState(() {
+                finalAmountReset();
+                if (!selectedProducts.contains(product) &&
+                    !productPresent(product)) {
+                  selectedProducts.add(product);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text("Item is already in the list!"),
+                    duration: const Duration(seconds: 3),
+                    behavior: SnackBarBehavior.floating,
+                  ));
+                }
+                calculateTotal();
+              });
+                        });
           },
         ),
       ),
@@ -293,7 +290,6 @@ class SelectProductsPageState extends State<SelectProductsPage> {
 
   String _getButtonText() {
     if (selectedCategory != null &&
-        selectedCategory!.name != null &&
         selectedCategory!.name.isNotEmpty) {
       return "Add products";
     } else {
@@ -421,7 +417,7 @@ class SelectProductsPageState extends State<SelectProductsPage> {
                 cursorColor: Colors.black,
                 keyboardType: TextInputType.number,
                 onChanged: (value) {
-                  if (value != null && value.isNotEmpty) {
+                  if (value.isNotEmpty) {
                     // TO DO widget.billingIdVal = double.parse(value);
                   }
                 },
@@ -473,23 +469,21 @@ class SelectProductsPageState extends State<SelectProductsPage> {
               keyboardType: TextInputType.number,
               onChanged: (value) {
                 setState(() {
-                  if (value != null) {
-                    if (value.isNotEmpty) {
-                      double discount = double.parse(value);
-                      price.discountAmt = 0;
-                      if (discount > 0) {
-                        price.discountAmt = price.total * (discount / 100);
-                        price.finalAmt = price.total - price.discountAmt;
-                        if (price.finalAmt < 0) {
-                          price.finalAmt = 0;
-                        }
+                  if (value.isNotEmpty) {
+                    double discount = double.parse(value);
+                    price.discountAmt = 0;
+                    if (discount > 0) {
+                      price.discountAmt = price.total * (discount / 100);
+                      price.finalAmt = price.total - price.discountAmt;
+                      if (price.finalAmt < 0) {
+                        price.finalAmt = 0;
                       }
-                    } else {
-                      price.discountAmt = 0;
-                      price.finalAmt = price.total;
                     }
+                  } else {
+                    price.discountAmt = 0;
+                    price.finalAmt = price.total;
                   }
-                });
+                                });
               },
             ),
           ),
@@ -519,23 +513,21 @@ class SelectProductsPageState extends State<SelectProductsPage> {
               keyboardType: TextInputType.number,
               onChanged: (value) {
                 setState(() {
-                  if (value != null) {
-                    if (value.isNotEmpty) {
-                      double discountPrice = double.parse(value);
-                      price.discountAmt = 0;
-                      if (discountPrice > 0) {
-                        price.discountAmt = discountPrice;
-                        price.finalAmt = price.total - discountPrice;
-                        if (price.finalAmt < 0) {
-                          price.finalAmt = 0;
-                        }
+                  if (value.isNotEmpty) {
+                    double discountPrice = double.parse(value);
+                    price.discountAmt = 0;
+                    if (discountPrice > 0) {
+                      price.discountAmt = discountPrice;
+                      price.finalAmt = price.total - discountPrice;
+                      if (price.finalAmt < 0) {
+                        price.finalAmt = 0;
                       }
-                    } else {
-                      price.discountAmt = 0;
-                      price.finalAmt = price.total;
                     }
+                  } else {
+                    price.discountAmt = 0;
+                    price.finalAmt = price.total;
                   }
-                });
+                                });
               },
             ),
           ),
