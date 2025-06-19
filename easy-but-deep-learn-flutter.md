@@ -1,7 +1,3 @@
-Great question — here’s a list of **basic-looking Flutter questions** that can go very deep if you answer them well (senior interviewers often test this):
-
----
-
 ### 1️⃣ What is a widget in Flutter?
 
 Looks basic, but depth:
