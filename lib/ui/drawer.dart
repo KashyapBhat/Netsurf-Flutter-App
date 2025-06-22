@@ -139,13 +139,13 @@ class AppDrawer extends StatelessWidget {
                         await deviceInfo.androidInfo;
                     analytics.logEvent(
                       name: CT_LOGOUT,
-                      parameters: <String, dynamic>{
+                      parameters: <String, Object>{
                         CT_DISTRIBUTOR_NAME: retailer.name,
                         CT_DISTRIBUTOR_PH_NO: retailer.mobileNo,
                         CT_MODEL_NAME: androidInfo.model,
                         CT_MANUFACTURER_NAME: androidInfo.manufacturer,
                         CT_ANDROID_VERSION_STRING: androidInfo.version.release,
-                        CT_ANDROID_VERSION: androidInfo.version.baseOS
+                        CT_ANDROID_VERSION: androidInfo.version.baseOS ?? ""
                       },
                     );
                     showLogoutErrorDialog(context);
@@ -161,13 +161,13 @@ class AppDrawer extends StatelessWidget {
                         await deviceInfo.androidInfo;
                     analytics.logEvent(
                       name: CT_AUTHOR,
-                      parameters: <String, dynamic>{
+                      parameters: <String, Object>{
                         CT_DISTRIBUTOR_NAME: retailer.name,
                         CT_DISTRIBUTOR_PH_NO: retailer.mobileNo,
                         CT_MODEL_NAME: androidInfo.model,
                         CT_MANUFACTURER_NAME: androidInfo.manufacturer,
                         CT_ANDROID_VERSION_STRING: androidInfo.version.release,
-                        CT_ANDROID_VERSION: androidInfo.version.baseOS
+                        CT_ANDROID_VERSION: androidInfo.version.baseOS ?? ""
                       },
                     );
                     _launchURL(displayData.alink);
@@ -183,14 +183,14 @@ class AppDrawer extends StatelessWidget {
                           await deviceInfo.androidInfo;
                       analytics.logEvent(
                         name: CT_REPORT_ISSUE,
-                        parameters: <String, dynamic>{
+                        parameters: <String, Object>{
                           CT_DISTRIBUTOR_NAME: retailer.name,
                           CT_DISTRIBUTOR_PH_NO: retailer.mobileNo,
                           CT_MODEL_NAME: androidInfo.model,
                           CT_MANUFACTURER_NAME: androidInfo.manufacturer,
                           CT_ANDROID_VERSION_STRING:
                               androidInfo.version.release,
-                          CT_ANDROID_VERSION: androidInfo.version.baseOS
+                          CT_ANDROID_VERSION: androidInfo.version.baseOS ?? ""
                         },
                       );
                       final Uri params = Uri(
@@ -211,13 +211,13 @@ class AppDrawer extends StatelessWidget {
                         await deviceInfo.androidInfo;
                     analytics.logEvent(
                       name: CT_SHARE_APP,
-                      parameters: <String, dynamic>{
+                      parameters: <String, Object>{
                         CT_DISTRIBUTOR_NAME: retailer.name,
                         CT_DISTRIBUTOR_PH_NO: retailer.mobileNo,
                         CT_MODEL_NAME: androidInfo.model,
                         CT_MANUFACTURER_NAME: androidInfo.manufacturer,
                         CT_ANDROID_VERSION_STRING: androidInfo.version.release,
-                        CT_ANDROID_VERSION: androidInfo.version.baseOS
+                        CT_ANDROID_VERSION: androidInfo.version.baseOS ?? ""
                       },
                     );
                     print("Play Link: " + displayData.playlink);

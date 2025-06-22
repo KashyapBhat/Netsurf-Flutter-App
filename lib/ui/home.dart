@@ -1,5 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:carousel_slider/carousel_slider.dart';
+import 'package:carousel_slider/carousel_slider.dart' as carousel;
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
@@ -157,25 +157,25 @@ class HomePageState extends State<HomePage> {
         ),
         centerTitle: true,
         background: Center(
-          child: CarouselSlider(
-            options: CarouselOptions(height: 400.0),
+          child: carousel.CarouselSlider(
+            options: carousel.CarouselOptions(height: 400.0),
             items: Iterable<int>.generate(length).toList().map((i) {
               return Builder(
                 builder: (BuildContext context) {
                   return Container(
                     width: MediaQuery.of(context).size.width,
                     margin:
-                        EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
+                        const EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
                     decoration: BoxDecoration(
                         color: Colors.blueGrey.shade50,
-                        borderRadius: BorderRadius.all(Radius.circular(8))),
+                        borderRadius: const BorderRadius.all(Radius.circular(8))),
                     child: CachedNetworkImage(
                       imageUrl: bannerList![i],
                       progressIndicatorBuilder:
                           (context, url, downloadProgress) => CustomLoader(),
                       fit: BoxFit.contain,
                       fadeInCurve: Curves.easeInToLinear,
-                      errorWidget: (context, url, error) => Icon(Icons.error),
+                      errorWidget: (context, url, error) => const Icon(Icons.error),
                     ),
                   );
                 },
@@ -308,13 +308,13 @@ class HomePageState extends State<HomePage> {
                   AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
                   analytics.logEvent(
                     name: CT_DISTRIBUTOR_LOGIN,
-                    parameters: <String, dynamic>{
+                    parameters: <String, Object>{
                       CT_DISTRIBUTOR_NAME: retailer.name,
                       CT_DISTRIBUTOR_PH_NO: retailer.mobileNo,
                       CT_MODEL_NAME: androidInfo.model,
                       CT_MANUFACTURER_NAME: androidInfo.manufacturer,
                       CT_ANDROID_VERSION_STRING: androidInfo.version.release,
-                      CT_ANDROID_VERSION: androidInfo.version.baseOS
+                      CT_ANDROID_VERSION: androidInfo.version.baseOS ?? ""
                     },
                   );
                   await Preference.setRetailer(user);
