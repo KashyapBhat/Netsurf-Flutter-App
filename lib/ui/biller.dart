@@ -293,17 +293,17 @@ class HomePageState extends State<BillerPage> {
                 analytics.setCurrentScreen(screenName: CT_PDF_CREATION);
                 analytics.logEvent(
                   name: CT_SAVE_BILL,
-                  parameters: <String, dynamic>{
-                    CT_DISTRIBUTOR_NAME: invoice.retailer?.name,
-                    CT_DISTRIBUTOR_PH_NO: invoice.retailer?.mobileNo,
-                    CT_CUSTOMER_NAME: invoice.customer?.name,
-                    CT_CUSTOMER_PH_NO: invoice.customer?.mobileNo,
-                    CT_BILLING_NO: invoice.billingInfo?.number,
+                  parameters: <String, Object>{
+                    CT_DISTRIBUTOR_NAME: invoice.retailer?.name ?? "",
+                    CT_DISTRIBUTOR_PH_NO: invoice.retailer?.mobileNo ?? "",
+                    CT_CUSTOMER_NAME: invoice.customer?.name ?? "",
+                    CT_CUSTOMER_PH_NO: invoice.customer?.mobileNo ?? "",
+                    CT_BILLING_NO: invoice.billingInfo?.number ?? "",
                     CT_BILLING_DATE: formattedDate,
                     CT_MODEL_NAME: androidInfo.model,
                     CT_MANUFACTURER_NAME: androidInfo.manufacturer,
                     CT_ANDROID_VERSION_STRING: androidInfo.version.release,
-                    CT_ANDROID_VERSION: androidInfo.version.baseOS
+                    CT_ANDROID_VERSION: androidInfo.version.baseOS ?? ""
                   },
                 );
                 if (!isAlreadySaved)

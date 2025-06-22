@@ -308,13 +308,13 @@ class HomePageState extends State<HomePage> {
                   AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
                   analytics.logEvent(
                     name: CT_DISTRIBUTOR_LOGIN,
-                    parameters: <String, dynamic>{
+                    parameters: <String, Object>{
                       CT_DISTRIBUTOR_NAME: retailer.name,
                       CT_DISTRIBUTOR_PH_NO: retailer.mobileNo,
                       CT_MODEL_NAME: androidInfo.model,
                       CT_MANUFACTURER_NAME: androidInfo.manufacturer,
                       CT_ANDROID_VERSION_STRING: androidInfo.version.release,
-                      CT_ANDROID_VERSION: androidInfo.version.baseOS
+                      CT_ANDROID_VERSION: androidInfo.version.baseOS ?? ""
                     },
                   );
                   await Preference.setRetailer(user);

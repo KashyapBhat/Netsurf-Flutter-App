@@ -64,6 +64,9 @@ class Products {
       case 4:
         products = getBioFit();
         break;
+      default:
+        products = getDefaultProducts();
+        break;
     }
     return products;
   }

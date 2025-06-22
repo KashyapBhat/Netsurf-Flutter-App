@@ -11,7 +11,7 @@ plugins {
 
 android {
     namespace = "in.codingcurve.project_netsurf"
-    compileSdk = 33
+    compileSdk = 35
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -25,7 +25,7 @@ android {
     defaultConfig {
         applicationId = "in.codingcurve.netsurfs_calci"
         minSdk = 23
-        targetSdk = 33
+        targetSdk = 35
         multiDexEnabled = true
         versionCode = flutter.versionCode
         versionName = flutter.versionName
