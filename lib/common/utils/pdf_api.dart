@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:open_file_plus/open_file_plus.dart';
+import 'package:open_app_file/open_app_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/widgets.dart';
 
@@ -21,7 +21,6 @@ class PdfApi {
 
   static Future openFile(File file) async {
     final url = file.path;
-
-    await OpenFile.open(url);
+    await OpenAppFile.open(url);
   }
 }
