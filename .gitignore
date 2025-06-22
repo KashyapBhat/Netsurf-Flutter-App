@@ -1,0 +1,45 @@
+# Flutter
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.dart_tool/
+build/
+
+# Android
+android/app/src/main/assets/flutter_assets/
+android/app/build/
+android/app/intermediates/
+android/.gradle/
+android/captures/
+android/*.iml
+android/app/*.iml
+android/local.properties
+android/key.properties
+
+# iOS
+ios/Flutter/App.framework
+ios/Flutter/flutter_assets/
+ios/Pods/
+ios/Runner/Assets.xcassets/AppIcon.appiconset/
+ios/Runner.xcworkspace/
+ios/Runner.xcodeproj/project.xcworkspace/
+ios/Runner.xcodeproj/xcuserdata/
+ios/build/
+ios/DerivedData/
+ios/Runner/GoogleService-Info.plist
+
+# macOS
+.DS_Store
+*.swp
+
+# IDEs
+.idea/
+.vscode/
+
+# Other
+*.log
+*.lock
+assets/
+key/
+key 2/
+init_app.sh 
